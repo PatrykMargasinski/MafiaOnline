@@ -44,6 +44,7 @@ namespace MafiaOnline
 
             //Services
             services.AddScoped<IAgentService, AgentService>();
+            services.AddScoped<IBossService, BossService>();
 
             services.AddControllers();
 

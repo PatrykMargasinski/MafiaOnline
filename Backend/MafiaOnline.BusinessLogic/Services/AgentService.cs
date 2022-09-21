@@ -13,7 +13,9 @@ namespace MafiaOnline.BusinessLogic.Services
 
     public interface IAgentService
     {
-        Task<IList<AgentDTO>> GetAgentList();
+        Task<IList<AgentDTO>> GetAllAgents();
+        Task<IList<AgentDTO>> GetBossAgents(long bossId);
+        Task<IList<AgentDTO>> GetActiveAgents(long bossId);
     }
 
     public class AgentService : IAgentService
@@ -27,9 +29,21 @@ namespace MafiaOnline.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<IList<AgentDTO>> GetAgentList()
+        public async Task<IList<AgentDTO>> GetAllAgents()
         {
             var agents = await _unitOfWork.Agents.GetAllAsync();
+            return _mapper.Map<IList<AgentDTO>>(agents);
+        }
+
+        public async Task<IList<AgentDTO>> GetBossAgents(long bossId)
+        {
+            var agents = await _unitOfWork.Agents.GetBossAgents(bossId);
+            return _mapper.Map<IList<AgentDTO>>(agents);
+        }
+
+        public async Task<IList<AgentDTO>> GetActiveAgents(long bossId)
+        {
+            var agents = await _unitOfWork.Agents.GetActiveAgents(bossId);
             return _mapper.Map<IList<AgentDTO>>(agents);
         }
     }

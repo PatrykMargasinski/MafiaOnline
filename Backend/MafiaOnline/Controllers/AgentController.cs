@@ -21,9 +21,23 @@ namespace MafiaOnline.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAgentList()
+        public async Task<IActionResult> GetAllAgents()
         {
-            var agents = await _agentService.GetAgentList();
+            var agents = await _agentService.GetAllAgents();
+            return new JsonResult(agents);
+        }
+
+        [HttpGet("{bossId}")]
+        public async Task<IActionResult> GetBossAgents(long bossId)
+        {
+            var agents = await _agentService.GetBossAgents(bossId);
+            return new JsonResult(agents);
+        }
+
+        [HttpGet("active/{bossId}")]
+        public async Task<IActionResult> GetActiveAgents(long bossId)
+        {
+            var agents = await _agentService.GetActiveAgents(bossId);
             return new JsonResult(agents);
         }
     }
