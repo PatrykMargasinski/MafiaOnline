@@ -40,7 +40,7 @@ namespace MafiaOnline.DataAccess.Repositories
         public async Task<IList<Agent>> GetAgentsOnMission(long bossId)
         {
             var agents = await _context.Agents
-                .Include(x => x.PerformingMissions)
+                .Include(x => x.PerformingMission)
                 .ThenInclude(y => y.Mission)
                 .Where(z => z.BossId == bossId)
                 .ToListAsync();

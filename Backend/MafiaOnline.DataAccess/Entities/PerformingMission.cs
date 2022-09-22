@@ -22,12 +22,12 @@ namespace MafiaOnline.DataAccess.Entities
             builder.ToTable("PerformingMission");
 
             builder.HasOne(d => d.Agent)
-                .WithMany(p => p.PerformingMissions)
-                .HasForeignKey(d => d.AgentId);
+                .WithOne(p => p.PerformingMission)
+                .HasForeignKey<PerformingMission>(d => d.AgentId);
 
             builder.HasOne(d => d.Mission)
-                .WithMany(p => p.PerformingMissions)
-                .HasForeignKey(d => d.MissionId);
+                .WithOne(p => p.PerformingMission)
+                .HasForeignKey<PerformingMission>(d => d.MissionId);
         }
     }
 }

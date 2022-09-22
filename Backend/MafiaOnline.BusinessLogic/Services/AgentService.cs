@@ -29,22 +29,40 @@ namespace MafiaOnline.BusinessLogic.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Returns all agents in the database
+        /// </summary>
         public async Task<IList<AgentDTO>> GetAllAgents()
         {
             var agents = await _unitOfWork.Agents.GetAllAsync();
             return _mapper.Map<IList<AgentDTO>>(agents);
         }
 
+        /// <summary>
+        /// Returns agents belonging to the boss
+        /// </summary>
         public async Task<IList<AgentDTO>> GetBossAgents(long bossId)
         {
             var agents = await _unitOfWork.Agents.GetBossAgents(bossId);
             return _mapper.Map<IList<AgentDTO>>(agents);
         }
 
+        /// <summary>
+        /// Returns active agents belonging to the boss
+        /// </summary>
         public async Task<IList<AgentDTO>> GetActiveAgents(long bossId)
         {
             var agents = await _unitOfWork.Agents.GetActiveAgents(bossId);
             return _mapper.Map<IList<AgentDTO>>(agents);
+        }
+
+        /// <summary>
+        /// Returns agents on mission belonging to the boss
+        /// </summary>
+        public async Task<IList<AgentOnMissionDTO>> GetAgentsOnMission(long bossId)
+        {
+            var agents = await _unitOfWork.Agents.GetAgentsOnMission(bossId);
+            return _mapper.Map<IList<AgentOnMissionDTO>>(agents);
         }
     }
 }

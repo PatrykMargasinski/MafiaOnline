@@ -19,7 +19,7 @@ namespace MafiaOnline.DataAccess.Entities
 
         public virtual Boss Boss { get; set; }
         public virtual AgentForSale AgentForSale { get; set; }
-        public virtual List<PerformingMission> PerformingMissions { get; set; }
+        public virtual PerformingMission PerformingMission { get; set; }
     }
 
     public enum AgentState
