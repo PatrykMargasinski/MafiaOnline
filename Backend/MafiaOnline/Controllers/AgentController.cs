@@ -40,5 +40,33 @@ namespace MafiaOnline.Controllers
             var agents = await _agentService.GetActiveAgents(bossId);
             return new JsonResult(agents);
         }
+
+        [HttpGet("onMission/{bossId}")]
+        public async Task<IActionResult> GetAgentsOnMission(long bossId)
+        {
+            var agents = await _agentService.GetAgentsOnMission(bossId);
+            return new JsonResult(agents);
+        }
+
+        [HttpGet("forSale")]
+        public async Task<IActionResult> GetAgentsForSale()
+        {
+            var agents = await _agentService.GetAgentsForSale();
+            return new JsonResult(agents);
+        }
+
+        [HttpPost("abandon/{agentId}")]
+        public async Task<IActionResult> AbandonAgent(long agentId)
+        {
+            var agents = await _agentService.AbandonAgent(agentId);
+            return new JsonResult(agents);
+        }
+
+        [HttpPost("recruit")]
+        public async Task<IActionResult> RecruitAgent(long bossId, long agentId)
+        {
+            var agent = await _agentService.RecruitAgent(bossId, agentId);
+            return new JsonResult($"Agent {agent.FirstName} {agent.LastName} is at your service.");
+        }
     }
 }

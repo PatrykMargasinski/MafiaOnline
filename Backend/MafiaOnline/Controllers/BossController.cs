@@ -30,11 +30,9 @@ namespace MafiaOnline.Controllers
         }
 
         [HttpGet("{bossId}")]
-        public async Task<IActionResult> GetBossDatas(long? bossId)
+        public async Task<IActionResult> GetBossDatas(long bossId)
         {
-            if (!bossId.HasValue)
-                throw new Exception("No id specified");
-            var boss = await _bossService.GetBossDatas(bossId.Value);
+            var boss = await _bossService.GetBossDatas(bossId);
             return new JsonResult(boss);
         }
     }

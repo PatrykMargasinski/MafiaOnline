@@ -20,10 +20,12 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.AgentName, y => y.MapFrom(z => z.FirstName + " " + z.LastName))
                 .ForMember(x => x.MissionName, y => y.MapFrom(z => z.PerformingMission.Mission.Name))
                 .ForMember(x => x.SuccessChance, y => y.MapFrom(z => Utility.CalculateAgentSuccessChance(z, z.PerformingMission.Mission)));
+            CreateMap<Agent, AgentForSaleDTO>()
+                .ForMember(x => x.Price, y => y.MapFrom(z => z.AgentForSale.Price));
 
             //Boss
             CreateMap<Boss, BossDTO>()
-                .ForMember(x=>x.Name, y=>y.MapFrom(z=>z.FirstName+" "+z.LastName));
+                .ForMember(x=>x.Name, y=>y.MapFrom(z=>z.FirstName + " " + z.LastName));
         }
     }
 }

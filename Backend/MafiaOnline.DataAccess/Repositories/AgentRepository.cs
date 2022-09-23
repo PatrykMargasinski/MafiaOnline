@@ -14,6 +14,7 @@ namespace MafiaOnline.DataAccess.Repositories
         Task<IList<Agent>> GetActiveAgents(long bossId);
         Task<IList<Agent>> GetBossAgents(long bossId);
         Task<IList<Agent>> GetAgentsOnMission(long bossId);
+        Task<IList<Agent>> GetAgentsForSale();
     }
 
     public class AgentRepository : CrudRepository<Agent>, IAgentRepository
@@ -25,7 +26,9 @@ namespace MafiaOnline.DataAccess.Repositories
 
         public async Task<IList<Agent>> GetActiveAgents(long bossId)
         {
-            var agents = await _context.Agents.Where(x => x.State == AgentState.Active && x.BossId==bossId).ToListAsync();
+            var agents = await _context.Agents
+                .Where(x => x.State == AgentState.Active && x.BossId==bossId)
+                .ToListAsync();
             return agents;
         }
 
@@ -42,9 +45,34 @@ namespace MafiaOnline.DataAccess.Repositories
             var agents = await _context.Agents
                 .Include(x => x.PerformingMission)
                 .ThenInclude(y => y.Mission)
-                .Where(z => z.BossId == bossId)
+                .Where(z => z.BossId == bossId && z.State == AgentState.OnMission)
                 .ToListAsync();
             return agents;
+        }
+
+        public async Task<IList<Agent>> GetAgentsForSale()
+        {
+            var agents = await _context.Agents
+                .Include(x => x.AgentForSale)
+                .Where(z => z.State == AgentState.OnSale)
+                .ToListAsync();
+            return agents;
+        }
+
+        public async override Task<Agent> GetByIdAsync(long agentId)
+        {
+            var agent = await _context.Agents
+                .Include(x => x.AgentForSale)
+                .FirstOrDefaultAsync(y=>y.Id == agentId);
+            return agent;
+        }
+
+        public async override Task<IList<Agent>> GetByIdsAsync(long[] agentsId)
+        {
+            var agent = await _context.Agents
+                .Include(x => x.AgentForSale)
+                .ToListAsync();
+            return agent;
         }
     }
 }
