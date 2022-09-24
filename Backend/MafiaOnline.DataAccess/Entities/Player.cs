@@ -12,6 +12,8 @@ namespace MafiaOnline.DataAccess.Entities
         public string Password { get; set; }
         public long BossId { get; set; }
         public virtual Boss Boss { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
     }
 
     public class PlayerModelConfiguration : IEntityTypeConfiguration<Player>

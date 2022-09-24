@@ -1,4 +1,7 @@
+using AutoMapper;
+using MafiaOnline.BusinessLogic;
 using MafiaOnline.BusinessLogic.Services;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +48,18 @@ namespace MafiaOnline
             //Services
             services.AddScoped<IAgentService, AgentService>();
             services.AddScoped<IBossService, BossService>();
+            services.AddScoped<IPlayerService, PlayerService>();
+
+            //Utils
+            services.AddScoped<ISecurityUtils, SecurityUtils>();
+            services.AddScoped<IMissionUtils, MissionUtils>();
+            services.AddScoped<ITokenUtils, TokenUtils>();
+
+            services.AddSingleton(provider => new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile(provider.CreateScope().ServiceProvider.GetService<IMissionUtils>()));
+
+            }).CreateMapper());
 
             services.AddControllers();
 

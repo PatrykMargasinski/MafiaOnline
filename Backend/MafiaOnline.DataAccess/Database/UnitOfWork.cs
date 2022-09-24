@@ -9,6 +9,7 @@ namespace MafiaOnline.DataAccess.Database
         IAgentRepository Agents { get; }
         IAgentForSaleRepository AgentsForSale { get; }
         IBossRepository Bosses { get; }
+        IPlayerRepository Players { get; }
     }
     public class UnitOfWork : IUnitOfWork
     {
@@ -20,11 +21,13 @@ namespace MafiaOnline.DataAccess.Database
             Agents = new AgentRepository(context);
             AgentsForSale = new AgentForSaleRepository(context);
             Bosses = new BossRepository(context);
+            Players = new PlayerRepository(context);
         }
 
         public IAgentRepository Agents { get; }
-        public IBossRepository Bosses { get; }
         public IAgentForSaleRepository AgentsForSale { get; }
+        public IBossRepository Bosses { get; }
+        public IPlayerRepository Players { get; }
 
         public void Commit()
         {

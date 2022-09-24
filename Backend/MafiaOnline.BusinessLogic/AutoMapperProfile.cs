@@ -12,20 +12,28 @@ namespace MafiaOnline.BusinessLogic
 {
     public class AutoMapperProfile : Profile
     {
-        public AutoMapperProfile()
+        private readonly IMissionUtils _missionUtils;
+        public AutoMapperProfile(IMissionUtils missionUtils)
         {
+            _missionUtils = missionUtils;
+
             //Agent
             CreateMap<Agent, AgentDTO>();
             CreateMap<Agent, AgentOnMissionDTO>()
                 .ForMember(x => x.AgentName, y => y.MapFrom(z => z.FirstName + " " + z.LastName))
                 .ForMember(x => x.MissionName, y => y.MapFrom(z => z.PerformingMission.Mission.Name))
-                .ForMember(x => x.SuccessChance, y => y.MapFrom(z => Utility.CalculateAgentSuccessChance(z, z.PerformingMission.Mission)));
+                .ForMember(x => x.SuccessChance, y => y.MapFrom(z => _missionUtils.CalculateAgentSuccessChance(z, z.PerformingMission.Mission)));
             CreateMap<Agent, AgentForSaleDTO>()
                 .ForMember(x => x.Price, y => y.MapFrom(z => z.AgentForSale.Price));
 
             //Boss
             CreateMap<Boss, BossDTO>()
-                .ForMember(x=>x.Name, y=>y.MapFrom(z=>z.FirstName + " " + z.LastName));
+                .ForMember(x => x.Name, y => y.MapFrom(z => z.FirstName + " " + z.LastName));
+        }
+
+        public AutoMapperProfile()
+        {
+
         }
     }
 }
