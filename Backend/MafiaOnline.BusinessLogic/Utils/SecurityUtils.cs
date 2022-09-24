@@ -85,7 +85,7 @@ namespace MafiaOnline.BusinessLogic.Utils
 
         public bool VerifyPassword(Player player, string pass)
         {
-            string savedPasswordHash = player.Password;
+            string savedPasswordHash = player.HashedPassword;
             byte[] hashBytes = Convert.FromBase64String(savedPasswordHash);
             byte[] salt = new byte[16];
             Array.Copy(hashBytes, 0, salt, 0, 16);

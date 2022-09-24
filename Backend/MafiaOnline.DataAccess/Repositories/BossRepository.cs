@@ -12,6 +12,7 @@ namespace MafiaOnline.DataAccess.Repositories
     public interface IBossRepository : ICrudRepository<Boss>
     {
         Task<IList<Boss>> GetBestBosses(int from, int to);
+        Task<IList<Boss>> GetByLastName(string lastName);
     }
 
     public class BossRepository : CrudRepository<Boss>, IBossRepository
@@ -27,6 +28,14 @@ namespace MafiaOnline.DataAccess.Repositories
                 .OrderByDescending(x => x.Money)
                 .Skip(from)
                 .Take(to - from)
+                .ToListAsync();
+            return bosses;
+        }
+
+        public async Task<IList<Boss>> GetByLastName(string lastName)
+        {
+            var bosses = await _context.Bosses
+                .Where(x => x.LastName == lastName)
                 .ToListAsync();
             return bosses;
         }

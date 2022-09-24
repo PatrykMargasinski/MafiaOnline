@@ -9,7 +9,7 @@ namespace MafiaOnline.DataAccess.Entities
     public partial class Player : Entity
     {
         public string Nick { get; set; }
-        public string Password { get; set; }
+        public string HashedPassword { get; set; }
         public long BossId { get; set; }
         public virtual Boss Boss { get; set; }
         public string RefreshToken { get; set; }

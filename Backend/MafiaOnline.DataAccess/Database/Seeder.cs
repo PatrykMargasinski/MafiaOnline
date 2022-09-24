@@ -29,8 +29,8 @@ namespace MafiaOnline.DataAccess.Database
         private static IList<Player> PreparePlayers()
         {
             return new List<Player> {
-                new Player{Id=1, Nick="mafia", Password="tlnK6HiwFF4+b4DRVaVdRlIPtzduirsf8W3+nbXlLWlf9c/J", BossId=1}, //password: a
-                new Player{Id=2, Nick="tomek", Password="d2JZt0Jz9UzgW1l544W2WnOaX14u/pfGUDYTQzv5AEWk3W7D", BossId=2} //password: b
+                new Player{Id=1, Nick="mafia", HashedPassword="tlnK6HiwFF4+b4DRVaVdRlIPtzduirsf8W3+nbXlLWlf9c/J", BossId=1}, //password: a
+                new Player{Id=2, Nick="tomek", HashedPassword="d2JZt0Jz9UzgW1l544W2WnOaX14u/pfGUDYTQzv5AEWk3W7D", BossId=2} //password: b
             };
         }
 

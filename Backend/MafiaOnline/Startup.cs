@@ -54,6 +54,7 @@ namespace MafiaOnline
             services.AddScoped<ISecurityUtils, SecurityUtils>();
             services.AddScoped<IMissionUtils, MissionUtils>();
             services.AddScoped<ITokenUtils, TokenUtils>();
+            services.AddScoped<IBasicUtils, BasicUtils>();
 
             services.AddSingleton(provider => new MapperConfiguration(cfg =>
             {
