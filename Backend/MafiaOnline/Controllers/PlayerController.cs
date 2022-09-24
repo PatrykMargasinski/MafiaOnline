@@ -34,5 +34,12 @@ namespace MafiaOnline.Controllers
             await _playerService.Register(user);
             return Ok();
         }
+
+        [HttpPost("/changePassword")]
+        public async Task<IActionResult> Register([FromBody] ChangePasswordRequest user)
+        {
+            await _playerService.ChangePassword(user);
+            return Ok();
+        }
     }
 }
