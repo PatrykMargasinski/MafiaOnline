@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Quartz;
 
 namespace MafiaOnline
 {
@@ -49,6 +50,7 @@ namespace MafiaOnline
             services.AddScoped<IAgentService, AgentService>();
             services.AddScoped<IBossService, BossService>();
             services.AddScoped<IPlayerService, PlayerService>();
+            services.AddScoped<IMissionService, MissionService>();
 
             //Utils
             services.AddScoped<ISecurityUtils, SecurityUtils>();
@@ -62,10 +64,19 @@ namespace MafiaOnline
 
             }).CreateMapper());
 
-            services.AddControllers();
+            services.AddQuartz(q =>
+            {
+                q.UseMicrosoftDependencyInjectionJobFactory();
+            });
+            services.AddQuartzServer(options =>
+            {
+                options.WaitForJobsToComplete = true;
+            });
 
             //AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
