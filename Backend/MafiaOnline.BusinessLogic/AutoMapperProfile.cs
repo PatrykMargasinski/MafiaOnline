@@ -29,6 +29,14 @@ namespace MafiaOnline.BusinessLogic
             //Boss
             CreateMap<Boss, BossDTO>()
                 .ForMember(x => x.Name, y => y.MapFrom(z => z.FirstName + " " + z.LastName));
+
+            //Mission
+            CreateMap<Mission, MissionDTO>();
+            CreateMap<PerformingMission, PerformingMissionDTO>()
+                .ForMember(x => x.AgentName, y => y.MapFrom(z => z.Agent.FirstName + " " + z.Agent.LastName))
+                .ForMember(x => x.MissionName, y => y.MapFrom(z => z.Mission.Name))
+                .ForMember(x => x.SuccessChance, y => y.MapFrom(z => _missionUtils.CalculateAgentSuccessChance(z.Agent, z.Mission)))
+                .ForMember(x => x.Loot, y => y.MapFrom(z => z.Mission.Loot));
         }
 
         public AutoMapperProfile()

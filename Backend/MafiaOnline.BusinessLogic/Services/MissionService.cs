@@ -19,6 +19,8 @@ namespace MafiaOnline.BusinessLogic.Services
         Task StartMission(long agentId, long missionId);
         Task<PerformingMission> DoMission(long agentId, long missionId);
         Task EndMission(long pmId);
+        Task<IList<MissionDTO>> GetAvailableMissions();
+        Task<IList<PerformingMissionDTO>> GetPerformingMissions(long bossId);
     }
 
     public class MissionService : IMissionService
@@ -47,8 +49,14 @@ namespace MafiaOnline.BusinessLogic.Services
             Mission mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
             if (mission == null)
             {
-                throw new Exception("Mission with id " + missionId + " not found!");
+                throw new Exception("Mission " + missionId + " not found!");
             }
+
+            if (mission.State != MissionState.Available)
+            {
+                throw new Exception("Mission " + missionId + " is not available");
+            }
+
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
 
             if (agent == null)
@@ -60,6 +68,12 @@ namespace MafiaOnline.BusinessLogic.Services
             {
                 throw new Exception("Agent " + agentId + " is without boss");
             }
+
+            if (agent.State != AgentState.Active)
+            {
+                throw new Exception("Agent " + agentId + " is not active");
+            }
+
             DateTime missionFinishTime = DateTime.Now.AddSeconds(mission.Duration);
 
             PerformingMission performingMission = new PerformingMission()
@@ -69,6 +83,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 CompletionTime = missionFinishTime
             };
             agent.State = AgentState.OnMission;
+            mission.State = MissionState.Performing;
             _unitOfWork.PerformingMissions.Create(performingMission);
             _unitOfWork.Commit();
             return performingMission;
@@ -103,9 +118,22 @@ namespace MafiaOnline.BusinessLogic.Services
                 info += ("\nMission failed.\n");
             }
             agent.State = AgentState.Active;
+            mission.State = MissionState.Available;
             //_reportRepository.CreateReport(bossId, "Mission: " + mission.Name, info);
             _unitOfWork.PerformingMissions.DeleteById(pm.Id);
             _unitOfWork.Commit();
+        }
+
+        public async Task<IList<MissionDTO>> GetAvailableMissions()
+        {
+            var missions = await _unitOfWork.Missions.GetAvailableMissions();
+            return _mapper.Map<IList<MissionDTO>>(missions);
+        }
+
+        public async Task<IList<PerformingMissionDTO>> GetPerformingMissions(long bossId)
+        {
+            var missions = await _unitOfWork.Missions.GetPerformingMissions(bossId);
+            return _mapper.Map<IList<PerformingMissionDTO>>(missions);
         }
     }
 }

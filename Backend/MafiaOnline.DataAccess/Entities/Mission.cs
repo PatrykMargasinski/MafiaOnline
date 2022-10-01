@@ -15,7 +15,14 @@ namespace MafiaOnline.DataAccess.Entities
         public int IntelligencePercentage { get; set; }
         public int Loot { get; set; }
         public double Duration { get; set; }
+        public MissionState State { get; set; }
         public virtual PerformingMission PerformingMission { get; set; }
+    }
+
+    public enum MissionState
+    {
+        Available,
+        Performing
     }
 
     public class MissionModelConfiguration : IEntityTypeConfiguration<Mission>
@@ -23,6 +30,8 @@ namespace MafiaOnline.DataAccess.Entities
         public void Configure(EntityTypeBuilder<Mission> builder)
         {
             builder.ToTable("Mission");
+
+            builder.Property(x => x.State).HasConversion<int>();
         }
     }
 }
