@@ -8,7 +8,7 @@ namespace MafiaOnline.DataAccess.Entities
 {
     public partial class Message : Entity
     {
-        public long? ToBossId { get; set; }
+        public long ToBossId { get; set; }
         public long? FromBossId { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }

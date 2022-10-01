@@ -51,6 +51,7 @@ namespace MafiaOnline
             services.AddScoped<IBossService, BossService>();
             services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IMissionService, MissionService>();
+            services.AddScoped<IMessageService, MessageService>();
 
             //Utils
             services.AddScoped<ISecurityUtils, SecurityUtils>();
@@ -60,7 +61,10 @@ namespace MafiaOnline
 
             services.AddSingleton(provider => new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new AutoMapperProfile(provider.CreateScope().ServiceProvider.GetService<IMissionUtils>()));
+                cfg.AddProfile(new AutoMapperProfile(
+                    provider.CreateScope().ServiceProvider.GetService<IMissionUtils>(),
+                    provider.CreateScope().ServiceProvider.GetService<ISecurityUtils>()
+                    ));
 
             }).CreateMapper());
 

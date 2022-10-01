@@ -13,6 +13,7 @@ namespace MafiaOnline.DataAccess.Repositories
     {
         Task<IList<Boss>> GetBestBosses(int from, int to);
         Task<IList<Boss>> GetByLastName(string lastName);
+        Task<Boss> GetByFullName(string fullName);
     }
 
     public class BossRepository : CrudRepository<Boss>, IBossRepository
@@ -38,6 +39,15 @@ namespace MafiaOnline.DataAccess.Repositories
                 .Where(x => x.LastName == lastName)
                 .ToListAsync();
             return bosses;
+        }
+
+        public async Task<Boss> GetByFullName(string fullName)
+        {
+            var boss = await _context.Bosses
+                .Where(x => ((x.FirstName + x.LastName).Replace(" ", string.Empty) == fullName.Replace(" ", string.Empty)) 
+                || ((x.LastName + x.FirstName).Replace(" ", string.Empty) == fullName.Replace(" ", string.Empty)))
+                .FirstOrDefaultAsync();
+            return boss;
         }
     }
 }

@@ -13,9 +13,11 @@ namespace MafiaOnline.BusinessLogic
     public class AutoMapperProfile : Profile
     {
         private readonly IMissionUtils _missionUtils;
-        public AutoMapperProfile(IMissionUtils missionUtils)
+        private readonly ISecurityUtils _securityUtils;
+        public AutoMapperProfile(IMissionUtils missionUtils, ISecurityUtils securityUtils)
         {
             _missionUtils = missionUtils;
+            _securityUtils = securityUtils;
 
             //Agent
             CreateMap<Agent, AgentDTO>();
@@ -37,6 +39,17 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.MissionName, y => y.MapFrom(z => z.Mission.Name))
                 .ForMember(x => x.SuccessChance, y => y.MapFrom(z => _missionUtils.CalculateAgentSuccessChance(z.Agent, z.Mission)))
                 .ForMember(x => x.Loot, y => y.MapFrom(z => z.Mission.Loot));
+
+            //Message
+            CreateMap<Message, MessageNoContentDTO>()
+                .ForMember(x => x.FromBossName, y => y.MapFrom(z => (z.FromBoss == null) ? string.Empty : (z.FromBoss.FirstName + " " + z.FromBoss.LastName)))
+                .ForMember(x => x.ToBossName, y => y.MapFrom(z => z.ToBoss.FirstName + " " + z.ToBoss.LastName))
+                .ForMember(x => x.Subject, y => y.MapFrom(z => _securityUtils.Decrypt(z.Subject)));
+            CreateMap<Message, MessageDTO>()
+                .ForMember(x => x.FromBossName, y => y.MapFrom(z => (z.FromBoss == null) ? string.Empty : (z.FromBoss.FirstName + " " + z.FromBoss.LastName)))
+                .ForMember(x => x.ToBossName, y => y.MapFrom(z => z.ToBoss.FirstName + " " + z.ToBoss.LastName))
+                .ForMember(x => x.Subject, y => y.MapFrom(z => _securityUtils.Decrypt(z.Subject)))
+                .ForMember(x => x.Content, y => y.MapFrom(z => _securityUtils.Decrypt(z.Content)));
         }
 
         public AutoMapperProfile()
