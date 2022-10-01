@@ -25,7 +25,7 @@ namespace MafiaOnline.Controllers
         public async Task<IActionResult> StartMission(long agentId, long missionId)
         {
 
-            await _missionService.DoMission(agentId, missionId);
+            await _missionService.StartMission(agentId, missionId);
             return Ok();
         }
     }
