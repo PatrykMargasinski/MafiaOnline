@@ -21,6 +21,8 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<MessageNoContentDTO>> GetMessagesFromBoss(long bossId);
         Task<MessageDTO> GetMessageContent(long messageId);
         Task<IList<MessageNoContentDTO>> GetReports(long bossId);
+        Task<IList<MessageNoContentDTO>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen);
+        Task<IList<MessageNoContentDTO>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen);
     }
 
     public class MessageService : IMessageService
@@ -89,6 +91,19 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var messages = await _unitOfWork.Messages.GetReports(bossId);
             return _mapper.Map<IList<MessageNoContentDTO>>(messages);
+        }
+
+        public async Task<IList<MessageNoContentDTO>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen)
+        {
+            var messages = await _unitOfWork.Messages.GetAllMessagesToInRange(bossId, fromRange, toRange, bossNameFilter, onlyUnseen);
+            return _mapper.Map<IList<MessageNoContentDTO>>(messages);
+        }
+
+        public async Task<IList<MessageNoContentDTO>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen)
+        {
+
+            var reports = await _unitOfWork.Messages.GetAllReportsToInRange( bossId,fromRange,toRange, onlyUnseen);
+            return _mapper.Map<IList<MessageNoContentDTO>>(reports);
         }
     }
 }

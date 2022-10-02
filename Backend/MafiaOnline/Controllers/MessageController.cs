@@ -35,6 +35,13 @@ namespace MafiaOnline.Controllers
             return Ok(messages);
         }
 
+        [HttpGet("to")]
+        public JsonResult GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter = "", bool onlyUnseen = false)
+        {
+            var messages = _messageService.GetAllMessagesToInRange(bossId, fromRange.Value, toRange.Value, bossNameFilter, onlyUnseen);
+            return new JsonResult(messages);
+        }
+
         [HttpGet("fromBoss/{bossId}")]
         public async Task<IActionResult> GetMessagesFromBoss(long bossId)
         {
