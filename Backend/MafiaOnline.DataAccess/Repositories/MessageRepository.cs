@@ -13,7 +13,7 @@ namespace MafiaOnline.DataAccess.Repositories
     {
         Task<IList<Message>> GetMessagesToBoss(long bossId);
         Task<IList<Message>> GetMessagesFromBoss(long bossId);
-        Task<IList<Message>> GetReportsToBoss(long bossId);
+        Task<IList<Message>> GetReports(long bossId);
     }
 
     public class MessageRepository : CrudRepository<Message>, IMessageRepository
@@ -41,7 +41,7 @@ namespace MafiaOnline.DataAccess.Repositories
              return messages;
         }
 
-        public async Task<IList<Message>> GetReportsToBoss(long bossId)
+        public async Task<IList<Message>> GetReports(long bossId)
         {
             var messages = await _context
                 .Messages

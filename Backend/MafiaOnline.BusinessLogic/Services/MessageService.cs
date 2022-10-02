@@ -20,6 +20,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<MessageNoContentDTO>> GetMessagesToBoss(long bossId);
         Task<IList<MessageNoContentDTO>> GetMessagesFromBoss(long bossId);
         Task<MessageDTO> GetMessageContent(long messageId);
+        Task<IList<MessageNoContentDTO>> GetReports(long bossId);
     }
 
     public class MessageService : IMessageService
@@ -84,9 +85,9 @@ namespace MafiaOnline.BusinessLogic.Services
             return _mapper.Map<MessageDTO>(message);
         }
 
-        public async Task<IList<MessageNoContentDTO>> GetReportsToBoss(long bossId)
+        public async Task<IList<MessageNoContentDTO>> GetReports(long bossId)
         {
-            var messages = await _unitOfWork.Messages.GetReportsToBoss(bossId);
+            var messages = await _unitOfWork.Messages.GetReports(bossId);
             return _mapper.Map<IList<MessageNoContentDTO>>(messages);
         }
     }

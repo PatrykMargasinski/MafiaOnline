@@ -52,7 +52,7 @@ namespace MafiaOnline.Controllers
         [HttpGet("report/{bossId}")]
         public async Task<IActionResult> GetReports(long bossId)
         {
-            var messages = await _messageService.GetMessagesFromBoss(bossId);
+            var messages = await _messageService.GetReports(bossId);
             return Ok(messages);
         }
     }
