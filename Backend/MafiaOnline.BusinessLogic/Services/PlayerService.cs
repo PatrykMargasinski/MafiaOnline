@@ -70,6 +70,8 @@ namespace MafiaOnline.BusinessLogic.Services
             var refreshToken = _tokenUtils.GenerateRefreshToken();
             player.RefreshToken = refreshToken;
             player.RefreshTokenExpiryTime = DateTime.Now.AddHours(1);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(player.BossId);
+            boss.LastSeen = DateTime.Now;
             _unitOfWork.Commit();
 
             return new Tokens()

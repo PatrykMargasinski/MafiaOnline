@@ -10,5 +10,6 @@ namespace MafiaOnline.BusinessLogic.Entities
     {
         public string Name { get; set; }
         public long Money { get; set; }
+        public DateTime LastSeen { get; set; }
     }
 }
