@@ -29,13 +29,15 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IMapper _mapper;
         private readonly ISchedulerFactory _scheduler;
         private readonly IMissionUtils _missionUtils;
+        private readonly IReporter _reporter;
 
-        public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils)
+        public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _scheduler = scheluder;
             _missionUtils = missionUtils;
+            _reporter = reporter;
         }
 
         public async Task StartMission(long agentId, long missionId)
@@ -119,7 +121,7 @@ namespace MafiaOnline.BusinessLogic.Services
             }
             agent.State = AgentState.Active;
             mission.State = MissionState.Available;
-            //_reportRepository.CreateReport(bossId, "Mission: " + mission.Name, info);
+            await _reporter.CreateReport(bossId, "Mission: " + mission.Name, info);
             _unitOfWork.PerformingMissions.DeleteById(pm.Id);
             _unitOfWork.Commit();
         }

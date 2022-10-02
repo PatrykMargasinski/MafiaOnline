@@ -13,6 +13,7 @@ namespace MafiaOnline.DataAccess.Repositories
     {
         Task<IList<Message>> GetMessagesToBoss(long bossId);
         Task<IList<Message>> GetMessagesFromBoss(long bossId);
+        Task<IList<Message>> GetReportsToBoss(long bossId);
     }
 
     public class MessageRepository : CrudRepository<Message>, IMessageRepository
@@ -26,7 +27,7 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var messages = await _context
                 .Messages
-                .Where(x => x.ToBossId == bossId)
+                .Where(x => x.ToBossId == bossId && x.Type==MessageType.BossMessage)
                 .ToListAsync();
             return messages;
         }
@@ -35,9 +36,20 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var messages = await _context
                 .Messages
-                .Where(x => x.FromBossId == bossId)
+                .Where(x => x.FromBossId == bossId && x.Type == MessageType.BossMessage)
                 .ToListAsync();
              return messages;
         }
+
+        public async Task<IList<Message>> GetReportsToBoss(long bossId)
+        {
+            var messages = await _context
+                .Messages
+                .Where(x => x.ToBossId == bossId && x.Type == MessageType.Report)
+                .ToListAsync();
+            return messages;
+        }
+
+
     }
 }

@@ -29,16 +29,16 @@ namespace MafiaOnline.Controllers
         }
 
         [HttpGet("toBoss/{bossId}")]
-        public async Task<IActionResult> GetToBossMessages(long bossId)
+        public async Task<IActionResult> GetMessagesToBoss(long bossId)
         {
-            var messages = await _messageService.GetToBossMessages(bossId);
+            var messages = await _messageService.GetMessagesToBoss(bossId);
             return Ok(messages);
         }
 
         [HttpGet("fromBoss/{bossId}")]
-        public async Task<IActionResult> GetFromBossMessages(long bossId)
+        public async Task<IActionResult> GetMessagesFromBoss(long bossId)
         {
-            var messages = await _messageService.GetFromBossMessages(bossId);
+            var messages = await _messageService.GetMessagesFromBoss(bossId);
             return Ok(messages);
         }
 
@@ -47,6 +47,13 @@ namespace MafiaOnline.Controllers
         {
             var message = await _messageService.GetMessageContent(messageId);
             return Ok(message);
+        }
+
+        [HttpGet("report/{bossId}")]
+        public async Task<IActionResult> GetReports(long bossId)
+        {
+            var messages = await _messageService.GetMessagesFromBoss(bossId);
+            return Ok(messages);
         }
     }
 }

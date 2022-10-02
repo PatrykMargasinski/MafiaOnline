@@ -17,8 +17,8 @@ namespace MafiaOnline.BusinessLogic.Services
     public interface IMessageService
     {
         Task SendMessage(SendMessageRequest request);
-        Task<IList<MessageNoContentDTO>> GetToBossMessages(long bossId);
-        Task<IList<MessageNoContentDTO>> GetFromBossMessages(long bossId);
+        Task<IList<MessageNoContentDTO>> GetMessagesToBoss(long bossId);
+        Task<IList<MessageNoContentDTO>> GetMessagesFromBoss(long bossId);
         Task<MessageDTO> GetMessageContent(long messageId);
     }
 
@@ -55,19 +55,20 @@ namespace MafiaOnline.BusinessLogic.Services
                 ToBossId = toBoss.Id,
                 FromBossId = request.FromBossId,
                 ReceivedDate = DateTime.Now,
+                Type = MessageType.BossMessage,
                 Seen = false
             };
             _unitOfWork.Messages.Create(message);
             _unitOfWork.Commit();
         }
 
-        public async Task<IList<MessageNoContentDTO>> GetToBossMessages(long bossId)
+        public async Task<IList<MessageNoContentDTO>> GetMessagesToBoss(long bossId)
         {
             var messages = await _unitOfWork.Messages.GetMessagesToBoss(bossId);
             return _mapper.Map<IList<MessageNoContentDTO>>(messages);
         }
 
-        public async Task<IList<MessageNoContentDTO>> GetFromBossMessages(long bossId)
+        public async Task<IList<MessageNoContentDTO>> GetMessagesFromBoss(long bossId)
         {
             var messages = await _unitOfWork.Messages.GetMessagesFromBoss(bossId);
             return _mapper.Map<IList<MessageNoContentDTO>>(messages);
@@ -81,6 +82,12 @@ namespace MafiaOnline.BusinessLogic.Services
             message.Seen = true;
             _unitOfWork.Commit();
             return _mapper.Map<MessageDTO>(message);
+        }
+
+        public async Task<IList<MessageNoContentDTO>> GetReportsToBoss(long bossId)
+        {
+            var messages = await _unitOfWork.Messages.GetReportsToBoss(bossId);
+            return _mapper.Map<IList<MessageNoContentDTO>>(messages);
         }
     }
 }

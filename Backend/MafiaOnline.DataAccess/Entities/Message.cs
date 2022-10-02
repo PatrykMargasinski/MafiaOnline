@@ -6,6 +6,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MafiaOnline.DataAccess.Entities
 {
+    public enum MessageType
+    {
+        BossMessage,
+        Report
+    }
+
     public partial class Message : Entity
     {
         public long ToBossId { get; set; }
@@ -14,6 +20,7 @@ namespace MafiaOnline.DataAccess.Entities
         public string Content { get; set; }
         public DateTime ReceivedDate { get; set; }
         public bool Seen { get; set; }
+        public MessageType Type { get; set; }
         public virtual Boss FromBoss { get; set; }
         public virtual Boss ToBoss { get; set; }
     }
@@ -31,6 +38,8 @@ namespace MafiaOnline.DataAccess.Entities
             builder.HasOne(d => d.ToBoss)
                 .WithMany(p => p.MessageToBosses)
                 .HasForeignKey(d => d.ToBossId);
+
+            builder.Property(x => x.Type).HasConversion<int>();
         }
     }
 }
