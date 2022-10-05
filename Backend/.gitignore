@@ -86,4 +86,4 @@ _[Ss]cripts
 /.vs
 
 
-MafiaOnline/app.log
+appsettings.json

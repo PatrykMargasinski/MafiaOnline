@@ -51,7 +51,6 @@ namespace MafiaOnline
             options
             .UseSqlServer(Configuration.GetConnectionString("MafiaAppCon"))
             .UseSqlServer(b => b.MigrationsAssembly("MafiaOnline.DataAccess"))
-            .LogTo(Console.WriteLine, LogLevel.Information)
             );
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -101,10 +100,6 @@ namespace MafiaOnline
                     Title = "Sneaker API",
                     Description = "API for retrieving sneakers"
                 });
-            });
-
-            services.AddLogging(loggingBuilder => {
-                loggingBuilder.AddFile("app.log", append: true);
             });
         }
 
