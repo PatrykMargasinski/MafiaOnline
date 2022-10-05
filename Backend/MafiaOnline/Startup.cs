@@ -102,6 +102,10 @@ namespace MafiaOnline
                     Description = "API for retrieving sneakers"
                 });
             });
+
+            services.AddLogging(loggingBuilder => {
+                loggingBuilder.AddFile("app.log", append: true);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
