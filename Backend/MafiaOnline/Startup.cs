@@ -77,7 +77,8 @@ namespace MafiaOnline
                     ));
 
             }).CreateMapper());
-
+            
+            services.Configure<QuartzOptions>(Configuration.GetSection("Quartz"));
             services.AddQuartz(q =>
             {
                 q.UseMicrosoftDependencyInjectionJobFactory();
