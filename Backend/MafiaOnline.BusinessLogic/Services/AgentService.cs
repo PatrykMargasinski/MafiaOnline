@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using System;
@@ -27,11 +28,13 @@ namespace MafiaOnline.BusinessLogic.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IAgentValidator _agentValidator;
 
-        public AgentService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _agentValidator = agentValidator;
         }
 
         /// <summary>
@@ -80,17 +83,12 @@ namespace MafiaOnline.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Agent abandons his boss
+        /// Boss abandons an agent
         /// </summary>
         public async Task<Agent> AbandonAgent(long agentId)
         {
+            await _agentValidator.ValidateAbandonAgent(agentId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
-            if (agent == null)
-                throw new Exception("Agent not found");
-            if (agent.State != AgentState.Active)
-                throw new Exception("Agent isn't active - he cannot be abandoned");
-            if (agent.BossId == null)
-                throw new Exception("Agent doesn't belong to any boss");
             agent.State = AgentState.Renegate;
             agent.Boss = null;
             agent.BossId = null;
@@ -103,18 +101,9 @@ namespace MafiaOnline.BusinessLogic.Services
         /// </summary>
         public async Task<Agent> RecruitAgent(long bossId, long agentId)
         {
+            await _agentValidator.ValidateRecruitAgent(bossId, agentId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
-            if (agent == null)
-                throw new Exception("Agent not found");
             var boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
-            if (agent.State != AgentState.OnSale)
-                throw new Exception("Agent is not for sale");
-            if (agent.AgentForSale == null)
-                throw new Exception("There is no AgentForSale instance");
-            if (boss == null)
-                throw new Exception("Boss not found");
-            if (agent.AgentForSale.Price > boss.Money)
-                throw new Exception("Boss cannot afford the agent");
             boss.Money -= agent.AgentForSale.Price;
             _unitOfWork.AgentsForSale.DeleteByAgentId(agentId);
             agent.Boss = boss;

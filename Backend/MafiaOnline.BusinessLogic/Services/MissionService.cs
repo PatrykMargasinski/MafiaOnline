@@ -2,6 +2,7 @@
 using MafiaAPI.Jobs;
 using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
+using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using Quartz;
@@ -30,14 +31,16 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ISchedulerFactory _scheduler;
         private readonly IMissionUtils _missionUtils;
         private readonly IReporter _reporter;
+        private readonly IMissionValidator _missionValidator;
 
-        public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter)
+        public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter, IMissionValidator missionValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _scheduler = scheluder;
             _missionUtils = missionUtils;
             _reporter = reporter;
+            _missionValidator = missionValidator;
         }
 
         public async Task StartMission(long agentId, long missionId)
@@ -48,34 +51,11 @@ namespace MafiaOnline.BusinessLogic.Services
 
         public async Task<PerformingMission> DoMission(long agentId, long missionId)
         {
-            Mission mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
-            if (mission == null)
-            {
-                throw new Exception("Mission " + missionId + " not found!");
-            }
 
-            if (mission.State != MissionState.Available)
-            {
-                throw new Exception("Mission " + missionId + " is not available");
-            }
+            await _missionValidator.ValidateDoMission(agentId, missionId);
 
+            var mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
-
-            if (agent == null)
-            {
-                throw new Exception("Agent with id " + agentId + " not found!");
-            }
-
-            if (agent.BossId == null)
-            {
-                throw new Exception("Agent " + agentId + " is without boss");
-            }
-
-            if (agent.State != AgentState.Active)
-            {
-                throw new Exception("Agent " + agentId + " is not active");
-            }
-
             DateTime missionFinishTime = DateTime.Now.AddSeconds(mission.Duration);
 
             PerformingMission performingMission = new PerformingMission()
@@ -93,17 +73,12 @@ namespace MafiaOnline.BusinessLogic.Services
 
         public async Task EndMission(long pmId)
         {
+            await _missionValidator.ValidateEndMission(pmId);
+
             PerformingMission pm = await _unitOfWork.PerformingMissions.GetByIdAsync(pmId);
-            if (pm == null)
-            {
-                throw new Exception("No pm with given id " + pmId + "!");
-            }
             Agent agent = await _unitOfWork.Agents.GetByIdAsync(pm.AgentId);
             Mission mission = await _unitOfWork.Missions.GetByIdAsync(pm.MissionId);
-            if (agent.BossId==null)
-            {
-                throw new Exception("Agent with id " + agent.Id + " has no boss but he went on mission!");
-            }
+
             long bossId = agent.BossId.Value;
             Boss boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
             string info = "Agent " + agent.FirstName + " " + agent.LastName +

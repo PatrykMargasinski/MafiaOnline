@@ -2,6 +2,7 @@
 using MafiaAPI.Jobs;
 using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
+using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using Quartz;
@@ -30,26 +31,20 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ISecurityUtils _securityUtils;
+        private readonly IMessageValidator _messageValidator;
 
-        public MessageService(IUnitOfWork unitOfWork, IMapper mapper, ISecurityUtils securityUtils)
+        public MessageService(IUnitOfWork unitOfWork, IMapper mapper, ISecurityUtils securityUtils, IMessageValidator messageValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _securityUtils = securityUtils;
+            _messageValidator = messageValidator;
         }
 
         public async Task SendMessage(SendMessageRequest request)
         {
+            await _messageValidator.ValidateSendMessage(request);
             var toBoss = await _unitOfWork.Bosses.GetByFullName(request.ToBossFullName);
-
-            if (toBoss == null)
-                throw new Exception("Recipient not found");
-
-            if (string.IsNullOrEmpty(request.Subject))
-                throw new Exception("Subject cannot be empty");
-
-            if (string.IsNullOrEmpty(request.Content))
-                throw new Exception("Content cannot be empty");
 
             var message = new Message()
             {

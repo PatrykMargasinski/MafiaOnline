@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
+using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using System;
@@ -27,45 +28,24 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ISecurityUtils _securityUtils;
         private readonly ITokenUtils _tokenUtils;
         private readonly IBasicUtils _basicUtils;
+        private readonly IPlayerValidator _playerValidator;
 
         public PlayerService(IUnitOfWork unitOfWork, IMapper mapper, 
             ISecurityUtils securityUtils, ITokenUtils tokenUtils, 
-            IBasicUtils basicUtils)
+            IBasicUtils basicUtils, IPlayerValidator playerValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _securityUtils = securityUtils;
             _tokenUtils = tokenUtils;
             _basicUtils = basicUtils;
+            _playerValidator = playerValidator;
         }
 
-        public async Task<Tokens> Login(LoginRequest user)
+        public async Task<Tokens> Login(LoginRequest request)
         {
-            if (user == null)
-            {
-                throw new Exception("There is no data");
-            }
-
-            IList<string> errors = new List<string>();
-            if (string.IsNullOrEmpty(user.Nick)) errors.Add("Nick is empty");
-            if (string.IsNullOrEmpty(user.Password)) errors.Add("Password is empty");
-
-            if (errors.Count > 0)
-            {
-                throw new Exception(string.Join('\n', errors));
-            }
-
-            Player player = await _unitOfWork.Players.GetByNick(user.Nick);
-            if (player == null)
-            {
-                throw new Exception("There is no player with such nick");
-            }
-
-            if (_securityUtils.VerifyPassword(player, user.Password) == false)
-            {
-                throw new Exception("Wrong password");
-            }
-
+            await _playerValidator.ValidateLogin(request);
+            Player player = await _unitOfWork.Players.GetByNick(request.Nick);
             var token = _tokenUtils.CreateToken(player);
             var refreshToken = _tokenUtils.GenerateRefreshToken();
             player.RefreshToken = refreshToken;
@@ -81,55 +61,21 @@ namespace MafiaOnline.BusinessLogic.Services
             };
         }
 
-        public async Task Register(RegisterRequest model)
+        public async Task Register(RegisterRequest request)
         {
-            if (model == null)
-            {
-                throw new Exception("There is no data");
-            }
-            IList<string> errors = new List<string>();
-            if (model.Nick == "") errors.Add("Nick is empty");
-            else if (await _unitOfWork.Players.GetByNick(model.Nick) != null)
-            {
-                errors.Add("There is a player with a such nick");
-            }
-            if (model.Password == "") errors.Add("Password is empty");
-            if (model.BossFirstName == "") errors.Add("Boss first name is empty");
-            else if (!_basicUtils.IsAlphabets(model.BossFirstName)) errors.Add("Boss first name should include only alphabets");
-            if (model.BossLastName == "") errors.Add("Boss last name is empty");
-            else
-            {
-                if (!_basicUtils.IsAlphabets(model.BossLastName)) errors.Add("Boss last name should include only alphabets");
-                else if ((await _unitOfWork.Bosses.GetByLastName(model.BossLastName)).Count>0)
-                {
-                    errors.Add("There is a boss with a such last name");
-                }
-            }
-            if (model.AgentNames == null) errors.Add("There is no agent names");
-            else
-            {
-                if (model.AgentNames.Length != 3) errors.Add("Wrong number of agent first names");
-                else for (int i = 0; i < model.AgentNames.Length; i++)
-                    {
-                        if (model.AgentNames[i] == "")
-                            errors.Add($"Agent{i}'s first name is empty");
-                        else if (!_basicUtils.IsAlphabets(model.AgentNames[i]))
-                            errors.Add($"Agent{i}'s first name should include only alphabets");
-                    }
-            }
-            if (errors.Count > 0) throw new Exception(string.Join('\n', errors));
+            await _playerValidator.ValidateRegister(request);
 
             Boss boss = new Boss()
             {
-                FirstName = _basicUtils.UppercaseFirst(model.BossFirstName),
-                LastName = _basicUtils.UppercaseFirst(model.BossLastName),
+                FirstName = _basicUtils.UppercaseFirst(request.BossFirstName),
+                LastName = _basicUtils.UppercaseFirst(request.BossLastName),
                 Money = 5000
             };
             _unitOfWork.Bosses.Create(boss);
             Player player = new Player()
             {
-                Nick = model.Nick,
-                HashedPassword = _securityUtils.Hash(model.Password),
+                Nick = request.Nick,
+                HashedPassword = _securityUtils.Hash(request.Password),
             };
             player.Boss = boss;
 
@@ -137,12 +83,12 @@ namespace MafiaOnline.BusinessLogic.Services
 
             Random random = new Random();
 
-            foreach (var agentName in model.AgentNames)
+            foreach (var agentName in request.AgentNames)
             {
                 var newAgent = new Agent()
                 {
                     FirstName = _basicUtils.UppercaseFirst(agentName),
-                    LastName = _basicUtils.UppercaseFirst(model.BossLastName),
+                    LastName = _basicUtils.UppercaseFirst(request.BossLastName),
                     Strength = random.Next(2, 5),
                     Intelligence = random.Next(2, 5),
                     Dexterity = random.Next(2, 5),
@@ -156,26 +102,12 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.Commit();
         }
 
-        public async Task ChangePassword(ChangePasswordRequest changeModel)
+        public async Task ChangePassword(ChangePasswordRequest request)
         {
-            Player player = await _unitOfWork.Players.GetByIdAsync(changeModel.PlayerId);
-            if (player == null)
-            {
-                throw new Exception("User not found");
-            }
+            await _playerValidator.ValidateChangePassword(request);
+            Player player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
 
-            if (_securityUtils.VerifyPassword(player, changeModel.OldPassword) == false)
-            {
-                throw new Exception("Invalid old password");
-            }
-
-            if (!changeModel.NewPassword.Equals(changeModel.RepeatedNewPassword))
-            {
-                throw new Exception("Repeated new password isn't correct");
-            }
-
-
-            player.HashedPassword = _securityUtils.Hash(changeModel.NewPassword);
+            player.HashedPassword = _securityUtils.Hash(request.NewPassword);
             _unitOfWork.Commit();
         }
 

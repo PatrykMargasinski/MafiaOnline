@@ -17,6 +17,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Quartz;
 using Newtonsoft.Json.Serialization;
+using MafiaOnline.BusinessLogic.Validators;
 
 namespace MafiaOnline
 {
@@ -68,6 +69,12 @@ namespace MafiaOnline
             services.AddScoped<ITokenUtils, TokenUtils>();
             services.AddScoped<IBasicUtils, BasicUtils>();
             services.AddScoped<IReporter, Reporter>();
+
+            //Validators
+            services.AddScoped<IMissionValidator, MissionValidator>();
+            services.AddScoped<IAgentValidator, AgentValidator>();
+            services.AddScoped<IMessageValidator, MessageValidator>();
+            services.AddScoped<IPlayerValidator, PlayerValidator>();
 
             services.AddSingleton(provider => new MapperConfiguration(cfg =>
             {
