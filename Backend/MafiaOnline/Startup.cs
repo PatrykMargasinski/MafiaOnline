@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Quartz;
 using Newtonsoft.Json.Serialization;
 using MafiaOnline.BusinessLogic.Validators;
+using MafiaOnline.ErrorHandling;
 
 namespace MafiaOnline
 {
@@ -132,6 +133,8 @@ namespace MafiaOnline
             }
 
             app.UseRouting();
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseAuthorization();
 
