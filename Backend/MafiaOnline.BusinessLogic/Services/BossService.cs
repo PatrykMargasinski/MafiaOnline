@@ -28,12 +28,18 @@ namespace MafiaOnline.BusinessLogic.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Returns basic informations about the boss
+        /// </summary>
         public async Task<BossDTO> GetBossDatas(long id)
         {
             var boss = await _unitOfWork.Bosses.GetByIdAsync(id);
             return _mapper.Map<BossDTO>(boss);
         }
 
+        /// <summary>
+        /// Returns ranked bosses in position between "from" and "to"
+        /// </summary>
         public async Task<IList<BossDTO>> GetBestBosses(int from, int to)
         {
             var bosses = await _unitOfWork.Bosses.GetBestBosses(from, to);

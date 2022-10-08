@@ -43,12 +43,18 @@ namespace MafiaOnline.BusinessLogic.Services
             _missionValidator = missionValidator;
         }
 
+        /// <summary>
+        /// Starts mission. It will be performed after a time depending on the mission
+        /// </summary>
         public async Task StartMission(long agentId, long missionId)
         {
             var pm = await DoMission(agentId, missionId);
             await MissionJob.Start(_scheduler, pm.Id, pm.CompletionTime);
         }
 
+        /// <summary>
+        /// Creates PerformingMission instance
+        /// </summary>
         public async Task<PerformingMission> DoMission(long agentId, long missionId)
         {
 
@@ -71,6 +77,9 @@ namespace MafiaOnline.BusinessLogic.Services
             return performingMission;
         }
 
+        /// <summary>
+        /// Ends mission and sends report to the boss informing about the result of the mission
+        /// </summary>
         public async Task EndMission(long pmId)
         {
             await _missionValidator.ValidateEndMission(pmId);
@@ -101,12 +110,18 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.Commit();
         }
 
+        /// <summary>
+        /// Returns available missions
+        /// </summary>
         public async Task<IList<MissionDTO>> GetAvailableMissions()
         {
             var missions = await _unitOfWork.Missions.GetAvailableMissions();
             return _mapper.Map<IList<MissionDTO>>(missions);
         }
 
+        /// <summary>
+        /// Returns missions performing by boss with id=bossId
+        /// </summary>
         public async Task<IList<PerformingMissionDTO>> GetPerformingMissions(long bossId)
         {
             var missions = await _unitOfWork.Missions.GetPerformingMissions(bossId);

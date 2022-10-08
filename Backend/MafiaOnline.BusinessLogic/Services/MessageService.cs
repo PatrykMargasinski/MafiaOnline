@@ -41,6 +41,9 @@ namespace MafiaOnline.BusinessLogic.Services
             _messageValidator = messageValidator;
         }
 
+        /// <summary>
+        /// Creates a message to the boss
+        /// </summary>
         public async Task SendMessage(SendMessageRequest request)
         {
             await _messageValidator.ValidateSendMessage(request);
@@ -60,12 +63,18 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.Commit();
         }
 
+        /// <summary>
+        /// Returns list of messages without content sent to boss with id=bossId
+        /// </summary>
         public async Task<IList<MessageNoContentDTO>> GetMessagesToBoss(long bossId)
         {
             var messages = await _unitOfWork.Messages.GetMessagesToBoss(bossId);
             return _mapper.Map<IList<MessageNoContentDTO>>(messages);
         }
 
+        /// <summary>
+        /// Returns messages sent by boss with id=bossId
+        /// </summary>
         public async Task<IList<MessageNoContentDTO>> GetMessagesFromBoss(long bossId)
         {
             var messages = await _unitOfWork.Messages.GetMessagesFromBoss(bossId);

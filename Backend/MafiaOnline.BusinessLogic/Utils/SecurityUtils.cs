@@ -27,6 +27,10 @@ namespace MafiaOnline.BusinessLogic.Utils
         }
 
         private readonly byte[] IV = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+
+        /// <summary>
+        /// Decrypts a text
+        /// </summary>
         public string Decrypt(string text)
         {
             byte[] bytes = Convert.FromBase64String(text);
@@ -48,6 +52,9 @@ namespace MafiaOnline.BusinessLogic.Utils
             }
         }
 
+        /// <summary>
+        /// Encrypts a text
+        /// </summary>
         public string Encrypt(string text)
         {
             byte[] bytes = Encoding.Unicode.GetBytes(text);
@@ -70,6 +77,9 @@ namespace MafiaOnline.BusinessLogic.Utils
             }
         }
 
+        /// <summary>
+        /// Hashes a text
+        /// </summary>
         public string Hash(string text)
         {
             byte[] salt = new byte[16];
@@ -83,6 +93,9 @@ namespace MafiaOnline.BusinessLogic.Utils
             return Convert.ToBase64String(hashBytes);
         }
 
+        /// <summary>
+        /// Checks if entered password is correct
+        /// </summary>
         public bool VerifyPassword(Player player, string pass)
         {
             string savedPasswordHash = player.HashedPassword;

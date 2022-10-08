@@ -15,6 +15,9 @@ namespace MafiaOnline.BusinessLogic.Utils
 
     public class MissionUtils : IMissionUtils
     {
+        /// <summary>
+        /// Calculates how big the probability of mission success is
+        /// </summary>
         public int CalculateAgentSuccessChance(Agent agent, Mission mission)
         {
             var agentPower = Math.Round(agent.Strength * mission.StrengthPercentage / 100.0 +
@@ -26,6 +29,9 @@ namespace MafiaOnline.BusinessLogic.Utils
             return chance;
         }
 
+        /// <summary>
+        /// Checks if mission is successfully completed
+        /// </summary>
         public bool IsMissionSuccessfullyCompleted(Agent agent, Mission mission)
         {
             Random random = new();

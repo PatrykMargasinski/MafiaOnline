@@ -42,6 +42,9 @@ namespace MafiaOnline.BusinessLogic.Services
             _playerValidator = playerValidator;
         }
 
+        /// <summary>
+        /// Returns tokens if login datas are correct
+        /// </summary>
         public async Task<Tokens> Login(LoginRequest request)
         {
             await _playerValidator.ValidateLogin(request);
@@ -61,6 +64,9 @@ namespace MafiaOnline.BusinessLogic.Services
             };
         }
 
+        /// <summary>
+        /// Creates an account (player, boss, agents instances)
+        /// </summary>
         public async Task Register(RegisterRequest request)
         {
             await _playerValidator.ValidateRegister(request);
@@ -102,6 +108,9 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.Commit();
         }
 
+        /// <summary>
+        /// Changes password if the old one is entered correctly
+        /// </summary>
         public async Task ChangePassword(ChangePasswordRequest request)
         {
             await _playerValidator.ValidateChangePassword(request);
@@ -111,6 +120,9 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.Commit();
         }
 
+        /// <summary>
+        /// Deletes an account (player, boss, agents instances)
+        /// </summary>
         public async Task<bool> DeleteAccount(DeleteAccountRequest user)
         {
             throw new NotImplementedException();

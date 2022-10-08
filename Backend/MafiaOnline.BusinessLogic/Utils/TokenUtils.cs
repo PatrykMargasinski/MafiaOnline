@@ -28,6 +28,10 @@ namespace MafiaOnline.BusinessLogic.Utils
             _config = config;
         }
 
+
+        /// <summary>
+        /// Creates a JWT token
+        /// </summary>
         public string CreateToken(Player player)
         {
             var key = _config.GetValue<string>("Security:AuthKey");
@@ -53,6 +57,9 @@ namespace MafiaOnline.BusinessLogic.Utils
             return tokenString;
         }
 
+        /// <summary>
+        /// Creates a refresh token
+        /// </summary>
         public string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
@@ -63,6 +70,9 @@ namespace MafiaOnline.BusinessLogic.Utils
             }
         }
 
+        /// <summary>
+        /// Returns principal from expired token
+        /// </summary>
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters

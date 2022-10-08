@@ -28,6 +28,9 @@ namespace MafiaOnline.BusinessLogic.Utils
             _securityUtils = securityUtils;
         }
 
+        /// <summary>
+        /// Creates a report
+        /// </summary>
         public async Task CreateReport(long toBossId, string subject, string content)
         {
             var toBoss = await _unitOfWork.Bosses.GetByIdAsync(toBossId);

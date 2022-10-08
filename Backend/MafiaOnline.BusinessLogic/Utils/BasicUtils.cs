@@ -15,6 +15,9 @@ namespace MafiaOnline.BusinessLogic.Utils
 
     public class BasicUtils : IBasicUtils
     {
+        /// <summary>
+        /// Checks if every letter is alphabet
+        /// </summary>
         public bool IsAlphabets(string inputString)
         {
             if (string.IsNullOrEmpty(inputString))
@@ -26,6 +29,9 @@ namespace MafiaOnline.BusinessLogic.Utils
             return true;
         }
 
+        /// <summary>
+        /// Makes a first letter uppercase
+        /// </summary>
         public string UppercaseFirst(string s)
         {
             if (string.IsNullOrEmpty(s))
