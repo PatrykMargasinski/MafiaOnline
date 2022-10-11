@@ -19,6 +19,7 @@ using Quartz;
 using Newtonsoft.Json.Serialization;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.ErrorHandling;
+using MafiaOnline.BusinessLogic.Factories;
 
 namespace MafiaOnline
 {
@@ -70,6 +71,9 @@ namespace MafiaOnline
             services.AddScoped<ITokenUtils, TokenUtils>();
             services.AddScoped<IBasicUtils, BasicUtils>();
             services.AddScoped<IReporter, Reporter>();
+
+            //Factories
+            services.AddScoped<IAgentFactory, AgentFactory>();
 
             //Validators
             services.AddScoped<IMissionValidator, MissionValidator>();
