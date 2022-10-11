@@ -12,6 +12,7 @@ namespace MafiaOnline.BusinessLogic.Factories
     public interface IAgentFactory
     {
         Task<Agent> Create(string firstName = null, string lastName = null, int? strength = null, int? dexterity = null, int? intelligence = null, int? upkeep = null);
+        Task<AgentForSale> CreateForSaleInstance(Agent agent);
     }
     public class AgentFactory : IAgentFactory
     {
@@ -27,7 +28,7 @@ namespace MafiaOnline.BusinessLogic.Factories
         public async Task<Agent> Create(string firstName = null, string lastName = null, int? strength = null, int? dexterity = null, int? intelligence = null, int? upkeep = null)
         {
             if(string.IsNullOrEmpty(firstName)) firstName = (await _unitOfWork.Names.GetRandomFirstName()).Text;
-            if (string.IsNullOrEmpty(lastName)) firstName = (await _unitOfWork.Names.GetRandomLastName()).Text;
+            if (string.IsNullOrEmpty(lastName)) lastName = (await _unitOfWork.Names.GetRandomLastName()).Text;
             var rand = new Random();
             return new Agent()
             {
@@ -40,6 +41,17 @@ namespace MafiaOnline.BusinessLogic.Factories
                 Upkeep = upkeep ?? rand.Next(2, 10) * 10,
                 IsFromBossFamily = false
             };
+        }
+        
+        public async Task<AgentForSale> CreateForSaleInstance(Agent agent)
+        {
+            var random = new Random();
+            var agentForSale = new AgentForSale()
+            {
+                AgentId = agent.Id,
+                Price = random.Next(2, 10) * 1000
+            };
+            return agentForSale;
         }
     }
 }
