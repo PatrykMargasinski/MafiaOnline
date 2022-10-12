@@ -136,13 +136,14 @@ namespace MafiaOnline.BusinessLogic.Services
                     var renegate = renegates[random.Next(0, renegates.Count)];
                     var agentForSale = await _agentFactory.CreateForSaleInstance(renegate);
                     _unitOfWork.AgentsForSale.Create(agentForSale);
-                    renegate.AgentForSale = agentForSale;
                     renegate.State = AgentState.OnSale;
                     renegates.Remove(renegate);
                 }
                 else
                 {
                     var newAgent = await _agentFactory.Create();
+                    var agentForSale = await _agentFactory.CreateForSaleInstance(newAgent);
+                    _unitOfWork.AgentsForSale.Create(agentForSale);
                     newAgent.State = AgentState.OnSale;
                     _unitOfWork.Agents.Create(newAgent);
                 }
