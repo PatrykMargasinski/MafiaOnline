@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using MafiaAPI.Jobs;
+using MafiaOnline.BusinessLogic.Const;
 using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.BusinessLogic.Factories;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +25,8 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<AgentForSaleDTO>> GetAgentsForSale();
         Task<Agent> AbandonAgent(long id);
         Task<Agent> RecruitAgent(long bossId, long agentId);
+        Task RefreshAgents();
+        Task StartRefreshAgentsJob();
 
     }
 
@@ -29,12 +35,16 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IAgentValidator _agentValidator;
+        private readonly ISchedulerFactory _scheduler;
+        private readonly IAgentFactory _agentFactory;
 
-        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator)
+        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _agentValidator = agentValidator;
+            _agentFactory = agentFactory;
+            _scheduler = scheduler;
         }
 
         /// <summary>
@@ -110,6 +120,46 @@ namespace MafiaOnline.BusinessLogic.Services
             agent.State = AgentState.Active;
             _unitOfWork.Commit();
             return agent;
+        }
+
+        /// <summary>
+        /// Replenishes agents for sale
+        /// </summary>
+        public async Task RefreshAgents()
+        {
+            var agentsForSale = await _unitOfWork.Agents.GetAgentsForSale();
+            var renegates = await _unitOfWork.Agents.GetRenegates();
+
+            //replenishment of agents for sale
+            for (int i = agentsForSale.Count; i < AgentConsts.NUMBER_OF_AGENTS_FOR_SALE; i++)
+            {
+                var random = new Random();
+                Agent newAgent;
+
+                //50% chance that renegate agent become for sale, 50% that there will be new agent created
+                if (random.Next(2)%2==1 && renegates.Count!=0)
+                {
+                    newAgent = renegates[random.Next(0, renegates.Count)];
+                    renegates.Remove(newAgent);
+                }
+                else
+                {
+                    newAgent = await _agentFactory.Create();
+                    _unitOfWork.Agents.Create(newAgent);
+
+                }
+                var agentForSale = await _agentFactory.CreateForSaleInstance(newAgent);
+                _unitOfWork.AgentsForSale.Create(agentForSale);
+                newAgent.State = AgentState.OnSale;
+            }
+            _unitOfWork.Commit();
+        }
+
+        public async Task StartRefreshAgentsJob()
+        {
+            var jobs = await _scheduler.GetScheduler().Result.GetCurrentlyExecutingJobs();
+            await RefreshAgents();
+            await AgentRefreshJob.Start(_scheduler, DateTime.Now.AddMinutes(AgentConsts.MINUTES_TO_REFRESH_AGENTS_FOR_SALE));
         }
     }
 }

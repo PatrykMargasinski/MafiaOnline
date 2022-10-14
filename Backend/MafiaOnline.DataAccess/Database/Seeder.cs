@@ -38,11 +38,12 @@ namespace MafiaOnline.DataAccess.Database
         private static IList<Agent> PrepareAgents()
         {
             return new List<Agent> {
-                new Agent{Id=1, BossId=1, State = AgentState.Active, FirstName="Jotaro", LastName="Kujo", Strength=10, Intelligence=10, Dexterity=10, Upkeep=100},
-                new Agent{Id=2, BossId=1, State = AgentState.Active, FirstName="Adam", LastName="Mickiewicz", Strength=5, Intelligence=5, Dexterity=5, Upkeep=50},
-                new Agent{Id=3, BossId=2, State = AgentState.Active, FirstName="Natalia", LastName="Natsu", Strength=7, Intelligence=3, Dexterity=4, Upkeep=70},
-                new Agent{Id=4, State = AgentState.OnSale, FirstName="Eleonora", LastName="Lora", Strength=8, Intelligence=0, Dexterity=7, Upkeep=30},
-                new Agent{Id=5, BossId=1, State = AgentState.Active, FirstName="Robert", LastName="Makłowicz", Strength=3, Intelligence=5, Dexterity=1, Upkeep=200},
+                new Agent{Id=1, BossId=1, State = AgentState.Active, FirstName="Jotaro", LastName="Kujo", Strength=10, Intelligence=10, Dexterity=10, Upkeep=100, IsFromBossFamily = false},
+                new Agent{Id=2, BossId=1, State = AgentState.Active, FirstName="Adam", LastName="Mickiewicz", Strength=5, Intelligence=5, Dexterity=5, Upkeep=50, IsFromBossFamily = false},
+                new Agent{Id=3, BossId=2, State = AgentState.Active, FirstName="Natalia", LastName="Natsu", Strength=7, Intelligence=3, Dexterity=4, Upkeep=70, IsFromBossFamily = false},
+                new Agent{Id=4, State = AgentState.OnSale, FirstName="Eleonora", LastName="Lora", Strength=8, Intelligence=0, Dexterity=7, Upkeep=30, IsFromBossFamily = false},
+                new Agent{Id=5, BossId=1, State = AgentState.Active, FirstName="Robert", LastName="Makłowicz", Strength=3, Intelligence=5, Dexterity=1, Upkeep=200, IsFromBossFamily = false},
+                new Agent{Id=6, BossId=1, State = AgentState.Active, FirstName="Ricardo", LastName="Rico", Strength=10, Intelligence=10, Dexterity=10, Upkeep=100, IsFromBossFamily = true},
             };
         }
 

@@ -16,6 +16,7 @@ namespace MafiaOnline.DataAccess.Entities
         public int Dexterity { get; set; }
         public int Intelligence { get; set; }
         public long Upkeep { get; set; }
+        public bool IsFromBossFamily { get; set; }
 
         public virtual Boss Boss { get; set; }
         public virtual AgentForSale AgentForSale { get; set; }

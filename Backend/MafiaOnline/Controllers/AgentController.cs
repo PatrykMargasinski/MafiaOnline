@@ -68,5 +68,12 @@ namespace MafiaOnline.Controllers
             var agent = await _agentService.RecruitAgent(bossId, agentId);
             return new JsonResult($"Agent {agent.FirstName} {agent.LastName} is at your service.");
         }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshAgents()
+        {
+            await _agentService.RefreshAgents();
+            return Ok();
+        }
     }
 }
