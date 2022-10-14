@@ -51,6 +51,8 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Boss not found");
             if (agent.AgentForSale.Price > boss.Money)
                 throw new Exception("Boss cannot afford the agent");
+            if (agent.IsFromBossFamily)
+                throw new Exception("Agent from boss family cannot be abandoned");
         }
     }
 }
