@@ -81,6 +81,10 @@ namespace MafiaOnline
             services.AddScoped<IMessageValidator, MessageValidator>();
             services.AddScoped<IPlayerValidator, PlayerValidator>();
 
+
+            //Hosted service
+            services.AddHostedService<MyHostedService>();
+
             services.AddSingleton(provider => new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new AutoMapperProfile(

@@ -25,7 +25,7 @@ namespace MafiaAPI.Jobs
             JobKey key = context.JobDetail.Key;
 
             JobDataMap dataMap = context.JobDetail.JobDataMap;
-            await _agentService.RefreshAgents();
+            await _agentService.StartRefreshAgentsJob();
         }
 
         public async static Task Start(ISchedulerFactory factory, DateTime finishTime)
@@ -34,13 +34,18 @@ namespace MafiaAPI.Jobs
             IJobDetail job = PrepareJobDetail();
             ITrigger trigger = PrepareTrigger(finishTime);
 
+            if (await scheduler.CheckExists(job.Key))
+            {
+                await scheduler.DeleteJob(job.Key);
+            }
+
             await scheduler.ScheduleJob(job, trigger);
             await scheduler.Start();
         }
 
         private static IJobDetail PrepareJobDetail()
         {
-            return JobBuilder.Create<MissionJob>()
+            return JobBuilder.Create<AgentRefreshJob>()
                 .WithIdentity("agentRefreshJob", "group1")
                 .Build();
         }
