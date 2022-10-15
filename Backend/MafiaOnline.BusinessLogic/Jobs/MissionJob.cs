@@ -28,8 +28,11 @@ namespace MafiaAPI.Jobs
             long pmId = Int32.Parse(dataMap.GetString("pmId"));
             await _missionService.EndMission(pmId);
         }
+    }
 
-        public async static Task Start(ISchedulerFactory factory, long pmId, DateTime finishTime)
+    public class MissionJobRunner : IMissionJobRunner
+    {
+        public async Task Start(ISchedulerFactory factory, long pmId, DateTime finishTime)
         {
             IScheduler scheduler = await factory.GetScheduler();
             IJobDetail job = PrepareJobDetail(pmId);
@@ -39,7 +42,7 @@ namespace MafiaAPI.Jobs
             await scheduler.Start();
         }
 
-        private static IJobDetail PrepareJobDetail(long pmId)
+        private IJobDetail PrepareJobDetail(long pmId)
         {
             return JobBuilder.Create<MissionJob>()
                 .WithIdentity("missionJob" + pmId, "group1")
@@ -47,13 +50,18 @@ namespace MafiaAPI.Jobs
                 .Build();
         }
 
-        private static ITrigger PrepareTrigger(DateTime finishTime, long pmId)
+        private ITrigger PrepareTrigger(DateTime finishTime, long pmId)
         {
             return TriggerBuilder.Create()
                 .WithIdentity("missionTrigger" + pmId, "group1")
                 .StartAt(finishTime)
                 .Build();
         }
+    }
+
+    public interface IMissionJobRunner
+    {
+        Task Start(ISchedulerFactory factory, long pmId, DateTime finishTime);
     }
 
 }

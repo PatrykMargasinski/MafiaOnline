@@ -37,14 +37,16 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IAgentValidator _agentValidator;
         private readonly ISchedulerFactory _scheduler;
         private readonly IAgentFactory _agentFactory;
+        private readonly IAgentRefreshJobRunner _agentRefreshJobRunner;
 
-        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler)
+        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _agentValidator = agentValidator;
             _agentFactory = agentFactory;
             _scheduler = scheduler;
+            _agentRefreshJobRunner = agentRefreshJobRunner;
         }
 
         /// <summary>
@@ -157,9 +159,8 @@ namespace MafiaOnline.BusinessLogic.Services
 
         public async Task StartRefreshAgentsJob()
         {
-            var jobs = await _scheduler.GetScheduler().Result.GetCurrentlyExecutingJobs();
             await RefreshAgents();
-            await AgentRefreshJob.Start(_scheduler, DateTime.Now.AddMinutes(AgentConsts.MINUTES_TO_REFRESH_AGENTS_FOR_SALE));
+            await _agentRefreshJobRunner.Start(_scheduler, DateTime.Now.AddMinutes(AgentConsts.MINUTES_TO_REFRESH_AGENTS_FOR_SALE));
         }
     }
 }

@@ -32,8 +32,9 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IMissionUtils _missionUtils;
         private readonly IReporter _reporter;
         private readonly IMissionValidator _missionValidator;
+        private readonly IMissionJobRunner _jobRunner;
 
-        public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter, IMissionValidator missionValidator)
+        public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter, IMissionValidator missionValidator, IMissionJobRunner jobRunner)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -41,6 +42,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _missionUtils = missionUtils;
             _reporter = reporter;
             _missionValidator = missionValidator;
+            _jobRunner = jobRunner;
         }
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace MafiaOnline.BusinessLogic.Services
         public async Task StartMission(long agentId, long missionId)
         {
             var pm = await DoMission(agentId, missionId);
-            await MissionJob.Start(_scheduler, pm.Id, pm.CompletionTime);
+            await _jobRunner.Start(_scheduler, pm.Id, pm.CompletionTime);
         }
 
         /// <summary>

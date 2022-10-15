@@ -27,8 +27,11 @@ namespace MafiaAPI.Jobs
             JobDataMap dataMap = context.JobDetail.JobDataMap;
             await _agentService.StartRefreshAgentsJob();
         }
+    }
 
-        public async static Task Start(ISchedulerFactory factory, DateTime finishTime)
+    public class AgentRefreshJobRunner : IAgentRefreshJobRunner
+    {
+        public async Task Start(ISchedulerFactory factory, DateTime finishTime)
         {
             IScheduler scheduler = await factory.GetScheduler();
             IJobDetail job = PrepareJobDetail();
@@ -43,14 +46,14 @@ namespace MafiaAPI.Jobs
             await scheduler.Start();
         }
 
-        private static IJobDetail PrepareJobDetail()
+        private IJobDetail PrepareJobDetail()
         {
             return JobBuilder.Create<AgentRefreshJob>()
                 .WithIdentity("agentRefreshJob", "group1")
                 .Build();
         }
 
-        private static ITrigger PrepareTrigger(DateTime finishTime)
+        private ITrigger PrepareTrigger(DateTime finishTime)
         {
             return TriggerBuilder.Create()
                 .WithIdentity("agentRefreshTrigger", "group1")
@@ -58,5 +61,12 @@ namespace MafiaAPI.Jobs
                 .Build();
         }
     }
+
+    public interface IAgentRefreshJobRunner
+    {
+        Task Start(ISchedulerFactory factory, DateTime finishTime);
+    }
+
+
 
 }

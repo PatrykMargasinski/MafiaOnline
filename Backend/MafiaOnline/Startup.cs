@@ -20,6 +20,7 @@ using Newtonsoft.Json.Serialization;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.ErrorHandling;
 using MafiaOnline.BusinessLogic.Factories;
+using MafiaAPI.Jobs;
 
 namespace MafiaOnline
 {
@@ -81,6 +82,9 @@ namespace MafiaOnline
             services.AddScoped<IMessageValidator, MessageValidator>();
             services.AddScoped<IPlayerValidator, PlayerValidator>();
 
+            //Job runners
+            services.AddScoped<IMissionJobRunner, MissionJobRunner>();
+            services.AddScoped<IAgentRefreshJobRunner, AgentRefreshJobRunner>();
 
             //Hosted service
             services.AddHostedService<MyHostedService>();
