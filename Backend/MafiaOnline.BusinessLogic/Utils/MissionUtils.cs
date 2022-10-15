@@ -41,7 +41,6 @@ namespace MafiaOnline.BusinessLogic.Utils
         /// </summary>
         public bool IsMissionSuccessfullyCompleted(Agent agent, Mission mission)
         {
-            Random random = new();
             var value = _randomizer.Next(101);
             return value <= CalculateAgentSuccessChance(agent, mission);
         }
