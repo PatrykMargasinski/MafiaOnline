@@ -71,6 +71,7 @@ namespace MafiaOnline
             services.AddScoped<ITokenUtils, TokenUtils>();
             services.AddScoped<IBasicUtils, BasicUtils>();
             services.AddScoped<IReporter, Reporter>();
+            services.AddScoped<IRandomizer, Randomizer>();
 
             //Factories
             services.AddScoped<IAgentFactory, AgentFactory>();

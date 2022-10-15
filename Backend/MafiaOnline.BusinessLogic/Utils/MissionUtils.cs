@@ -15,6 +15,13 @@ namespace MafiaOnline.BusinessLogic.Utils
 
     public class MissionUtils : IMissionUtils
     {
+        private readonly IRandomizer _randomizer;
+
+        public MissionUtils(IRandomizer randomizer)
+        {
+            _randomizer = randomizer;
+        }
+
         /// <summary>
         /// Calculates how big the probability of mission success is
         /// </summary>
@@ -35,7 +42,7 @@ namespace MafiaOnline.BusinessLogic.Utils
         public bool IsMissionSuccessfullyCompleted(Agent agent, Mission mission)
         {
             Random random = new();
-            var value = random.Next(101);
+            var value = _randomizer.Next(101);
             return value <= CalculateAgentSuccessChance(agent, mission);
         }
     }
