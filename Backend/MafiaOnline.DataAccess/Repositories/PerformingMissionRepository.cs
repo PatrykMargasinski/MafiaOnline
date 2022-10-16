@@ -11,7 +11,8 @@ namespace MafiaOnline.DataAccess.Repositories
 {
     public interface IPerformingMissionRepository : ICrudRepository<PerformingMission>
     {
-
+        Task<PerformingMission> GetByAgentId(long agentId);
+        Task<IList<PerformingMission>> GetByAgentIds(long[] agentsId);
     }
 
     public class PerformingMissionRepository : CrudRepository<PerformingMission>, IPerformingMissionRepository
@@ -19,6 +20,17 @@ namespace MafiaOnline.DataAccess.Repositories
         public PerformingMissionRepository(DataContext context) : base(context)
         {
 
+        }
+        public async Task<PerformingMission> GetByAgentId(long agentId)
+        {
+            var pm = await _context.PerformingMissions.Where(x => agentId == x.AgentId).FirstOrDefaultAsync();
+            return pm;
+        }
+
+        public async Task<IList<PerformingMission>> GetByAgentIds(long[] agentsId)
+        {
+            var pms = await _context.PerformingMissions.Where(x => agentsId.Contains(x.AgentId)).ToListAsync();
+            return pms;
         }
     }
 }

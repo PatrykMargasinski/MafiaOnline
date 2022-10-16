@@ -15,7 +15,8 @@ namespace MafiaOnline.BusinessLogic.Validators
     {
         Task ValidateLogin(LoginRequest request);
         Task ValidateRegister(RegisterRequest request);
-        Task ValidateChangePassword(ChangePasswordRequest changeModel);
+        Task ValidateChangePassword(ChangePasswordRequest request);
+        Task ValidateDeleteAccount(DeleteAccountRequest request);
     }
 
     public class PlayerValidator : IPlayerValidator
@@ -117,6 +118,20 @@ namespace MafiaOnline.BusinessLogic.Validators
             if (!request.NewPassword.Equals(request.RepeatedNewPassword))
             {
                 throw new Exception("Repeated new password isn't correct");
+            }
+        }
+
+        public async Task ValidateDeleteAccount(DeleteAccountRequest request)
+        {
+            Player player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
+            if (player == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            if (_securityUtils.VerifyPassword(player, request.Password) == false)
+            {
+                throw new Exception("Invalid password");
             }
         }
     }

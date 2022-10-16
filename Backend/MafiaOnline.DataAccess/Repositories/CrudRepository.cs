@@ -17,6 +17,7 @@ namespace MafiaOnline.DataAccess.Repositories
         public Task<T> GetRandomAsync();
         public long Create(T model);
         public void Update(T model);
+        public void UpdateRange(T[] models);
         public void DeleteById(long id);
         public void DeleteByIds(long[] ids);
         public bool Exists(long id);
@@ -60,6 +61,11 @@ namespace MafiaOnline.DataAccess.Repositories
         public virtual void Update(T model)
         {
             entities.Update(model);
+        }
+
+        public virtual void UpdateRange(T[] models)
+        {
+            entities.UpdateRange(models);
         }
 
         public virtual void DeleteById(long id)

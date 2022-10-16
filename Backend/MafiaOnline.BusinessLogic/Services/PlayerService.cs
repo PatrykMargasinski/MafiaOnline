@@ -4,6 +4,7 @@ using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<Tokens> Login(LoginRequest user);
         Task Register(RegisterRequest user);
         Task ChangePassword(ChangePasswordRequest user);
-        Task<bool> DeleteAccount(DeleteAccountRequest user);
+        Task DeleteAccount(DeleteAccountRequest user);
     }
 
     public class PlayerService : IPlayerService
@@ -29,10 +30,12 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ITokenUtils _tokenUtils;
         private readonly IBasicUtils _basicUtils;
         private readonly IPlayerValidator _playerValidator;
+        private readonly ISchedulerFactory _factory;
 
         public PlayerService(IUnitOfWork unitOfWork, IMapper mapper, 
             ISecurityUtils securityUtils, ITokenUtils tokenUtils, 
-            IBasicUtils basicUtils, IPlayerValidator playerValidator)
+            IBasicUtils basicUtils, IPlayerValidator playerValidator,
+            ISchedulerFactory factory)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -40,6 +43,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _tokenUtils = tokenUtils;
             _basicUtils = basicUtils;
             _playerValidator = playerValidator;
+            _factory = factory;
         }
 
         /// <summary>
@@ -123,9 +127,43 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Deletes an account (player, boss, agents instances)
         /// </summary>
-        public async Task<bool> DeleteAccount(DeleteAccountRequest user)
+        public async Task DeleteAccount(DeleteAccountRequest request)
         {
-            throw new NotImplementedException();
+            await _playerValidator.ValidateDeleteAccount(request);
+            var player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(player.BossId);
+            var agents = await _unitOfWork.Agents.GetBossAgents(boss.Id);
+
+            //removing PerformingMission instances and mission jobs
+            var agentsOnMission = agents.Where(x => x.State == AgentState.OnMission);
+            var performingMissions = await _unitOfWork.PerformingMissions.GetByAgentIds(agentsOnMission.Select(x => x.Id).ToArray());
+
+            IScheduler scheduler = await _factory.GetScheduler();
+
+            foreach (var performingMission in performingMissions)
+            {
+                var jobKey = new JobKey($"missionJob{performingMission.Id}", "group1");
+
+                if (await scheduler.CheckExists(jobKey))
+                {
+                    await scheduler.DeleteJob(jobKey);
+                }
+            }
+
+            _unitOfWork.PerformingMissions.DeleteByIds(performingMissions.Select(x => x.Id).ToArray());
+
+            //Agents from family are removed, others become renegades
+            var familyAgents = agents.Where(x => x.IsFromBossFamily == true);
+            _unitOfWork.Agents.DeleteByIds(familyAgents.Select(x => x.Id).ToArray());
+
+            var othersAgents  = agents.Where(x => x.IsFromBossFamily == false);
+            foreach(var agent in othersAgents)
+            {
+                agent.BossId = null;
+                agent.Boss = null;
+                agent.State = AgentState.Renegate;
+            }
+            _unitOfWork.Agents.UpdateRange(othersAgents.ToArray());
         }
     }
 }
