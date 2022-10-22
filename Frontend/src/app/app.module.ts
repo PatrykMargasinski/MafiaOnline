@@ -7,13 +7,16 @@ import { JwtModule } from '@auth0/angular-jwt';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
-import { HeaderComponent } from './endpoints/header/header.component';
-import { FooterComponent } from './endpoints/footer/footer.component';
-import { LoginComponent } from './endpoints/login/login.component';
-import { RegisterComponent } from './endpoints/register/register.component';
-import { HomeComponent } from './endpoints/home/home.component';
+import { HeaderComponent } from './page-elements/header/header.component';
+import { FooterComponent } from './page-elements/footer/footer.component';
+import { LoginComponent } from './pages/basic-pages/login/login.component';
+import { RegisterComponent } from './pages/basic-pages/register/register.component';
+import { HomeComponent } from './pages/basic-pages/home/home.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CustomErrorHandler } from './handlers/customErrorHandler';
+import { environment } from 'src/environments/environment';
+import { BossComponent } from './pages/boss/boss.component';
+import { AboutBossComponent } from './pages/boss/about-boss/about-boss.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -27,6 +30,8 @@ export function tokenGetter(){
     LoginComponent,
     RegisterComponent,
     HomeComponent,
+    AboutBossComponent,
+    BossComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,7 +42,7 @@ export function tokenGetter(){
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ["localhost:53191"],
+        allowedDomains: [environment.APIEndpoint],
         disallowedRoutes: []
       }
     }),
