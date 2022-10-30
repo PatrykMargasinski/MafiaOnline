@@ -11,7 +11,7 @@ export class CustomErrorHandler implements ErrorHandler {
     }
 
     private showAlert(error: any) :void {
-        if (console && console.group && console.error) {
+        if (console && console.group && console.error && error.error) {
             alert(error.error.messages[0]);
         }
     }

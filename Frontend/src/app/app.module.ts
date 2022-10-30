@@ -1,6 +1,6 @@
+import { BossRankingComponent } from './pages/boss/boss-ranking/boss-ranking.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -32,6 +32,7 @@ export function tokenGetter(){
     HomeComponent,
     AboutBossComponent,
     BossComponent,
+    BossRankingComponent
   ],
   imports: [
     BrowserModule,

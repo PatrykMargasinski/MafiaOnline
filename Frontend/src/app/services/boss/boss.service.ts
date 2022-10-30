@@ -23,8 +23,8 @@ export class BossService {
     return this.http.get<string[]>(this.APIUrl+'/similarNames?name='+ name);
   }
 
-  getBestBosses():Observable<Boss[]>
+  getBestBosses(from: number, to: number):Observable<Boss[]>
   {
-    return this.http.get<Boss[]>(this.APIUrl+'/bestBosses');
+    return this.http.get<Boss[]>(this.APIUrl+'/best?from='+from+'&to='+to);
   }
 }
