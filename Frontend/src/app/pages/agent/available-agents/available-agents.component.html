@@ -1,1 +1,24 @@
-<p>available-agents works!</p>
+<br><h3>Your agents</h3><br>
+
+<table class="table table-striped text-center">
+  <thead>
+    <tr>
+      <th scope="col">LastName</th>
+      <th scope="col">FirstName</th>
+      <th scope="col">Statistics</th>
+      <th scope="col">Upkeep</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let agent of AgentList">
+      <td>{{agent.LastName}}</td>
+      <td>{{agent.FirstName}}</td>
+      <td>{{agent.Strength}}/{{agent.Dexterity}}/{{agent.Intelligence}}</td>
+      <td>{{agent.Upkeep}}</td>
+      <td>
+          <button class="btn btn-danger" (click)="dismissAgent(agent.Id)">Dismiss</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

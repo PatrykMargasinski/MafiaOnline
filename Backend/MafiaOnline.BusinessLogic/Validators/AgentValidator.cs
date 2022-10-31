@@ -12,7 +12,7 @@ namespace MafiaOnline.BusinessLogic.Validators
 {
     public interface IAgentValidator
     {
-        Task ValidateAbandonAgent(long agentId);
+        Task ValidateDismissAgent(DismissAgentRequest request);
         Task ValidateRecruitAgent(RecruitAgentRequest request);
     }
 
@@ -27,15 +27,17 @@ namespace MafiaOnline.BusinessLogic.Validators
             _mapper = mapper;
         }
 
-        public async Task ValidateAbandonAgent(long agentId)
+        public async Task ValidateDismissAgent(DismissAgentRequest request)
         {
-            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
             if (agent == null)
                 throw new Exception("Agent not found");
             if (agent.State != AgentState.Active)
                 throw new Exception("Agent isn't active - he cannot be abandoned");
             if (agent.BossId == null)
                 throw new Exception("Agent doesn't belong to any boss");
+            if (agent.IsFromBossFamily)
+                throw new Exception("You cannot dismiss agent from the boss family");
         }
 
         public async Task ValidateRecruitAgent(RecruitAgentRequest request)
@@ -52,8 +54,6 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Boss not found");
             if (agent.AgentForSale.Price > boss.Money)
                 throw new Exception("Boss cannot afford the agent");
-            if (agent.IsFromBossFamily)
-                throw new Exception("Agent from boss family cannot be abandoned");
         }
     }
 }

@@ -24,7 +24,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<AgentDTO>> GetActiveAgents(long bossId);
         Task<IList<AgentOnMissionDTO>> GetAgentsOnMission(long bossId);
         Task<IList<AgentForSaleDTO>> GetAgentsForSale();
-        Task<Agent> AbandonAgent(long id);
+        Task<Agent> DismissAgent(DismissAgentRequest request);
         Task<Agent> RecruitAgent(RecruitAgentRequest request);
         Task RefreshAgents();
         Task StartRefreshAgentsJob();
@@ -96,12 +96,12 @@ namespace MafiaOnline.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Boss abandons an agent
+        /// Boss dismisses an agent
         /// </summary>
-        public async Task<Agent> AbandonAgent(long agentId)
+        public async Task<Agent> DismissAgent(DismissAgentRequest request)
         {
-            await _agentValidator.ValidateAbandonAgent(agentId);
-            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            await _agentValidator.ValidateDismissAgent(request);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
             agent.State = AgentState.Renegate;
             agent.Boss = null;
             agent.BossId = null;
@@ -112,7 +112,7 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Boss recruits an agent
         /// </summary>
-        public async Task<Agent> RecruitAgent([FromBody] RecruitAgentRequest request)
+        public async Task<Agent> RecruitAgent(RecruitAgentRequest request)
         {
             await _agentValidator.ValidateRecruitAgent(request);
             var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);

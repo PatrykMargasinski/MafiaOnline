@@ -56,15 +56,15 @@ namespace MafiaOnline.Controllers
             return new JsonResult(agents);
         }
 
-        [HttpPost("abandon/{agentId}")]
-        public async Task<IActionResult> AbandonAgent(long agentId)
+        [HttpPost("dismiss")]
+        public async Task<IActionResult> DismissAgent([FromBody] DismissAgentRequest request)
         {
-            var agents = await _agentService.AbandonAgent(agentId);
+            var agents = await _agentService.DismissAgent(request);
             return new JsonResult(agents);
         }
 
         [HttpPost("recruit")]
-        public async Task<IActionResult> RecruitAgent(RecruitAgentRequest request)
+        public async Task<IActionResult> RecruitAgent([FromBody] RecruitAgentRequest request)
         {
             var agent = await _agentService.RecruitAgent(request);
             return new JsonResult($"Agent {agent.FirstName} {agent.LastName} is at your service.");
