@@ -30,5 +30,7 @@ export interface AgentOnMission
   MissionId: number,
   AgentName: string,
   MissionName: string,
-  SuccessChance: number
+  SuccessChance: number,
+  CompletionTime: Date,
+  SecondsLeft: number
 }

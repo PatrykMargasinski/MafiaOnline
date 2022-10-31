@@ -10,12 +10,12 @@ export class TokenService {
 
   getBossId(){
     const decoded = this.jwtHelper.decodeToken(sessionStorage.getItem("jwtToken"));
-    return decoded.bossId;
+    return Number(decoded.bossId);
   }
 
   getPlayerId(){
     const decoded = this.jwtHelper.decodeToken(sessionStorage.getItem("jwtToken"));
-    return decoded.playerId;
+    return Number(decoded.playerId);
   }
 
   getLogin(){

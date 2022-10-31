@@ -1,1 +1,23 @@
-<p>agents-on-mission works!</p>
+<br><h3>Agents on mission</h3><br>
+
+<table class="table table-striped text-center">
+  <thead>
+    <tr>
+      <th scope="col">Mission name</th>
+      <th scope="col">Agent Name</th>
+      <th scope="col">Seconds left</th>
+      <th scope="col">Success chance</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let agent of agentsOnMission">
+      <td>{{agent.MissionName}}</td>
+      <td>{{agent.AgentName}}</td>
+      <td>{{agent.SecondsLeft}}</td>
+      <td>{{agent.SuccessChance}}</td>
+      <td>
+      </td>
+    </tr>
+  </tbody>
+</table>

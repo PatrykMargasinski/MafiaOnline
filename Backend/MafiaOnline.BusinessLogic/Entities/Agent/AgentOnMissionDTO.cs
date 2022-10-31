@@ -14,5 +14,7 @@ namespace MafiaOnline.BusinessLogic.Entities
         public string AgentName { get; set; }
         public string MissionName { get; set; }
         public int SuccessChance { get; set; }
+        public DateTime CompletionTime { get; set; }
+        public long SecondsLeft { get; set; }
     }
 }

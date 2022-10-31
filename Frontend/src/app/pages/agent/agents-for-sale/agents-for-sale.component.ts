@@ -18,7 +18,7 @@ export class AgentsForSaleComponent implements OnInit {
 
   ngOnInit(): void {
     this.refresh();
-    this.bossId = Number(this.tokenService.getBossId());
+    this.bossId = this.tokenService.getBossId();
   }
 
   refresh(){
