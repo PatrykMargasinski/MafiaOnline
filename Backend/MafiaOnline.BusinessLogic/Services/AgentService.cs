@@ -6,6 +6,7 @@ using MafiaOnline.BusinessLogic.Factories;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<AgentOnMissionDTO>> GetAgentsOnMission(long bossId);
         Task<IList<AgentForSaleDTO>> GetAgentsForSale();
         Task<Agent> AbandonAgent(long id);
-        Task<Agent> RecruitAgent(long bossId, long agentId);
+        Task<Agent> RecruitAgent(RecruitAgentRequest request);
         Task RefreshAgents();
         Task StartRefreshAgentsJob();
 
@@ -111,13 +112,13 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Boss recruits an agent
         /// </summary>
-        public async Task<Agent> RecruitAgent(long bossId, long agentId)
+        public async Task<Agent> RecruitAgent([FromBody] RecruitAgentRequest request)
         {
-            await _agentValidator.ValidateRecruitAgent(bossId, agentId);
-            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
-            var boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
+            await _agentValidator.ValidateRecruitAgent(request);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(request.BossId);
             boss.Money -= agent.AgentForSale.Price;
-            _unitOfWork.AgentsForSale.DeleteByAgentId(agentId);
+            _unitOfWork.AgentsForSale.DeleteByAgentId(request.AgentId);
             agent.Boss = boss;
             agent.State = AgentState.Active;
             _unitOfWork.Commit();
@@ -152,7 +153,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 }
                 var agentForSale = await _agentFactory.CreateForSaleInstance(newAgent);
                 _unitOfWork.AgentsForSale.Create(agentForSale);
-                newAgent.State = AgentState.OnSale;
+                newAgent.State = AgentState.ForSale;
             }
             _unitOfWork.Commit();
         }

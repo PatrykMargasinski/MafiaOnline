@@ -26,7 +26,7 @@ namespace MafiaOnline.DataAccess.Entities
     public enum AgentState
     {
         Renegate,
-        OnSale,
+        ForSale,
         Active,
         OnMission
     }

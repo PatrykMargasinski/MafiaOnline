@@ -17,6 +17,10 @@ import { CustomErrorHandler } from './handlers/customErrorHandler';
 import { environment } from 'src/environments/environment';
 import { BossComponent } from './pages/boss/boss.component';
 import { AboutBossComponent } from './pages/boss/about-boss/about-boss.component';
+import { AgentComponent } from './pages/agent/agent.component';
+import { AgentsForSaleComponent } from './pages/agent/agents-for-sale/agents-for-sale.component';
+import { AgentsOnMissionComponent } from './pages/agent/agents-on-mission/agents-on-mission.component';
+import { AvailableAgentsComponent } from './pages/agent/available-agents/available-agents.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -32,7 +36,11 @@ export function tokenGetter(){
     HomeComponent,
     AboutBossComponent,
     BossComponent,
-    BossRankingComponent
+    BossRankingComponent,
+    AgentComponent,
+    AgentsForSaleComponent,
+    AgentsOnMissionComponent,
+    AvailableAgentsComponent
   ],
   imports: [
     BrowserModule,

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Boss } from 'src/app/models/boss.model';
+import { Boss } from 'src/app/models/boss/boss.models';
 
 @Injectable({
   providedIn: 'root'

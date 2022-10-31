@@ -1,5 +1,6 @@
 ﻿using MafiaOnline.BusinessLogic.Services;
 using MafiaOnline.DataAccess.Entities;
+using MafiaOnline.BusinessLogic.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -63,9 +64,9 @@ namespace MafiaOnline.Controllers
         }
 
         [HttpPost("recruit")]
-        public async Task<IActionResult> RecruitAgent(long bossId, long agentId)
+        public async Task<IActionResult> RecruitAgent(RecruitAgentRequest request)
         {
-            var agent = await _agentService.RecruitAgent(bossId, agentId);
+            var agent = await _agentService.RecruitAgent(request);
             return new JsonResult($"Agent {agent.FirstName} {agent.LastName} is at your service.");
         }
 

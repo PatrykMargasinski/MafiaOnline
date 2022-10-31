@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Boss } from 'src/app/models/boss.model';
+import { Boss } from 'src/app/models/boss/boss.models';
 import { BossService } from 'src/app/services/boss/boss.service';
 import { TokenService } from 'src/app/services/auth/token.service';
 

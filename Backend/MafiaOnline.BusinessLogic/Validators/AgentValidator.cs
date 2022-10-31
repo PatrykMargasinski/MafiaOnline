@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using System;
@@ -12,7 +13,7 @@ namespace MafiaOnline.BusinessLogic.Validators
     public interface IAgentValidator
     {
         Task ValidateAbandonAgent(long agentId);
-        Task ValidateRecruitAgent(long agentId, long bossId);
+        Task ValidateRecruitAgent(RecruitAgentRequest request);
     }
 
     public class AgentValidator : IAgentValidator
@@ -37,13 +38,13 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Agent doesn't belong to any boss");
         }
 
-        public async Task ValidateRecruitAgent(long bossId, long agentId)
+        public async Task ValidateRecruitAgent(RecruitAgentRequest request)
         {
-            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
             if (agent == null)
                 throw new Exception("Agent not found");
-            var boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
-            if (agent.State != AgentState.OnSale)
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(request.BossId);
+            if (agent.State != AgentState.ForSale)
                 throw new Exception("Agent is not for sale");
             if (agent.AgentForSale == null)
                 throw new Exception("There is no AgentForSale instance");

@@ -1,6 +1,10 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AgentComponent } from './pages/agent/agent.component';
+import { AgentsForSaleComponent } from './pages/agent/agents-for-sale/agents-for-sale.component';
+import { AgentsOnMissionComponent } from './pages/agent/agents-on-mission/agents-on-mission.component';
+import { AvailableAgentsComponent } from './pages/agent/available-agents/available-agents.component';
 import { HomeComponent } from './pages/basic-pages/home/home.component';
 import { LoginComponent } from './pages/basic-pages/login/login.component';
 import { RegisterComponent } from './pages/basic-pages/register/register.component';
@@ -19,6 +23,12 @@ const routes: Routes = [
   [
     {path: 'aboutBoss', component: AboutBossComponent},
     {path: 'bossRanking', component: BossRankingComponent},
+  ]},
+  {path:'agent',component:AgentComponent, canActivate: [GuardService], children:
+  [
+    {path: 'availableAgents', component: AvailableAgentsComponent},
+    {path: 'agentsOnMission', component: AgentsOnMissionComponent},
+    {path: 'agentsForSale', component: AgentsForSaleComponent},
   ]},
 ];
 
