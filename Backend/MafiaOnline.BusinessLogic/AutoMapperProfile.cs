@@ -41,7 +41,8 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.AgentName, y => y.MapFrom(z => z.Agent.FirstName + " " + z.Agent.LastName))
                 .ForMember(x => x.MissionName, y => y.MapFrom(z => z.Mission.Name))
                 .ForMember(x => x.SuccessChance, y => y.MapFrom(z => _missionUtils.CalculateAgentSuccessChance(z.Agent, z.Mission)))
-                .ForMember(x => x.Loot, y => y.MapFrom(z => z.Mission.Loot));
+                .ForMember(x => x.Loot, y => y.MapFrom(z => z.Mission.Loot))
+                .ForMember(x => x.SecondsLeft, y => y.MapFrom(z => (long)DateTime.Now.Subtract(z.CompletionTime).TotalSeconds));
 
             //Message
             CreateMap<Message, MessageNoContentDTO>()

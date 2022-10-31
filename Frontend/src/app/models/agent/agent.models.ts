@@ -30,6 +30,9 @@ export interface AgentOnMission
   MissionId: number,
   AgentName: string,
   MissionName: string,
+  Strength: number,
+  Dexterity: number,
+  Intelligence: number,
   SuccessChance: number,
   CompletionTime: Date,
   SecondsLeft: number

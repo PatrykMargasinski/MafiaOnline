@@ -16,5 +16,6 @@ namespace MafiaOnline.BusinessLogic.Entities
         public int SuccessChance { get; set; }
         public int Loot { get; set; }
         public DateTime CompletionTime { get; set; }
+        public long SecondsLeft { get; set; }
     }
 }
