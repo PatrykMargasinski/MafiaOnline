@@ -8,6 +8,7 @@ namespace MafiaOnline.BusinessLogic.Entities
 {
     public class MessageDTO
     {
+        public long Id { get; set; }
         public long ToBossId { get; set; }
         public long? FromBossId { get; set; }
         public string ToBossName { get; set; }

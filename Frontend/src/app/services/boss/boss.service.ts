@@ -18,9 +18,9 @@ export class BossService {
     return this.http.get<Boss>(this.APIUrl+'/'+id);
   }
 
-  findBossNamesStartingWith(name:string):Observable<string[]>
+  findBossNamesStartingWith(startingWith:string):Observable<string[]>
   {
-    return this.http.get<string[]>(this.APIUrl+'/similarNames?name='+ name);
+    return this.http.get<string[]>(this.APIUrl+'/similarNames?startingWith='+ startingWith);
   }
 
   getBestBosses(from: number, to: number):Observable<Boss[]>

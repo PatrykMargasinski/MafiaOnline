@@ -19,7 +19,7 @@ export class BossRankingComponent implements OnInit {
   }
 
   sendMessage(bossName: string){
-    this.router.navigate(["/message/sendMessage"], { queryParams: { bossName: bossName }});
+    this.router.navigate(["/message/send"], { queryParams: { bossName: bossName }});
   }
 
   refreshBossList(){

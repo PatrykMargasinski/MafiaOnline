@@ -47,7 +47,7 @@ namespace MafiaOnline.BusinessLogic.Utils
                 {
                     byte[] decryptedBytes = new byte[bytes.Length];
                     cryptoStream.Read(decryptedBytes, 0, decryptedBytes.Length);
-                    return Encoding.Unicode.GetString(decryptedBytes);
+                    return Encoding.Unicode.GetString(decryptedBytes).Replace("\0", string.Empty);
                 }
             }
         }

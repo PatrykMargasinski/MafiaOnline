@@ -16,6 +16,8 @@ namespace MafiaOnline.DataAccess.Repositories
         Task<IList<Message>> GetReports(long bossId);
         Task<IList<Message>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen);
         Task<IList<Message>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen);
+        long CountMessages(long bossId);
+        long CountReports(long bossId);
     }
 
     public class MessageRepository : CrudRepository<Message>, IMessageRepository
@@ -92,6 +94,14 @@ namespace MafiaOnline.DataAccess.Repositories
                 .ToListAsync();
         }
 
+        public long CountMessages(long bossId)
+        {
+            return _context.Messages.Where(x => x.Type == MessageType.BossMessage).Count();
+        }
 
+        public long CountReports(long bossId)
+        {
+            return _context.Messages.Where(x => x.Type == MessageType.Report).Count();
+        }
     }
 }

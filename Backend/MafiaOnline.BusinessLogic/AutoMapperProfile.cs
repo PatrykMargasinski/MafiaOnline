@@ -45,10 +45,6 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.SecondsLeft, y => y.MapFrom(z => (long)DateTime.Now.Subtract(z.CompletionTime).TotalSeconds));
 
             //Message
-            CreateMap<Message, MessageNoContentDTO>()
-                .ForMember(x => x.FromBossName, y => y.MapFrom(z => (z.FromBoss == null) ? string.Empty : (z.FromBoss.FirstName + " " + z.FromBoss.LastName)))
-                .ForMember(x => x.ToBossName, y => y.MapFrom(z => z.ToBoss.FirstName + " " + z.ToBoss.LastName))
-                .ForMember(x => x.Subject, y => y.MapFrom(z => _securityUtils.Decrypt(z.Subject)));
             CreateMap<Message, MessageDTO>()
                 .ForMember(x => x.FromBossName, y => y.MapFrom(z => (z.FromBoss == null) ? string.Empty : (z.FromBoss.FirstName + " " + z.FromBoss.LastName)))
                 .ForMember(x => x.ToBossName, y => y.MapFrom(z => z.ToBoss.FirstName + " " + z.ToBoss.LastName))

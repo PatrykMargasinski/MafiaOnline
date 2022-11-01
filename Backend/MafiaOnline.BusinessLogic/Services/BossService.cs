@@ -15,6 +15,7 @@ namespace MafiaOnline.BusinessLogic.Services
     {
         Task<BossDTO> GetBossDatas(long id);
         Task<IList<BossDTO>> GetBestBosses(int from, int to);
+        Task<IList<string>> GetSimilarBossFullNames(string startingWithString);
     }
 
     public class BossService : IBossService
@@ -44,6 +45,15 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var bosses = await _unitOfWork.Bosses.GetBestBosses(from, to);
             return _mapper.Map<IList<BossDTO>>(bosses);
+        }
+
+        /// <summary>
+        /// Returns boss full names starting with "startingWithString"
+        /// </summary>
+        public async Task<IList<string>> GetSimilarBossFullNames(string startingWithString)
+        {
+            var bossNames = await _unitOfWork.Bosses.GetSimilarBossFullNames(startingWithString);
+            return bossNames;
         }
     }
 }

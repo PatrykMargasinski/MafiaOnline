@@ -21,12 +21,6 @@ namespace MafiaOnline.Controllers
             _messageService = messageService;
         }
 
-        [HttpPost("send")]
-        public async Task<IActionResult> SendMessage(SendMessageRequest request)
-        {
-            await _messageService.SendMessage(request);
-            return Ok();
-        }
 
         [HttpGet("toBoss/{bossId}")]
         public async Task<IActionResult> GetMessagesToBoss(long bossId)
@@ -35,10 +29,18 @@ namespace MafiaOnline.Controllers
             return Ok(messages);
         }
 
-        [HttpGet("to")]
-        public JsonResult GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter = "", bool onlyUnseen = false)
+        [HttpGet("bossMessagesTo")]
+        public async Task<IActionResult> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter = "", bool onlyUnseen = false)
         {
-            var messages = _messageService.GetAllMessagesToInRange(bossId, fromRange.Value, toRange.Value, bossNameFilter, onlyUnseen);
+            var messages = await _messageService.GetAllMessagesToInRange(bossId, fromRange.Value, toRange.Value, bossNameFilter, onlyUnseen);
+            return new JsonResult(messages);
+        }
+
+
+        [HttpGet("reportsTo")]
+        public async Task<IActionResult> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter = "", bool onlyUnseen = false)
+        {
+            var messages = await _messageService.GetAllReportsToInRange(bossId, fromRange.Value, toRange.Value, onlyUnseen);
             return new JsonResult(messages);
         }
 
@@ -49,18 +51,47 @@ namespace MafiaOnline.Controllers
             return Ok(messages);
         }
 
-        [HttpGet("content/{messageId}")]
-        public async Task<IActionResult> GetMessageContent(long messageId)
+        [HttpPost("send")]
+        public async Task<IActionResult> SendMessage([FromBody] SendMessageRequest request)
         {
-            var message = await _messageService.GetMessageContent(messageId);
-            return Ok(message);
+            await _messageService.SendMessage(request);
+            return Ok();
         }
 
-        [HttpGet("report/{bossId}")]
-        public async Task<IActionResult> GetReports(long bossId)
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteMessage(long messageId)
         {
-            var messages = await _messageService.GetReports(bossId);
-            return Ok(messages);
+            _messageService.DeleteMessage(messageId);
+            return Ok();
+        }
+
+        [HttpDelete("messages")]
+        public async Task<IActionResult> DeleteMessages(string messageIds)
+        {
+            _messageService.DeleteMessages(messageIds);
+            return Ok();
+        }
+
+        [HttpGet("bossMessageCount")]
+        public IActionResult CountMessages(long bossId)
+        {
+            var count = _messageService.CountMessages(bossId);
+            return Ok(count);
+        }
+
+        [HttpGet("reportCount")]
+        public IActionResult CountReports(long bossId)
+        {
+            var count = _messageService.CountReports(bossId);
+            return Ok(count);
+        }
+
+        [HttpGet("seen")]
+        public IActionResult SetSeen(long messageId)
+        {
+            var count = _messageService.SetSeen(messageId);
+            return Ok(count);
         }
     }
 }

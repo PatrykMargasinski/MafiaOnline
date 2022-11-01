@@ -18,12 +18,18 @@ namespace MafiaOnline.BusinessLogic.Services
     public interface IMessageService
     {
         Task SendMessage(SendMessageRequest request);
-        Task<IList<MessageNoContentDTO>> GetMessagesToBoss(long bossId);
-        Task<IList<MessageNoContentDTO>> GetMessagesFromBoss(long bossId);
-        Task<MessageDTO> GetMessageContent(long messageId);
-        Task<IList<MessageNoContentDTO>> GetReports(long bossId);
-        Task<IList<MessageNoContentDTO>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen);
-        Task<IList<MessageNoContentDTO>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen);
+        Task<IList<MessageDTO>> GetMessagesToBoss(long bossId);
+        Task<IList<MessageDTO>> GetMessagesFromBoss(long bossId);
+        Task<string> GetMessageContent(long messageId);
+        Task<IList<MessageDTO>> GetReports(long bossId);
+        Task<IList<MessageDTO>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen);
+        Task<IList<MessageDTO>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen);
+        void DeleteMessage(long messageId);
+        void DeleteMessages(string messageIds);
+        long CountMessages(long bossId);
+        long CountReports(long bossId);
+        Task SetSeen(long messageId);
+
     }
 
     public class MessageService : IMessageService
@@ -66,48 +72,78 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Returns list of messages without content sent to boss with id=bossId
         /// </summary>
-        public async Task<IList<MessageNoContentDTO>> GetMessagesToBoss(long bossId)
+        public async Task<IList<MessageDTO>> GetMessagesToBoss(long bossId)
         {
             var messages = await _unitOfWork.Messages.GetMessagesToBoss(bossId);
-            return _mapper.Map<IList<MessageNoContentDTO>>(messages);
+            return _mapper.Map<IList<MessageDTO>>(messages);
         }
 
         /// <summary>
         /// Returns messages sent by boss with id=bossId
         /// </summary>
-        public async Task<IList<MessageNoContentDTO>> GetMessagesFromBoss(long bossId)
+        public async Task<IList<MessageDTO>> GetMessagesFromBoss(long bossId)
         {
             var messages = await _unitOfWork.Messages.GetMessagesFromBoss(bossId);
-            return _mapper.Map<IList<MessageNoContentDTO>>(messages);
+            return _mapper.Map<IList<MessageDTO>>(messages);
         }
 
-        public async Task<MessageDTO> GetMessageContent(long messageId)
+        public async Task<string> GetMessageContent(long messageId)
         {
             var message = await _unitOfWork.Messages.GetByIdAsync(messageId);
             if (message == null)
                 throw new Exception("Message not found");
             message.Seen = true;
             _unitOfWork.Commit();
-            return _mapper.Map<MessageDTO>(message);
+            return _mapper.Map<MessageDTO>(message).Content;
         }
 
-        public async Task<IList<MessageNoContentDTO>> GetReports(long bossId)
+        public async Task<IList<MessageDTO>> GetReports(long bossId)
         {
             var messages = await _unitOfWork.Messages.GetReports(bossId);
-            return _mapper.Map<IList<MessageNoContentDTO>>(messages);
+            return _mapper.Map<IList<MessageDTO>>(messages);
         }
 
-        public async Task<IList<MessageNoContentDTO>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen)
+        public async Task<IList<MessageDTO>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen)
         {
             var messages = await _unitOfWork.Messages.GetAllMessagesToInRange(bossId, fromRange, toRange, bossNameFilter, onlyUnseen);
-            return _mapper.Map<IList<MessageNoContentDTO>>(messages);
+            return _mapper.Map<IList<MessageDTO>>(messages);
         }
 
-        public async Task<IList<MessageNoContentDTO>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen)
+        public async Task<IList<MessageDTO>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen)
         {
 
             var reports = await _unitOfWork.Messages.GetAllReportsToInRange( bossId,fromRange,toRange, onlyUnseen);
-            return _mapper.Map<IList<MessageNoContentDTO>>(reports);
+            return _mapper.Map<IList<MessageDTO>>(reports);
+        }
+
+        public void DeleteMessage(long messageId)
+        {
+            _unitOfWork.Messages.DeleteById(messageId);
+            _unitOfWork.Commit();
+        }
+
+        public void DeleteMessages(string messageIds)
+        {
+            var ids = messageIds.Split('i').Select(x => long.Parse(x)).ToArray();
+            _unitOfWork.Messages.DeleteByIds(ids);
+            _unitOfWork.Commit();
+        }
+
+        public long CountMessages(long bossId)
+        {
+            return _unitOfWork.Messages.CountMessages(bossId);
+        }
+
+        public long CountReports(long bossId)
+        {
+            return _unitOfWork.Messages.CountMessages(bossId);
+        }
+
+        public async Task SetSeen(long messageId)
+        {
+            var message = await _unitOfWork.Messages.GetByIdAsync(messageId);
+            message.Seen = true;
+            _unitOfWork.Commit();
         }
     }
 }

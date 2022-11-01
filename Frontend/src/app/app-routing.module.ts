@@ -1,3 +1,6 @@
+import { SendMessageComponent } from './pages/message/send-message/send-message.component';
+import { ShowReportsComponent } from './pages/message/show-reports/show-reports.component';
+import { ShowMessagesComponent } from './pages/message/show-messages/show-messages.component';
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -15,6 +18,7 @@ import { BossComponent } from './pages/boss/boss.component';
 import { AvailableMissionsComponent } from './pages/mission/available-missions/available-missions.component';
 import { PerformingMissionsComponent } from './pages/mission/performing-missions/performing-missions.component';
 import { GuardService } from './services/auth/guard.service';
+import { MessageComponent } from './pages/message/message.component';
 
 
 
@@ -37,6 +41,12 @@ const routes: Routes = [
   [
     {path: 'performing', component: PerformingMissionsComponent},
     {path: 'available', component: AvailableMissionsComponent},
+  ]},
+  {path:'message',component: MessageComponent, canActivate: [GuardService], children:
+  [
+    {path: 'messages', component: ShowMessagesComponent},
+    {path: 'reports', component: ShowReportsComponent},
+    {path: 'send', component: SendMessageComponent},
   ]},
 ];
 

@@ -26,6 +26,10 @@ import { AvailableMissionsComponent } from './pages/mission/available-missions/a
 import { PerformingMissionsComponent } from './pages/mission/performing-missions/performing-missions.component';
 import { MissionCardComponent } from './page-elements/mission/mission-card/mission-card.component';
 import { ChooseAgentOnMissionComponent } from './page-elements/agent/choose-agent-on-mission/choose-agent-on-mission.component';
+import { MessageComponent } from './pages/message/message.component';
+import { SendMessageComponent } from './pages/message/send-message/send-message.component';
+import { ShowMessagesComponent } from './pages/message/show-messages/show-messages.component';
+import { ShowReportsComponent } from './pages/message/show-reports/show-reports.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -50,7 +54,11 @@ export function tokenGetter(){
     AvailableMissionsComponent,
     PerformingMissionsComponent,
     MissionCardComponent,
-    ChooseAgentOnMissionComponent
+    ChooseAgentOnMissionComponent,
+    MessageComponent,
+    SendMessageComponent,
+    ShowMessagesComponent,
+    ShowReportsComponent
   ],
   imports: [
     BrowserModule,

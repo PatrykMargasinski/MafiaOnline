@@ -7,7 +7,6 @@ export class CustomErrorHandler implements ErrorHandler {
     }
 
     handleError(error: any): void {
-        console.log(error);
         this.showAlert(error);
     }
 
