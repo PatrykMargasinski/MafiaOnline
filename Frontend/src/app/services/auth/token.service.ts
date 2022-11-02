@@ -22,4 +22,9 @@ export class TokenService {
     const decoded = this.jwtHelper.decodeToken(sessionStorage.getItem("jwtToken"));
     return decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
   }
+
+  removeTokens(){
+    sessionStorage.removeItem("jwtToken");
+    sessionStorage.removeItem("refreshToken");
+  }
 }

@@ -30,6 +30,9 @@ import { MessageComponent } from './pages/message/message.component';
 import { SendMessageComponent } from './pages/message/send-message/send-message.component';
 import { ShowMessagesComponent } from './pages/message/show-messages/show-messages.component';
 import { ShowReportsComponent } from './pages/message/show-reports/show-reports.component';
+import { AccountSettingsComponent } from './pages/account-settings/account-settings.component';
+import { ChangePasswordComponent } from './pages/account-settings/change-password/change-password.component';
+import { DeleteAccountComponent } from './pages/account-settings/delete-account/delete-account.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -58,7 +61,10 @@ export function tokenGetter(){
     MessageComponent,
     SendMessageComponent,
     ShowMessagesComponent,
-    ShowReportsComponent
+    ShowReportsComponent,
+    AccountSettingsComponent,
+    ChangePasswordComponent,
+    DeleteAccountComponent
   ],
   imports: [
     BrowserModule,

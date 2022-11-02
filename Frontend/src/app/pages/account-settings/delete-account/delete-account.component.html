@@ -1,0 +1,10 @@
+<h5>Delete account</h5><br>
+<div class= "container col-6 p-4">
+    <div class="form-group">
+        <label for="pass">Password</label>
+        <input class="form-control" id="oldPass" type="password" name="pass" placeholder="Password required" [(ngModel)]="password">
+    </div>
+    <div class="text-center mt-3">
+        <button class="btn btn btn-outline-dark rounded-5 col-4" type="submit" (click)="deleteAccount()">Delete account</button>
+    </div>
+</div>

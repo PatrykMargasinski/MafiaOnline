@@ -1,3 +1,5 @@
+import { LoginRequest } from './../../../models/player/player.requests';
+import { PlayerService } from './../../../services/player/player.service';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
@@ -13,15 +15,15 @@ export class LoginComponent {
   invalidLogin: boolean;
   errorMessage: string;
 
-  constructor(private router: Router, private http: HttpClient) { }
+  constructor(private router: Router, private http: HttpClient, private playerService: PlayerService) { }
 
   login(form: NgForm) {
-    const credentials = {
+    const request: LoginRequest = {
       'Nick': form.value.nick,
       'Password': form.value.password
     }
 
-    this.http.post(environment.APIEndpoint + "/login", credentials)
+    this.playerService.login(request)
       .subscribe(response => {
         const token = (<any>response).Token;
         const refreshToken = (<any>response).RefreshToken;

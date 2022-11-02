@@ -19,6 +19,9 @@ import { AvailableMissionsComponent } from './pages/mission/available-missions/a
 import { PerformingMissionsComponent } from './pages/mission/performing-missions/performing-missions.component';
 import { GuardService } from './services/auth/guard.service';
 import { MessageComponent } from './pages/message/message.component';
+import { AccountSettingsComponent } from './pages/account-settings/account-settings.component';
+import { ChangePasswordComponent } from './pages/account-settings/change-password/change-password.component';
+import { DeleteAccountComponent } from './pages/account-settings/delete-account/delete-account.component';
 
 
 
@@ -48,6 +51,11 @@ const routes: Routes = [
     {path: 'reports', component: ShowReportsComponent},
     {path: 'send', component: SendMessageComponent},
   ]},
+  {path:'accountSettings',component: AccountSettingsComponent, canActivate: [GuardService], children:
+  [
+    {path: 'changePassword', component: ChangePasswordComponent},
+    {path: 'deleteAccount', component: DeleteAccountComponent},
+  ]}
 ];
 
 @NgModule({

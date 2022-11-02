@@ -41,5 +41,12 @@ namespace MafiaOnline.Controllers
             await _playerService.ChangePassword(user);
             return Ok();
         }
+
+        [HttpPost("/deleteAccount")]
+        public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest user)
+        {
+            await _playerService.DeleteAccount(user);
+            return Ok();
+        }
     }
 }

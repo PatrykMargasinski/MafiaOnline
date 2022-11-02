@@ -1,3 +1,4 @@
+import { TokenService } from 'src/app/services/auth/token.service';
 import { Component, OnInit } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -8,7 +9,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private jwtHelper: JwtHelperService) { }
+  constructor(private jwtHelper: JwtHelperService, private tokenService: TokenService) { }
 
   isUserAuthenticated(){
     const token: string = sessionStorage.getItem("jwtToken");
@@ -21,8 +22,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logOut(){
-    sessionStorage.removeItem("jwtToken");
-    sessionStorage.removeItem("refreshToken");
+    this.tokenService.removeTokens();
   }
 
   ngOnInit(): void {
