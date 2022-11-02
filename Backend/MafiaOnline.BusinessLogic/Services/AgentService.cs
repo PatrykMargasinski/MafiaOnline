@@ -7,6 +7,7 @@ using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -39,8 +40,9 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ISchedulerFactory _scheduler;
         private readonly IAgentFactory _agentFactory;
         private readonly IAgentRefreshJobRunner _agentRefreshJobRunner;
+        private readonly ILogger<AgentService> _logger;
 
-        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner)
+        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -48,6 +50,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _agentFactory = agentFactory;
             _scheduler = scheduler;
             _agentRefreshJobRunner = agentRefreshJobRunner;
+            _logger = logger;
         }
 
         /// <summary>

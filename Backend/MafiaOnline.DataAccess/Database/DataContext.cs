@@ -12,6 +12,7 @@ namespace MafiaOnline.DataAccess.Database
         public DataContext() { }
         public DataContext(DbContextOptions options) : base(options)
         {
+
         }
 
 

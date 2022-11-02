@@ -55,6 +55,7 @@ namespace MafiaOnline
             options
             .UseSqlServer(Configuration.GetConnectionString("MafiaAppCon"))
             .UseSqlServer(b => b.MigrationsAssembly("MafiaOnline.DataAccess"))
+            .EnableSensitiveDataLogging()
             );
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
