@@ -35,5 +35,12 @@ namespace MafiaOnline.Controllers
             var boss = await _bossService.GetBossDatas(bossId);
             return new JsonResult(boss);
         }
+
+        [HttpGet("similarNames")]
+        public async Task<IActionResult> GetSimilarBossFullNames(string startingWith)
+        {
+            var boss = await _bossService.GetSimilarBossFullNames(startingWith);
+            return new JsonResult(boss);
+        }
     }
 }

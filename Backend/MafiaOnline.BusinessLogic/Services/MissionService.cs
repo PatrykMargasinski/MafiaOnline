@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MafiaAPI.Jobs;
 using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.BusinessLogic.Entities.Mission;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
@@ -17,7 +18,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
     public interface IMissionService
     {
-        Task StartMission(long agentId, long missionId);
+        Task StartMission(StartMissionRequest request);
         Task<PerformingMission> DoMission(long agentId, long missionId);
         Task EndMission(long pmId);
         Task<IList<MissionDTO>> GetAvailableMissions();
@@ -48,9 +49,9 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Starts mission. It will be performed after a time depending on the mission
         /// </summary>
-        public async Task StartMission(long agentId, long missionId)
+        public async Task StartMission(StartMissionRequest request)
         {
-            var pm = await DoMission(agentId, missionId);
+            var pm = await DoMission(request.AgentId, request.MissionId);
             await _jobRunner.Start(_scheduler, pm.Id, pm.CompletionTime);
         }
 

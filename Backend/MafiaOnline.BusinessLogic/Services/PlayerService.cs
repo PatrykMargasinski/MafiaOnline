@@ -103,8 +103,9 @@ namespace MafiaOnline.BusinessLogic.Services
                     Intelligence = random.Next(2, 5),
                     Dexterity = random.Next(2, 5),
                     Upkeep = random.Next(2, 5) * 10,
-                    BossId = boss.Id,
-                    State = AgentState.Active
+                    Boss = boss,
+                    State = AgentState.Active,
+                    IsFromBossFamily = true
                 };
                 _unitOfWork.Agents.Create(newAgent);
             }
@@ -163,7 +164,11 @@ namespace MafiaOnline.BusinessLogic.Services
                 agent.Boss = null;
                 agent.State = AgentState.Renegate;
             }
+            _unitOfWork.Bosses.DeleteById(boss.Id);
+            _unitOfWork.Players.DeleteById(player.Id);
+
             _unitOfWork.Agents.UpdateRange(othersAgents.ToArray());
+            _unitOfWork.Commit();
         }
     }
 }

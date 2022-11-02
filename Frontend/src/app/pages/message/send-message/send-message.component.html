@@ -1,0 +1,35 @@
+<br><h3>Send message</h3><br>
+<button class="btn btn-success" (click)="returnToMessageList()">Go to message list</button>
+<br><br>
+
+<div class=" border border-dark p-4">
+	<form class="form-signin container-fluid col-12 align-middle justify-content-center mt-2" #sendForm="ngForm" (ngSubmit)="sendMessage()">
+		<div class="">
+			<div class="form-group mt-12">
+				<label>To</label>
+				<input (input)="findSimilarBossNames(this.messageToSend.ToBossFullName)" name="fullname" class="form-control" placeholder="Boss fullname required"
+				[(ngModel)]="this.messageToSend.ToBossFullName" list="nameHelper" [matAutocomplete]="auto">
+				<mat-autocomplete #auto="matAutocomplete">
+					<mat-option *ngFor="let bossName of similarBossNames" [value]="bossName">
+					  {{bossName}}
+					</mat-option>
+				</mat-autocomplete>
+			</div>
+
+			<div class="form-group mt-12">
+				<label for="subject">Subject</label>
+				<textarea class="form-control" id="subject" placeholder="Subject required" name="subject" [(ngModel)]="this.messageToSend.Subject" rows="1" cols="50" maxlength="20"></textarea>
+			</div>
+
+			<div class="form-group mt-12">
+				<label for="content">Content</label>
+				<textarea class="form-control" id="content" placeholder="Content required" name="content" [(ngModel)]="this.messageToSend.Content" rows="8" cols="50" maxlength="1000"></textarea>
+			</div>
+
+			<div class="text-center mt-3">
+				<button class="btn btn btn-outline-dark rounded-5 p-1 col-1" type="submit">Send</button>
+				<br>
+			</div>
+		</div>
+	</form>
+</div>

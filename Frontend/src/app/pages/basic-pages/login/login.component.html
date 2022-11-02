@@ -1,0 +1,17 @@
+<form class=" form-signin container-fluid col-3 border border-dark align-middle justify-content-center mt-2" #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+	<div class="p-4">
+		<div class="form-group">
+			<label for="nick">Nick</label>
+			<input class="form-control" id="nick" name="nick" placeholder="Nick required" ngModel class="form-control">
+		</div>
+
+		<div class="form-group mt-4">
+			<label for="password">Password</label>
+			<input class="form-control" type="password" id="password" placeholder="Password required" name="password" ngModel class="form-control">
+		</div>
+
+		<div class="text-center mt-3">
+			<button class="btn btn btn-outline-dark rounded-5 col-10" type="submit">Zaloguj się</button>
+		</div>
+	</div>
+</form>

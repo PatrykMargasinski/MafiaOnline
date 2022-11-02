@@ -50,7 +50,7 @@ namespace MafiaOnline.BusinessLogic.Utils
                 Subject = _securityUtils.Encrypt(subject),
                 ToBossId = toBoss.Id,
                 ReceivedDate = DateTime.Now,
-                Type = MessageType.BossMessage,
+                Type = MessageType.Report,
                 Seen = false
             };
             _unitOfWork.Messages.Create(message);

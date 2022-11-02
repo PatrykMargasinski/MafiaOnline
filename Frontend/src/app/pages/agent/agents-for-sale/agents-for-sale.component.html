@@ -1,0 +1,24 @@
+<br><h3>Agents for recruitment</h3><br>
+
+<table class="table table-striped text-center">
+  <thead>
+    <tr>
+      <th scope="col">LastName</th>
+      <th scope="col">FirstName</th>
+      <th scope="col">Statistics</th>
+      <th scope="col">Price</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let agent of AgentsForSale">
+      <td>{{agent.LastName}}</td>
+      <td>{{agent.FirstName}}</td>
+      <td>{{agent.Strength}}/{{agent.Dexterity}}/{{agent.Intelligence}}</td>
+      <td>{{agent.Price}}</td>
+      <td>
+        <button class="btn btn-success" (click)="recruitAgent(agent.Id)">Recruit</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

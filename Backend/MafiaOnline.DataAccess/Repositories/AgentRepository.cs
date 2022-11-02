@@ -55,7 +55,7 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var agents = await _context.Agents
                 .Include(x => x.AgentForSale)
-                .Where(z => z.State == AgentState.OnSale)
+                .Where(z => z.State == AgentState.ForSale)
                 .ToListAsync();
             return agents;
         }

@@ -6,6 +6,8 @@ using MafiaOnline.BusinessLogic.Factories;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -23,8 +25,8 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<AgentDTO>> GetActiveAgents(long bossId);
         Task<IList<AgentOnMissionDTO>> GetAgentsOnMission(long bossId);
         Task<IList<AgentForSaleDTO>> GetAgentsForSale();
-        Task<Agent> AbandonAgent(long id);
-        Task<Agent> RecruitAgent(long bossId, long agentId);
+        Task<Agent> DismissAgent(DismissAgentRequest request);
+        Task<Agent> RecruitAgent(RecruitAgentRequest request);
         Task RefreshAgents();
         Task StartRefreshAgentsJob();
 
@@ -38,8 +40,9 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ISchedulerFactory _scheduler;
         private readonly IAgentFactory _agentFactory;
         private readonly IAgentRefreshJobRunner _agentRefreshJobRunner;
+        private readonly ILogger<AgentService> _logger;
 
-        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner)
+        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -47,6 +50,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _agentFactory = agentFactory;
             _scheduler = scheduler;
             _agentRefreshJobRunner = agentRefreshJobRunner;
+            _logger = logger;
         }
 
         /// <summary>
@@ -95,12 +99,12 @@ namespace MafiaOnline.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Boss abandons an agent
+        /// Boss dismisses an agent
         /// </summary>
-        public async Task<Agent> AbandonAgent(long agentId)
+        public async Task<Agent> DismissAgent(DismissAgentRequest request)
         {
-            await _agentValidator.ValidateAbandonAgent(agentId);
-            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            await _agentValidator.ValidateDismissAgent(request);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
             agent.State = AgentState.Renegate;
             agent.Boss = null;
             agent.BossId = null;
@@ -111,13 +115,13 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Boss recruits an agent
         /// </summary>
-        public async Task<Agent> RecruitAgent(long bossId, long agentId)
+        public async Task<Agent> RecruitAgent(RecruitAgentRequest request)
         {
-            await _agentValidator.ValidateRecruitAgent(bossId, agentId);
-            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
-            var boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
+            await _agentValidator.ValidateRecruitAgent(request);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(request.BossId);
             boss.Money -= agent.AgentForSale.Price;
-            _unitOfWork.AgentsForSale.DeleteByAgentId(agentId);
+            _unitOfWork.AgentsForSale.DeleteByAgentId(request.AgentId);
             agent.Boss = boss;
             agent.State = AgentState.Active;
             _unitOfWork.Commit();
@@ -152,7 +156,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 }
                 var agentForSale = await _agentFactory.CreateForSaleInstance(newAgent);
                 _unitOfWork.AgentsForSale.Create(agentForSale);
-                newAgent.State = AgentState.OnSale;
+                newAgent.State = AgentState.ForSale;
             }
             _unitOfWork.Commit();
         }

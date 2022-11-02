@@ -1,6 +1,7 @@
 using MafiaOnline.BusinessLogic.Services;
 using Microsoft.Extensions.Logging;
 using Quartz;
+using Quartz.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -36,6 +37,11 @@ namespace MafiaAPI.Jobs
             IScheduler scheduler = await factory.GetScheduler();
             IJobDetail job = PrepareJobDetail();
             ITrigger trigger = PrepareTrigger(finishTime);
+
+            if (await scheduler.CheckExists(trigger.Key))
+            {
+                await scheduler.UnscheduleJob(trigger.Key);
+            }
 
             if (await scheduler.CheckExists(job.Key))
             {

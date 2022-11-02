@@ -1,4 +1,5 @@
 ﻿using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.BusinessLogic.Entities.Mission;
 using MafiaOnline.BusinessLogic.Services;
 using MafiaOnline.DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,10 @@ namespace MafiaOnline.Controllers
         }
 
         [HttpPost("start")]
-        public async Task<IActionResult> StartMission(long agentId, long missionId)
+        public async Task<IActionResult> StartMission([FromBody] StartMissionRequest request)
         {
 
-            await _missionService.StartMission(agentId, missionId);
+            await _missionService.StartMission(request);
             return Ok();
         }
 
@@ -36,7 +37,7 @@ namespace MafiaOnline.Controllers
             return new JsonResult(agents);
         }
 
-        [HttpGet("performing/{bossId}")]
+        [HttpGet("performing")]
         public async Task<IActionResult> GetPerformingMissions(long bossId)
         {
             var missions = await _missionService.GetPerformingMissions(bossId);
