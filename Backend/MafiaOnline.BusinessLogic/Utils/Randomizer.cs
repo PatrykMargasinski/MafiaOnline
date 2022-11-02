@@ -1,0 +1,38 @@
+﻿using MafiaOnline.DataAccess.Entities;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MafiaOnline.BusinessLogic.Utils
+{
+    public interface IRandomizer
+    {
+        int Next(int x);
+    }
+
+    public class Randomizer : IRandomizer
+    {
+        private readonly Random _random;
+        public Randomizer()
+        {
+            _random = new Random();
+        }
+
+
+        /// <summary>
+        /// Returns random number from 0 to y
+        /// </summary>
+        public int Next(int x)
+        {
+            return _random.Next(x);
+        }
+    }
+}
