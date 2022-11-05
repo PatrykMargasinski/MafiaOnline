@@ -1,6 +1,7 @@
 ﻿using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,6 +83,22 @@ namespace MafiaOnline.DataAccess.Repositories
                 .Include(x => x.AgentForSale)
                 .ToListAsync();
             return agent;
+        }
+
+        public override void DeleteById(long id)
+        {
+            base.DeleteById(id);
+            var agentForSale = _context.AgentsForSale.Where(x=> x.AgentId == id).FirstOrDefault();
+            if (agentForSale != null)
+                _context.AgentsForSale.Remove(agentForSale);
+        }
+
+        public override void DeleteByIds(long[] ids)
+        {
+            base.DeleteByIds(ids);
+            var agentsForSale = _context.AgentsForSale.Where(x => ids.Contains(x.AgentId)).ToList();
+            if (agentsForSale.Count!=0)
+                _context.AgentsForSale.RemoveRange(agentsForSale);
         }
     }
 }

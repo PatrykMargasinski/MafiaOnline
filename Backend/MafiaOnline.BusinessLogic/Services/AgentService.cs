@@ -3,6 +3,7 @@ using MafiaAPI.Jobs;
 using MafiaOnline.BusinessLogic.Const;
 using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Factories;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
@@ -28,7 +29,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<Agent> DismissAgent(DismissAgentRequest request);
         Task<Agent> RecruitAgent(RecruitAgentRequest request);
         Task RefreshAgents();
-        Task StartRefreshAgentsJob();
+        Task ScheduleRefreshAgentsJob();
 
     }
 
@@ -41,8 +42,9 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IAgentFactory _agentFactory;
         private readonly IAgentRefreshJobRunner _agentRefreshJobRunner;
         private readonly ILogger<AgentService> _logger;
+        private readonly IRandomizer _randomizer;
 
-        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger)
+        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger, IRandomizer randomizer)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -51,6 +53,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _scheduler = scheduler;
             _agentRefreshJobRunner = agentRefreshJobRunner;
             _logger = logger;
+            _randomizer = randomizer;
         }
 
         /// <summary>
@@ -133,19 +136,38 @@ namespace MafiaOnline.BusinessLogic.Services
         /// </summary>
         public async Task RefreshAgents()
         {
+            _logger.LogInformation("Refreshing agents started at: " + DateTime.Now.ToString());
             var agentsForSale = await _unitOfWork.Agents.GetAgentsForSale();
             var renegates = await _unitOfWork.Agents.GetRenegates();
+
+            //removing agents being too long for sale
+            var agentsToRemove = agentsForSale.Where(x => DateTime.Now > x.AgentForSale.StartOfSale.AddMinutes(AgentConsts.MINUTES_TO_REMOVE_FROM_SALE));
+            IList<long> removedIds = new List<long>();
+
+            foreach(var agent in agentsToRemove)
+            {
+                if(_randomizer.Next(2)%2==1)
+                {
+                    removedIds.Add(agent.Id);
+                    
+                }
+            }
+
+            _logger.LogInformation("Agents to remove: " + string.Join(',',removedIds));
+
+            _unitOfWork.Agents.DeleteByIds(removedIds.ToArray());
+
+            agentsForSale = agentsForSale.Where(x => !removedIds.Contains(x.Id)).ToList();
 
             //replenishment of agents for sale
             for (int i = agentsForSale.Count; i < AgentConsts.NUMBER_OF_AGENTS_FOR_SALE; i++)
             {
-                var random = new Random();
                 Agent newAgent;
 
                 //50% chance that renegate agent become for sale, 50% that there will be new agent created
-                if (random.Next(2)%2==1 && renegates.Count!=0)
+                if (_randomizer.Next(2)%2==1 && renegates.Count!=0)
                 {
-                    newAgent = renegates[random.Next(0, renegates.Count)];
+                    newAgent = renegates[_randomizer.Next(0, renegates.Count)];
                     renegates.Remove(newAgent);
                 }
                 else
@@ -156,14 +178,12 @@ namespace MafiaOnline.BusinessLogic.Services
                 }
                 var agentForSale = await _agentFactory.CreateForSaleInstance(newAgent);
                 _unitOfWork.AgentsForSale.Create(agentForSale);
-                newAgent.State = AgentState.ForSale;
             }
             _unitOfWork.Commit();
         }
 
-        public async Task StartRefreshAgentsJob()
+        public async Task ScheduleRefreshAgentsJob()
         {
-            await RefreshAgents();
             await _agentRefreshJobRunner.Start(_scheduler, DateTime.Now.AddMinutes(AgentConsts.MINUTES_TO_REFRESH_AGENTS_FOR_SALE));
         }
     }

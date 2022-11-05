@@ -60,7 +60,7 @@ namespace MafiaOnline.BusinessLogic.Services
                     scope.ServiceProvider
                         .GetService<IAgentService>();
 
-                await agentService.StartRefreshAgentsJob();
+                await agentService.ScheduleRefreshAgentsJob();
             }
         }
     }

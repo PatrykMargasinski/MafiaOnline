@@ -10,6 +10,7 @@ namespace MafiaOnline.DataAccess.Entities
     {
         public long AgentId { get; set; }
         public long Price { get; set; }
+        public DateTime StartOfSale { get; set; }
         public virtual Agent Agent { get; set; }
     }
 

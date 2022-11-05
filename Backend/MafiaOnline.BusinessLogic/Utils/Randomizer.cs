@@ -16,6 +16,7 @@ namespace MafiaOnline.BusinessLogic.Utils
     public interface IRandomizer
     {
         int Next(int x);
+        int Next(int x, int y);
     }
 
     public class Randomizer : IRandomizer
@@ -33,6 +34,14 @@ namespace MafiaOnline.BusinessLogic.Utils
         public int Next(int x)
         {
             return _random.Next(x);
+        }
+
+        /// <summary>
+        /// Returns random number from x to y
+        /// </summary>
+        public int Next(int x, int y)
+        {
+            return _random.Next(x, y);
         }
     }
 }

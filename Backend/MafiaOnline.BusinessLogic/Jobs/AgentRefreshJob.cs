@@ -1,9 +1,11 @@
+using MafiaOnline.BusinessLogic.Const;
 using MafiaOnline.BusinessLogic.Services;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Logging;
 using System;
 using System.Threading.Tasks;
+using static Quartz.Logging.OperationName;
 
 namespace MafiaAPI.Jobs
 {
@@ -26,7 +28,8 @@ namespace MafiaAPI.Jobs
             JobKey key = context.JobDetail.Key;
 
             JobDataMap dataMap = context.JobDetail.JobDataMap;
-            await _agentService.StartRefreshAgentsJob();
+            await _agentService.RefreshAgents();
+            await _agentService.ScheduleRefreshAgentsJob();
         }
     }
 
@@ -35,20 +38,17 @@ namespace MafiaAPI.Jobs
         public async Task Start(ISchedulerFactory factory, DateTime finishTime)
         {
             IScheduler scheduler = await factory.GetScheduler();
-            IJobDetail job = PrepareJobDetail();
+
+            JobKey jobKey = new("agentRefreshJob", "group1");
+            if (await scheduler.CheckExists(jobKey))
+            {
+                await scheduler.DeleteJob(jobKey);
+            }
+
+            IJobDetail newJob = PrepareJobDetail();
             ITrigger trigger = PrepareTrigger(finishTime);
 
-            if (await scheduler.CheckExists(trigger.Key))
-            {
-                await scheduler.UnscheduleJob(trigger.Key);
-            }
-
-            if (await scheduler.CheckExists(job.Key))
-            {
-                await scheduler.DeleteJob(job.Key);
-            }
-
-            await scheduler.ScheduleJob(job, trigger);
+            await scheduler.ScheduleJob(newJob, trigger);
             await scheduler.Start();
         }
 
