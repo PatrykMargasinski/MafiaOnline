@@ -21,60 +21,75 @@ namespace MafiaOnline.BusinessLogic.Utils
     public class SecurityUtils : ISecurityUtils
     {
         private readonly IConfiguration _config;
+
+        private string aes_key;
+        private string aes_iv;
         public SecurityUtils(IConfiguration config)
         {
             _config = config;
+            aes_key = _config.GetValue<string>("Security:EncryptKey");
+            aes_iv = _config.GetValue<string>("Security:IV");
         }
 
         private readonly byte[] IV = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
-        /// <summary>
-        /// Decrypts a text
-        /// </summary>
-        public string Decrypt(string text)
+        public string Encrypt(string plainText)
         {
-            byte[] bytes = Convert.FromBase64String(text);
-            SymmetricAlgorithm crypt = Aes.Create();
-            HashAlgorithm hash = MD5.Create();
-            var key = _config.GetValue<string>("Security:EncryptKey");
-            crypt.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(key));
-            crypt.IV = IV;
+            byte[] encrypted;
 
-            using (MemoryStream memoryStream = new MemoryStream(bytes))
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
-                using (CryptoStream cryptoStream =
-                   new CryptoStream(memoryStream, crypt.CreateDecryptor(), CryptoStreamMode.Read))
+                aes.Key = Convert.FromBase64String(aes_key);
+                aes.IV = Convert.FromBase64String(aes_iv);
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+
+                ICryptoTransform enc = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    byte[] decryptedBytes = new byte[bytes.Length];
-                    cryptoStream.Read(decryptedBytes, 0, decryptedBytes.Length);
-                    return Encoding.Unicode.GetString(decryptedBytes).Replace("\0", string.Empty);
+                    using (CryptoStream cs = new CryptoStream(ms, enc, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter sw = new StreamWriter(cs))
+                        {
+                            sw.Write(plainText);
+                        }
+
+                        encrypted = ms.ToArray();
+                    }
                 }
             }
+
+            return Convert.ToBase64String(encrypted);
         }
 
-        /// <summary>
-        /// Encrypts a text
-        /// </summary>
-        public string Encrypt(string text)
+        public string Decrypt(string encryptedText)
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(text);
-            SymmetricAlgorithm crypt = Aes.Create();
-            HashAlgorithm hash = MD5.Create();
-            crypt.BlockSize = 128;
-            var key = _config.GetValue<string>("Security:EncryptKey");
-            crypt.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(key));
-            crypt.IV = IV;
+            string decrypted = null;
+            byte[] cipher = Convert.FromBase64String(encryptedText);
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
-                using (CryptoStream cryptoStream =
-                   new CryptoStream(memoryStream, crypt.CreateEncryptor(), CryptoStreamMode.Write))
-                {
-                    cryptoStream.Write(bytes, 0, bytes.Length);
-                }
+                aes.Key = Convert.FromBase64String(aes_key);
+                aes.IV = Convert.FromBase64String(aes_iv);
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
 
-                return Convert.ToBase64String(memoryStream.ToArray());
+                ICryptoTransform dec = aes.CreateDecryptor(aes.Key, aes.IV);
+
+                using (MemoryStream ms = new MemoryStream(cipher))
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, dec, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader sr = new StreamReader(cs))
+                        {
+                            decrypted = sr.ReadToEnd();
+                        }
+                    }
+                }
             }
+
+            return decrypted;
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { BasicUtils } from './../../../utils/basic-utils';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Mission } from 'src/app/models/mission/mission.models';
 
@@ -13,7 +14,7 @@ export class MissionCardComponent implements OnInit {
   @Input() content: any;
   @Output() getMissionId = new EventEmitter<number>();
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal, private basicUtils: BasicUtils) { }
 
   ngOnInit(): void {
 
@@ -27,6 +28,12 @@ export class MissionCardComponent implements OnInit {
     }, (reason) => {
 
     });
+  }
+
+  printMissionPercentagesWithColors(diff: number, str: number, dex: number, int: number)
+  {
+    const text = this.basicUtils.printMissionPercentagesWithColors(diff,str,dex,int);
+    return text;
   }
 
 }

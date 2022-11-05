@@ -1,4 +1,4 @@
-import { BasicUtils } from './../../../utils/basic-utils/basic-utils';
+import { BasicUtils } from './../../../utils/basic-utils';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Message} from 'src/app/models/message/message.models';

@@ -7,7 +7,7 @@
     <p>Duration: {{mission.Duration}}s</p>
   </div>
   <div class="col-6 text-left">
-    <p>Difficuly: {{mission.DifficultyLevel}}</p>
+    <span [innerHTML]="printMissionPercentagesWithColors(mission.DifficultyLevel, mission.StrengthPercentage, mission.DexterityPercentage, mission.IntelligencePercentage)"></span>
   </div>
   <div class="col-6 text-right">
      <p>Reward: {{mission.Loot}}$</p>
