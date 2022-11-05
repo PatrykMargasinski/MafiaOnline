@@ -20,6 +20,7 @@ namespace MafiaOnline.DataAccess.Database
         public virtual DbSet<Boss> Bosses { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<Mission> Missions { get; set; }
+        public virtual DbSet<MissionTemplate> MissionTemplates { get; set; }
         public virtual DbSet<PerformingMission> PerformingMissions { get; set; }
         public virtual DbSet<Player> Players { get; set; }
         public virtual DbSet<AgentForSale> AgentsForSale { get; set; }

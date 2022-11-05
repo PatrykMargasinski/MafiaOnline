@@ -15,6 +15,7 @@ namespace MafiaOnline.DataAccess.Database
             modelBuilder.Entity<Mission>().HasData(PrepareMissions());
             modelBuilder.Entity<PerformingMission>().HasData(PreparePerformingMissions());
             modelBuilder.Entity<Name>().HasData(PrepareNames());
+            modelBuilder.Entity<MissionTemplate>().HasData(PrepareMissionTemplates());
         }
 
         private static IList<Boss> PrepareBosses()
@@ -222,6 +223,19 @@ namespace MafiaOnline.DataAccess.Database
                 new Name (){ Id=150,Text="Dena",Type=NameType.LastName},
                 new Name (){ Id=151,Text="Gregorio",Type=NameType.LastName},
                 new Name (){ Id=152,Text="Parrinello",Type=NameType.LastName}
+            };
+        }
+
+        private static IList<MissionTemplate> PrepareMissionTemplates()
+        {
+            return new List<MissionTemplate>
+            {
+                new MissionTemplate (){ Id=1, Name="Assassination", MinDifficulty=4, MaxDifficulty=8, MinLoot = 1000, MaxLoot=5000, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=2, Name="Theft", MinDifficulty=4, MaxDifficulty=8, MinLoot = 1000, MaxLoot=5000, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=3, Name="Money laundering", MinDifficulty=4, MaxDifficulty=8, MinLoot = 1000, MaxLoot=5000, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=4, Name = "Bank robbery", MinDifficulty=6, MaxDifficulty=10, MinLoot = 4000, MaxLoot=10000, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=5, Name = "Drug production", MinDifficulty=6, MaxDifficulty=10, MinLoot = 4000, MaxLoot=10000, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=6, Name = "Arms trade", MinDifficulty=6, MaxDifficulty=10, MinLoot = 4000, MaxLoot=10000, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, MinDuration=10, MaxDuration=30 },
             };
         }
     }
