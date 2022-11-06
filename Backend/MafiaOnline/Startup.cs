@@ -128,7 +128,8 @@ namespace MafiaOnline
             });
 
             services.AddLogging(loggingBuilder => {
-                loggingBuilder.AddFile("app.log", append: true);
+                var loggingSection = Configuration.GetSection("Logging");
+                loggingBuilder.AddFile(loggingSection);
             });
         }
 

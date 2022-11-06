@@ -9,6 +9,6 @@ namespace MafiaOnline.BusinessLogic.Const
     public class MissionConsts
     {
         public const int MAX_NUMBER_OF_MISSIONS = 12;
-        public const int MINUTES_TO_REFRESH_MISSIONS = 5;
+        public const int MINUTES_TO_REFRESH_MISSIONS = 1;
     }
 }

@@ -118,10 +118,18 @@ namespace MafiaOnline.BusinessLogic.Services
             {
                 info += ("\nMission failed.\n");
             }
-            agent.State = AgentState.Active;
-            mission.State = MissionState.Available;
             await _reporter.CreateReport(bossId, "Mission: " + mission.Name, info);
+
+            agent.State = AgentState.Active;
             _unitOfWork.PerformingMissions.DeleteById(pm.Id);
+            if (mission.RepeatableMission == true)
+            {
+                mission.State = MissionState.Available;
+            }
+            else
+            {
+                _unitOfWork.Missions.DeleteById(mission.Id);
+            }
             _unitOfWork.Commit();
         }
 
