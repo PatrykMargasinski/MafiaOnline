@@ -50,13 +50,13 @@ namespace MafiaOnline.DataAccess.Database
         private static IList<Mission> PrepareMissions()
         {
             return new List<Mission> {
-                new Mission{Id=1, Name="Bank robbery", DifficultyLevel=7, Loot=5000, Duration=30, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available},
-                new Mission{Id=2, Name="Senator assassination", DifficultyLevel=9, Loot=10000, Duration=10, StrengthPercentage=80, DexterityPercentage=20, IntelligencePercentage=0, State=MissionState.Available},
-                new Mission{Id=3, Name="Party", DifficultyLevel=2, Loot=100, Duration=10, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, State=MissionState.Available},
-                new Mission{Id=4, Name="Buy a coffee", DifficultyLevel=1, Loot=10, Duration=5, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available},
-                new Mission{Id=5, Name="Money laundering", DifficultyLevel=5, Loot=1000, Duration=55, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, State=MissionState.Available},
-                new Mission{Id=6, Name="Car theft", DifficultyLevel=6, Loot=2000, Duration=3600, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available},
-                new Mission{Id=7, Name="Arms trade", DifficultyLevel=8, Loot=4000, Duration=15, StrengthPercentage=40, DexterityPercentage=20, IntelligencePercentage=40, State=MissionState.Available}
+                new Mission{Id=1, Name="Bank robbery", DifficultyLevel=7, Loot=5000, Duration=30, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=2, Name="Senator assassination", DifficultyLevel=9, Loot=10000, Duration=10, StrengthPercentage=80, DexterityPercentage=20, IntelligencePercentage=0, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=3, Name="Party", DifficultyLevel=2, Loot=100, Duration=10, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=4, Name="Buy a coffee", DifficultyLevel=1, Loot=10, Duration=5, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=5, Name="Money laundering", DifficultyLevel=5, Loot=1000, Duration=55, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=6, Name="Car theft", DifficultyLevel=6, Loot=2000, Duration=3600, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=7, Name="Arms trade", DifficultyLevel=8, Loot=4000, Duration=15, StrengthPercentage=40, DexterityPercentage=20, IntelligencePercentage=40, State=MissionState.Available, RepeatableMission = true}
             };
         }
 

@@ -15,6 +15,7 @@ namespace MafiaOnline.DataAccess.Entities
         public int IntelligencePercentage { get; set; }
         public int Loot { get; set; }
         public double Duration { get; set; }
+        public bool RepeatableMission { get; set; }
         public MissionState State { get; set; }
         public virtual PerformingMission PerformingMission { get; set; }
     }
