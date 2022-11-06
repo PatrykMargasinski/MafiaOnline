@@ -236,6 +236,12 @@ namespace MafiaOnline.DataAccess.Database
                 new MissionTemplate (){ Id=4, Name = "Bank robbery", MinDifficulty=6, MaxDifficulty=10, MinLoot = 4000, MaxLoot=10000, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, MinDuration=10, MaxDuration=30 },
                 new MissionTemplate (){ Id=5, Name = "Drug production", MinDifficulty=6, MaxDifficulty=10, MinLoot = 4000, MaxLoot=10000, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, MinDuration=10, MaxDuration=30 },
                 new MissionTemplate (){ Id=6, Name = "Arms trade", MinDifficulty=6, MaxDifficulty=10, MinLoot = 4000, MaxLoot=10000, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=7, Name = "Vandalism", MinDifficulty=3, MaxDifficulty=7, MinLoot = 2000, MaxLoot=2000, StrengthPercentage=80, DexterityPercentage=10, IntelligencePercentage=10, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=8, Name = "Arson on the building", MinDifficulty=3, MaxDifficulty=7, MinLoot = 2000, MaxLoot=5000, StrengthPercentage=10, DexterityPercentage=80, IntelligencePercentage=10, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=9, Name = "Gambling manilupation", MinDifficulty=3, MaxDifficulty=7, MinLoot = 2000, MaxLoot=5000, StrengthPercentage=10, DexterityPercentage=10, IntelligencePercentage=80, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=10, Name = "Blackmail", MinDifficulty=4, MaxDifficulty=6, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=40, DexterityPercentage=30, IntelligencePercentage=30, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=11, Name = "Drug smuggling", MinDifficulty=4, MaxDifficulty=6, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=30, DexterityPercentage=40, IntelligencePercentage=30, MinDuration=10, MaxDuration=30 },
+                new MissionTemplate (){ Id=12, Name = "Deal you can not throw away", MinDifficulty=6, MaxDifficulty=7, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=30, DexterityPercentage=30, IntelligencePercentage=40, MinDuration=10, MaxDuration=30 },
             };
         }
     }

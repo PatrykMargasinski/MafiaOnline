@@ -153,7 +153,7 @@ namespace MafiaOnline.BusinessLogic.Services
             {
                 var newMission = await _missionFactory.CreateByMissionTemplate(template);
                 _unitOfWork.Missions.Create(newMission);
-                _logger.LogInformation("Mission with id: " + newMission.Id + " added" );
+                _logger.LogInformation("Mission from template" + template.Id + " added" );
             }
             _unitOfWork.Commit();
         }
