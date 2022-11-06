@@ -12,6 +12,7 @@ namespace MafiaOnline.DataAccess.Database
         IPlayerRepository Players { get; }
         IMessageRepository Messages { get; }
         IMissionRepository Missions { get; }
+        IMissionTemplateRepository MissionTemplates { get; }
         IPerformingMissionRepository PerformingMissions { get; }
         INameRepository Names { get; }
     }
@@ -27,6 +28,7 @@ namespace MafiaOnline.DataAccess.Database
             Bosses = new BossRepository(context);
             Players = new PlayerRepository(context);
             Missions = new MissionRepository(context);
+            MissionTemplates = new MissionTemplateRepository(context);
             PerformingMissions = new PerformingMissionRepository(context);
             Messages = new MessageRepository(context);
             Names = new NameRepository(context);
@@ -38,6 +40,7 @@ namespace MafiaOnline.DataAccess.Database
         public IBossRepository Bosses { get; }
         public IPlayerRepository Players { get; }
         public IMissionRepository Missions { get; }
+        public IMissionTemplateRepository MissionTemplates { get; }
         public IMessageRepository Messages { get; }
         public IPerformingMissionRepository PerformingMissions { get; }
         public INameRepository Names { get; }

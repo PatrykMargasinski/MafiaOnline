@@ -15,6 +15,7 @@ namespace MafiaOnline.DataAccess.Repositories
         public Task<T> GetByIdAsync(long id);
         public Task<IList<T>> GetByIdsAsync(long[] ids);
         public Task<T> GetRandomAsync();
+        public Task<IList<T>> GetRandomsAsync(int count);
         public long Create(T model);
         public void Update(T model);
         public void UpdateRange(T[] models);
@@ -50,6 +51,11 @@ namespace MafiaOnline.DataAccess.Repositories
         public async virtual Task<T> GetRandomAsync()
         {
             return await entities.OrderBy(r => Guid.NewGuid()).FirstOrDefaultAsync();
+        }
+
+        public async virtual Task<IList<T>> GetRandomsAsync(int count)
+        {
+            return await entities.OrderBy(r => Guid.NewGuid()).Take(count).ToListAsync();
         }
 
         public virtual long Create(T model)

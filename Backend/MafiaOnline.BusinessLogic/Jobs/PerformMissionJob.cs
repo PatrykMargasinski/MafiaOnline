@@ -8,12 +8,12 @@ namespace MafiaAPI.Jobs
 {
 
     [DisallowConcurrentExecution]
-    public class MissionJob : IJob
+    public class PerformMissionJob : IJob
     {
-        private readonly ILogger<MissionJob> _logger;
+        private readonly ILogger<PerformMissionJob> _logger;
         private readonly IMissionService _missionService;
-        public MissionJob(
-            ILogger<MissionJob> logger,
+        public PerformMissionJob(
+            ILogger<PerformMissionJob> logger,
             IMissionService missionService
             )
         {
@@ -30,7 +30,7 @@ namespace MafiaAPI.Jobs
         }
     }
 
-    public class MissionJobRunner : IMissionJobRunner
+    public class PerformMissionJobRunner : IPerformMissionJobRunner
     {
         public async Task Start(ISchedulerFactory factory, long pmId, DateTime finishTime)
         {
@@ -44,7 +44,7 @@ namespace MafiaAPI.Jobs
 
         private IJobDetail PrepareJobDetail(long pmId)
         {
-            return JobBuilder.Create<MissionJob>()
+            return JobBuilder.Create<PerformMissionJob>()
                 .WithIdentity("missionJob" + pmId, "group1")
                 .UsingJobData("pmId", pmId.ToString())
                 .Build();
@@ -59,7 +59,7 @@ namespace MafiaAPI.Jobs
         }
     }
 
-    public interface IMissionJobRunner
+    public interface IPerformMissionJobRunner
     {
         Task Start(ISchedulerFactory factory, long pmId, DateTime finishTime);
     }

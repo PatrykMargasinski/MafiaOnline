@@ -39,7 +39,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
         private async void OnStarted()
         {
-            await AgentRefreshJob();
+            await RefreshJobs();
         }
 
         private async void OnStopping()
@@ -52,7 +52,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
         }
 
-        private async Task AgentRefreshJob()
+        private async Task RefreshJobs()
         {
             using (var scope = _services.CreateScope())
             {
@@ -61,6 +61,12 @@ namespace MafiaOnline.BusinessLogic.Services
                         .GetService<IAgentService>();
 
                 await agentService.ScheduleRefreshAgentsJob();
+
+                IMissionService missionService =
+                    scope.ServiceProvider
+                        .GetService<IMissionService>();
+
+                await missionService.ScheduleRefreshMissionsJob();
             }
         }
     }

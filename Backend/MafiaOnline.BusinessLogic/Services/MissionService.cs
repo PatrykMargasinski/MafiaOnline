@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using MafiaAPI.Jobs;
+using MafiaOnline.BusinessLogic.Const;
 using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Entities.Mission;
+using MafiaOnline.BusinessLogic.Factories;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -23,6 +26,8 @@ namespace MafiaOnline.BusinessLogic.Services
         Task EndMission(long pmId);
         Task<IList<MissionDTO>> GetAvailableMissions();
         Task<IList<PerformingMissionDTO>> GetPerformingMissions(long bossId);
+        Task RefreshMissions();
+        Task ScheduleRefreshMissionsJob();
     }
 
     public class MissionService : IMissionService
@@ -33,9 +38,13 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IMissionUtils _missionUtils;
         private readonly IReporter _reporter;
         private readonly IMissionValidator _missionValidator;
-        private readonly IMissionJobRunner _jobRunner;
+        private readonly ILogger<MissionService> _logger;
+        private readonly IPerformMissionJobRunner _jobRunner;
+        private readonly IMissionFactory _missionFactory;
+        private readonly IMissionRefreshJobRunner _missionRefreshJobRunner;
 
-        public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter, IMissionValidator missionValidator, IMissionJobRunner jobRunner)
+        public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter, IMissionValidator missionValidator,
+            IPerformMissionJobRunner jobRunner, ILogger<MissionService> logger, IMissionFactory missionFactory, IMissionRefreshJobRunner missionRefreshJobRunner)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -44,6 +53,9 @@ namespace MafiaOnline.BusinessLogic.Services
             _reporter = reporter;
             _missionValidator = missionValidator;
             _jobRunner = jobRunner;
+            _logger = logger;
+            _missionFactory = missionFactory;
+            _missionRefreshJobRunner = missionRefreshJobRunner;
         }
 
         /// <summary>
@@ -129,6 +141,26 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var missions = await _unitOfWork.Missions.GetPerformingMissions(bossId);
             return _mapper.Map<IList<PerformingMissionDTO>>(missions);
+        }
+
+        public async Task RefreshMissions()
+        {
+            _logger.LogInformation("Refreshing missions started at: " + DateTime.Now.ToString());
+            var missions = await _unitOfWork.Missions.GetAllAsync();
+            var countOfNewMissions = MissionConsts.MAX_NUMBER_OF_MISSIONS - missions.Count;
+            var templates = await _unitOfWork.MissionTemplates.GetRandomsAsync(countOfNewMissions);
+            foreach(var template in templates)
+            {
+                var newMission = await _missionFactory.CreateByMissionTemplate(template);
+                _unitOfWork.Missions.Create(newMission);
+                _logger.LogInformation("Mission with id: " + newMission.Id + " added" );
+            }
+            _unitOfWork.Commit();
+        }
+
+        public async Task ScheduleRefreshMissionsJob()
+        {
+            await _missionRefreshJobRunner.Start(_scheduler, DateTime.Now.AddMinutes(MissionConsts.MINUTES_TO_REFRESH_MISSIONS));
         }
     }
 }
