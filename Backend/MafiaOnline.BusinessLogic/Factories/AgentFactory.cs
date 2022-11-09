@@ -65,7 +65,7 @@ namespace MafiaOnline.BusinessLogic.Factories
             };
 
             if (agentForSale.Price < 1000) agentForSale.Price = 1000;
-
+            agentForSale.StartOfSale = DateTime.Now;
             agentForSale.Agent = agent;
             agent.State = AgentState.ForSale;
             return agentForSale;
