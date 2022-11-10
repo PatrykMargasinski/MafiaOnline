@@ -20,7 +20,6 @@
         <button routerLink="boss"
         class="m-1 btn btn-light btn-outline-primary" Button>Bosses</button>
       </li>
-
       <li class="nav-item" *ngIf="isUserAuthenticated()">
           <button routerLink="agent"
           class="m-1 btn btn-light btn-outline-primary" Button>Agents</button>
@@ -29,6 +28,11 @@
       <li class="nav-item" *ngIf="isUserAuthenticated()">
           <button routerLink="mission"
           class="m-1 btn btn-light btn-outline-primary" Button>Missions</button>
+      </li>
+
+      <li class="nav-item" *ngIf="isUserAuthenticated()">
+        <button routerLink="map"
+        class="m-1 btn btn-light btn-outline-primary" Button>Map</button>
       </li>
 
       <li class="nav-item" *ngIf="isUserAuthenticated()">

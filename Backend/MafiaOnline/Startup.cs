@@ -66,6 +66,7 @@ namespace MafiaOnline
             services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IMissionService, MissionService>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IMapService, MapService>();
 
             //Utils
             services.AddScoped<ISecurityUtils, SecurityUtils>();

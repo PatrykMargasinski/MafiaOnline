@@ -1,0 +1,20 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { MapField } from 'src/app/models/map/mapField.models';
+import { environment } from 'src/environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MapService {
+
+  readonly APIUrl = environment.APIEndpoint + '/map'
+
+  constructor(private http:HttpClient) { }
+
+  getMap(x: number, y:number, size: number):Observable<MapField[]>
+  {
+    return this.http.get<MapField[]>(this.APIUrl+'?x=' + x + '&y=' + y +'&size=' + size);
+  }
+}
