@@ -39,6 +39,7 @@ namespace MafiaOnline.BusinessLogic
             CreateMap<Mission, MissionDTO>()
                 .ForMember(x => x.Name, y => y.MapFrom(z => z.Name + (z.RepeatableMission ? " (repeatable)" : "")));
 
+            //Map
             CreateMap<PerformingMission, PerformingMissionDTO>()
                 .ForMember(x => x.AgentName, y => y.MapFrom(z => z.Agent.FirstName + " " + z.Agent.LastName))
                 .ForMember(x => x.MissionName, y => y.MapFrom(z => z.Mission.Name))
@@ -52,6 +53,12 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.ToBossName, y => y.MapFrom(z => z.ToBoss.FirstName + " " + z.ToBoss.LastName))
                 .ForMember(x => x.Subject, y => y.MapFrom(z => _securityUtils.Decrypt(z.Subject)))
                 .ForMember(x => x.Content, y => y.MapFrom(z => _securityUtils.Decrypt(z.Content)));
+
+            //Headquarters
+            CreateMap<Headquarters, HeadquartersDTO>()
+                .ForMember(x => x.BossFirstName, y => y.MapFrom(z=>z.Boss.FirstName))
+                .ForMember(x => x.BossLastName, y => y.MapFrom(z => z.Boss.LastName));
+
         }
 
         public AutoMapperProfile()

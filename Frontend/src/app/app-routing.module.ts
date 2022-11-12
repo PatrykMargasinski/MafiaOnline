@@ -23,6 +23,7 @@ import { AccountSettingsComponent } from './pages/account-settings/account-setti
 import { ChangePasswordComponent } from './pages/account-settings/change-password/change-password.component';
 import { DeleteAccountComponent } from './pages/account-settings/delete-account/delete-account.component';
 import { MapComponent } from './pages/map/map.component';
+import { ShowMapComponent } from './pages/map/show-map/show-map.component';
 
 
 
@@ -41,7 +42,10 @@ const routes: Routes = [
     {path: 'onMission', component: AgentsOnMissionComponent},
     {path: 'forSale', component: AgentsForSaleComponent},
   ]},
-  {path:'map',component:MapComponent , canActivate: [GuardService]},
+  {path:'map',component:MapComponent , canActivate: [GuardService], children:
+  [
+    {path: 'showMap', component: ShowMapComponent},
+  ]},
   {path:'mission',component: MissionComponent, canActivate: [GuardService], children:
   [
     {path: 'performing', component: PerformingMissionsComponent},

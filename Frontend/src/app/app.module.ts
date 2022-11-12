@@ -1,3 +1,4 @@
+import { HeadquartersDetailsComponent } from './page-elements/map-elements/headquarters-details/headquarters-details/headquarters-details.component';
 import { BossRankingComponent } from './pages/boss/boss-ranking/boss-ranking.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
@@ -68,7 +69,8 @@ export function tokenGetter(){
     ChangePasswordComponent,
     DeleteAccountComponent,
     MapComponent,
-    ShowMapComponent
+    ShowMapComponent,
+    HeadquartersDetailsComponent
   ],
   imports: [
     BrowserModule,

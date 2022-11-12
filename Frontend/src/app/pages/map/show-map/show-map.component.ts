@@ -1,4 +1,3 @@
-import { BossService } from './../../../services/boss/boss.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MapField } from 'src/app/models/map/mapField.models';
@@ -15,13 +14,19 @@ export class ShowMapComponent implements OnInit {
   edgeX : number
   edgeY : number
 
-  constructor(private mapService: MapService, private tokenService: TokenService) { }
+  constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal) { }
   mapFields: MapField[]
   chosenMapFieldId: number
+  chosenElementType: number
 
   ngOnInit(): void {
     this.edgeX=0
     this.edgeY=0
+    this.refreshMap();
+  }
+
+  closeAndRefresh() {
+    this.modalService.dismissAll();
     this.refreshMap();
   }
 
@@ -72,5 +77,11 @@ export class ShowMapComponent implements OnInit {
   {
     this.edgeX++;
     this.refreshMap();
+  }
+
+  divClick(mapFieldId: number, elementType: number, mapElementContent: any){
+    this.chosenMapFieldId=mapFieldId
+    this.chosenElementType=elementType
+    this.modalService.open(mapElementContent, {ariaLabelledBy: 'modal-basic-title'});
   }
 }
