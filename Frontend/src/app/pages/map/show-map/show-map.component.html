@@ -1,8 +1,31 @@
 <br><h3>Show map</h3><br>
+
+<br><h5>Edge: {{edgeY}} {{edgeX}}</h5><br>
+
+<div class="container col-1" style="margin-left: auto; margin-right: auto;">
+  <img src="../../../../assets/arrow.png" alt="Arrow up" style="width:90%;height:90%;" (click)="moveUp()">
+</div>
+
+<div class="container col-1 mt-auto mb-auto float-left">
+  <img src="../../../../assets/arrow.png" class="left" alt="Arrow left" style="width:90%;height:90%; margin-top: auto; margin-bottom: auto;" (click)="moveLeft()">
+</div>
+
 <div class="container col-10">
   <div *ngFor="let item of mapFields">
-    <div class="terrainDiv" [style.background]="getTerrainColor(item.ElementType)">
+    <div class="terrainDiv" [style.background]="getTerrainColor(item.Terrain)">
+      <div *ngIf="item.MapElement==1">
+        <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myheadquarters.png" alt="MH" style="max-width: 90%; max-height: 90%">
+        <img *ngIf="item.Owner != getBossId()" src="../../../../assets/headquarters.png" alt="H" style="max-width: 90%; max-height: 90%">
+      </div>
     </div>
   </div>
+</div>
+
+<div class="container col-1 row">
+  <img src="../../../../assets/arrow.png" class="right" alt="Arrow right" style="width:90%;height:90%; margin-top: auto; margin-bottom: auto; clear: both;" (click)="moveRight()">
+</div>
+
+<div class="container col-1 row">
+  <img src="../../../../assets/arrow.png" class="down" alt="Arrow down" style="width:90%;height:90%; margin-top: auto; margin-bottom: auto;" (click)="moveDown()">
 </div>
 <div class="clearfix"></div>

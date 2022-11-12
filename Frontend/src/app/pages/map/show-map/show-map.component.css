@@ -9,3 +9,28 @@
   display: table-cell;
   vertical-align:middle;
 }
+
+
+.leftDiv {
+  height: 100%
+}
+
+.right {
+  transform: rotate(-270deg);
+  -webkit-transform: rotate(-270deg);
+}
+
+.left {
+  transform: rotate(270deg);
+  -webkit-transform: rotate(270deg);
+}
+
+.up {
+  transform: rotate(-270deg);
+  -webkit-transform: rotate(-270deg);
+}
+
+.down {
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+}

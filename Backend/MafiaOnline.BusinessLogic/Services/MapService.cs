@@ -29,18 +29,36 @@ namespace MafiaOnline.BusinessLogic.Services
 
         public async Task<MapFieldDTO[]> GenerateMap(long x, long y, long size)
         {
+            var mapElements = await _unitOfWork.MapElements.GetInRange(x, x + size, y, y + size);
+
             var map = new MapFieldDTO[size * size];
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
+
+                    //set terrain
                     if ((i + x) % 6 == 0 || (j + y) % 6 == 0)
                     {
-                        map[i*size+j] = new MapFieldDTO { X = i, Y = j, ElementType = 0 };
+                        map[i*size+j] = new MapFieldDTO { X = (i + x), Y = (j + y), Terrain = TerrainType.Road};
                     }
                     else
                     {
-                        map[i*size+j] = new MapFieldDTO { X = i, Y = j, ElementType = 1 };
+                        map[i*size+j] = new MapFieldDTO { X = (i + x), Y = (j + y), Terrain = TerrainType.BuildUpArea };
+                    }
+
+                    //set map element
+                    var mapElement = mapElements.FirstOrDefault(el => el.X == (i + x) && el.Y == (j + y));
+                    if (mapElement != null)
+                    {
+                        map[i * size + j].MapElement = mapElement.Type;
+                        map[i * size + j].Id = mapElement.Id;
+                        map[i * size + j].Owner = mapElement.Owner;
+                        map[i * size + j].Description = mapElement.Description;
+                    }
+                    else
+                    {
+                        map[i * size + j].MapElement = MapElementType.None;
                     }
                 }
             }

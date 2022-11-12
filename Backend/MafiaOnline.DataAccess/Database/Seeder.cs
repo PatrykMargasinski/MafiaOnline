@@ -16,6 +16,7 @@ namespace MafiaOnline.DataAccess.Database
             modelBuilder.Entity<PerformingMission>().HasData(PreparePerformingMissions());
             modelBuilder.Entity<Name>().HasData(PrepareNames());
             modelBuilder.Entity<MissionTemplate>().HasData(PrepareMissionTemplates());
+            modelBuilder.Entity<Headquarters>().HasData(PrepareHeadquarters());
         }
 
         private static IList<Boss> PrepareBosses()
@@ -242,6 +243,15 @@ namespace MafiaOnline.DataAccess.Database
                 new MissionTemplate (){ Id=10, Name = "Blackmail", MinDifficulty=4, MaxDifficulty=6, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=40, DexterityPercentage=30, IntelligencePercentage=30, MinDuration=10, MaxDuration=30 },
                 new MissionTemplate (){ Id=11, Name = "Drug smuggling", MinDifficulty=4, MaxDifficulty=6, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=30, DexterityPercentage=40, IntelligencePercentage=30, MinDuration=10, MaxDuration=30 },
                 new MissionTemplate (){ Id=12, Name = "Deal you can not throw away", MinDifficulty=6, MaxDifficulty=7, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=30, DexterityPercentage=30, IntelligencePercentage=40, MinDuration=10, MaxDuration=30 },
+            };
+        }
+
+        private static IList<Headquarters> PrepareHeadquarters()
+        {
+            return new List<Headquarters>
+            {
+                new Headquarters (){Id=1, BossId=1, Type = MapElementType.Headquarters, X = 2, Y = 1, Name="The house of Patricio Rico" },
+                new Headquarters (){Id=2, BossId=2, Type = MapElementType.Headquarters, X = 14, Y = 1, Name="Margherita rules here"  },
             };
         }
     }

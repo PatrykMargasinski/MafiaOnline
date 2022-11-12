@@ -15,6 +15,8 @@ namespace MafiaOnline.DataAccess.Database
         IMissionTemplateRepository MissionTemplates { get; }
         IPerformingMissionRepository PerformingMissions { get; }
         INameRepository Names { get; }
+        IHeadquartersRepository Headquarters { get; }
+        IMapElementRepository MapElements { get; }
     }
     public class UnitOfWork : IUnitOfWork
     {
@@ -32,7 +34,8 @@ namespace MafiaOnline.DataAccess.Database
             PerformingMissions = new PerformingMissionRepository(context);
             Messages = new MessageRepository(context);
             Names = new NameRepository(context);
-            
+            Headquarters = new HeadquartersRepository(context);
+            MapElements = new MapElementRepository(context);
         }
 
         public IAgentRepository Agents { get; }
@@ -44,6 +47,10 @@ namespace MafiaOnline.DataAccess.Database
         public IMessageRepository Messages { get; }
         public IPerformingMissionRepository PerformingMissions { get; }
         public INameRepository Names { get; }
+
+        public IHeadquartersRepository Headquarters { get; }
+
+        public IMapElementRepository MapElements { get; }
 
         public void Commit()
         {

@@ -1,6 +1,10 @@
 export interface MapField
 {
+  Id : number,
   X: number,
   Y: number,
-  ElementType: number
+  Terrain: number,
+  MapElement : number,
+  Owner: number,
+  Description: string
 }

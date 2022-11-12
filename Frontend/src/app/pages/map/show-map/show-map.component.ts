@@ -1,7 +1,9 @@
+import { BossService } from './../../../services/boss/boss.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MapField } from 'src/app/models/map/mapField.models';
 import { MapService } from 'src/app/services/map/map.service';
+import { TokenService } from 'src/app/services/auth/token.service';
 
 @Component({
   selector: 'app-show-map',
@@ -10,15 +12,21 @@ import { MapService } from 'src/app/services/map/map.service';
 })
 export class ShowMapComponent implements OnInit {
 
+  edgeX : number
+  edgeY : number
 
-  constructor(private mapService: MapService) { }
+  constructor(private mapService: MapService, private tokenService: TokenService) { }
   mapFields: MapField[]
   chosenMapFieldId: number
+
   ngOnInit(): void {
+    this.edgeX=0
+    this.edgeY=0
     this.refreshMap();
   }
+
   refreshMap(){
-    this.mapService.getMap(1,1,20).subscribe(
+    this.mapService.getMap(this.edgeX,this.edgeY,20).subscribe(
       x=>
       {
         console.log(x)
@@ -34,5 +42,35 @@ export class ShowMapComponent implements OnInit {
       case 1:
         return "darkred";
     }
+  }
+
+  getBossId()
+  {
+    return this.tokenService.getBossId();
+  }
+
+  moveLeft()
+  {
+    this.edgeY--;
+    this.refreshMap();
+  }
+
+  moveRight()
+  {
+    this.edgeY++;
+    this.refreshMap();
+  }
+
+  moveUp()
+  {
+    console.log("test")
+    this.edgeX--;
+    this.refreshMap();
+  }
+
+  moveDown()
+  {
+    this.edgeX++;
+    this.refreshMap();
   }
 }
