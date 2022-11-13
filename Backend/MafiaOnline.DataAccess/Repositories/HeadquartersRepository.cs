@@ -11,7 +11,7 @@ namespace MafiaOnline.DataAccess.Repositories
 {
     public interface IHeadquartersRepository : ICrudRepository<Headquarters>
     {
-
+        Task<Headquarters> GetByBossId(long bossId);
     }
 
     public class HeadquartersRepository : CrudRepository<Headquarters>, IHeadquartersRepository
@@ -34,6 +34,12 @@ namespace MafiaOnline.DataAccess.Repositories
                 .Include(x => x.Boss)
                 .Where(x => ids.Contains(x.Id))
                 .ToListAsync();
+        }
+
+        public async Task<Headquarters> GetByBossId(long bossId)
+        {
+            return await entities
+                .FirstOrDefaultAsync(x => x.BossId == bossId);
         }
     }
 }

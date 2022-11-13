@@ -1,5 +1,5 @@
-import { Headquarters } from './../../../../models/headquarters/headquarters.models';
-import { HeadquartersService } from './../../../../services/headquarters/headquarters.service';
+import { Headquarters } from './../../../models/headquarters/headquarters.models';
+import { HeadquartersService } from './../../../services/headquarters/headquarters.service';
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({

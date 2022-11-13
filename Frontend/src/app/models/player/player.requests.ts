@@ -11,6 +11,7 @@ export interface RegisterRequest
   BossFirstName: string,
   BossLastName: string,
   AgentNames: string[]
+  HeadquartersName: string
 }
 
 export interface ChangePasswordRequest

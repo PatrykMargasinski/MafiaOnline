@@ -26,6 +26,14 @@ namespace MafiaOnline.Controllers
             var map = await _mapService.GenerateMap(x, y, size);
             return new JsonResult(map);
         }
-        
+
+
+        [HttpGet("edge")]
+        public async Task<IActionResult> GetEdgeForBoss(long bossId)
+        {
+            var edge = await _mapService.GetEdgeForBoss(bossId);
+            return new JsonResult(edge);
+        }
+
     }
 }

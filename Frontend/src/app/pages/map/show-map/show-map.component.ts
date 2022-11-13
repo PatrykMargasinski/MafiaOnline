@@ -20,9 +20,14 @@ export class ShowMapComponent implements OnInit {
   chosenElementType: number
 
   ngOnInit(): void {
-    this.edgeX=0
-    this.edgeY=0
-    this.refreshMap();
+    this.mapService.getEdgeForBoss(this.tokenService.getBossId()).subscribe(x=>
+      {
+        console.log(x)
+        this.edgeX=x[0]
+        this.edgeY=x[1]
+        this.refreshMap();
+      })
+
   }
 
   closeAndRefresh() {

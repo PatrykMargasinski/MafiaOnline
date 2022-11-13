@@ -14,6 +14,7 @@ namespace MafiaOnline.BusinessLogic.Services
     public interface IMapService
     {
         Task<MapFieldDTO[]> GenerateMap(long x, long y, long size);
+        Task<long[]> GetEdgeForBoss(long bossId);
     }
 
     public class MapService : IMapService
@@ -25,6 +26,13 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+        }
+
+        public async Task<long[]> GetEdgeForBoss(long bossId)
+        {
+            var headquarters = await _unitOfWork.Headquarters.GetByBossId(bossId);
+            var edge = new long[] {headquarters.X - 10, headquarters.Y - 10};
+            return edge;
         }
 
         public async Task<MapFieldDTO[]> GenerateMap(long x, long y, long size)
