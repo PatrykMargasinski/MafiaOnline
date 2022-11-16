@@ -86,6 +86,7 @@ namespace MafiaOnline.BusinessLogic.Validators
                     errors.Add("There is a boss with a such last name");
                 }
             }
+            if (request.HeadquartersName == "") errors.Add("Headquarters name is empty");
             if (request.AgentNames == null) errors.Add("There is no agent names");
             else
             {

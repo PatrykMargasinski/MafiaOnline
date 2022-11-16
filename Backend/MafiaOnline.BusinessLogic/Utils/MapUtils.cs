@@ -1,4 +1,5 @@
-﻿using MafiaOnline.DataAccess.Entities;
+﻿using MafiaOnline.DataAccess.Database;
+using MafiaOnline.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
