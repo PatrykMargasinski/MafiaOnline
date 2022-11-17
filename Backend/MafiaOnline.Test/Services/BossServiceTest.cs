@@ -38,6 +38,7 @@ namespace MafiaOnline.Test.Repositories
         [SetUp]
         public void Setup()
         {
+            _unitOfWork = new FakeUnitOfWork();
             if (_mapper == null)
             {
                 var mappingConfig = new MapperConfiguration(mc =>
@@ -48,7 +49,7 @@ namespace MafiaOnline.Test.Repositories
                 });
                 IMapper mapper = mappingConfig.CreateMapper();
                 _mapper = mapper;
-                _unitOfWork = new FakeUnitOfWork();
+                
             }
         }
 
