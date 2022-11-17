@@ -12,6 +12,7 @@ namespace MafiaOnline.BusinessLogic.Utils
     {
         bool IsCorner(long x, long y);
         bool IsStreet(long x, long y);
+        bool IsRoad(long x, long y);
         List<(long, long)> GetPossibleNewHeadquartersPositionFromPoint(long x0, long y0);
     }
 
@@ -33,6 +34,11 @@ namespace MafiaOnline.BusinessLogic.Utils
             return
             ((x % 6 == 1 || x % 6 == 5) && y % 6 != 0) ||
             ((y % 6 == 1 || y % 6 == 5) && x % 6 != 0);
+        }
+
+        public bool IsRoad(long x, long y)
+        {
+            return x % 6 == 0 || y % 6 == 0;
         }
 
         public List<(long, long)> GetPossibleNewHeadquartersPositionFromPoint(long x0, long y0)

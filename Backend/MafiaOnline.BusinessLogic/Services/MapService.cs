@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using System;
@@ -21,11 +22,13 @@ namespace MafiaOnline.BusinessLogic.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMapUtils _mapUtils;
 
-        public MapService(IUnitOfWork unitOfWork, IMapper mapper)
+        public MapService(IUnitOfWork unitOfWork, IMapper mapper, IMapUtils mapUtils)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _mapUtils = mapUtils;
         }
 
         public async Task<long[]> GetEdgeForBoss(long bossId)
@@ -46,7 +49,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 {
 
                     //set terrain
-                    if ((i + x) % 6 == 0 || (j + y) % 6 == 0)
+                    if (_mapUtils.IsRoad(i + x, j + y))
                     {
                         map[i*size+j] = new MapFieldDTO { X = (i + x), Y = (j + y), Terrain = TerrainType.Road};
                     }
