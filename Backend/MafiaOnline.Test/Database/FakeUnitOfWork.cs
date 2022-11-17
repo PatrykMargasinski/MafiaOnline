@@ -20,6 +20,7 @@ namespace MafiaOnline.Test.Database
                 .Options;
 
             context = new DataContext(options);
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             Agents = new AgentRepository(context);
             AgentsForSale = new AgentForSaleRepository(context);
