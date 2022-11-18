@@ -13,15 +13,17 @@ namespace MafiaOnline.BusinessLogic.Utils
         bool IsCorner(long x, long y);
         bool IsStreet(long x, long y);
         bool IsRoad(long x, long y);
-        List<(long, long)> GetPossibleNewHeadquartersPositionFromPoint(long x0, long y0);
+        Task<(long, long)> GetNewHeadquartersPosition();
     }
 
     public class MapUtils : IMapUtils
     {
-
-        public MapUtils()
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRandomizer _randomizer;
+        public MapUtils(IUnitOfWork unitOfWork, IRandomizer randomizer)
         {
-            
+            _unitOfWork = unitOfWork;
+            _randomizer = randomizer;
         }
 
         public bool IsCorner(long x, long y)
@@ -41,19 +43,37 @@ namespace MafiaOnline.BusinessLogic.Utils
             return x % 6 == 0 || y % 6 == 0;
         }
 
-        public List<(long, long)> GetPossibleNewHeadquartersPositionFromPoint(long x0, long y0)
+        private List<(long, long)> GetElementsAroundThePoint(long x0, long y0, long size)
         {
-            var possibilities = new List<(long, long)>();
-            for (long i = x0 - 15; i <= x0 + 15; i++)
-                for (long j = y0 - 15; j <= y0 + 15; j++)
-                    possibilities.Add((i, j));
+            var elements = new List<(long, long)>();
+            for (long i = x0 - size; i <= x0 + size; i++)
+                for (long j = y0 - size; j <= y0 + size; j++)
+                    elements.Add((i, j));
 
-            possibilities = possibilities
-                .Where(x => x.Item1 > (x0 - 10) && x.Item1 <= (x0 + 10) && x.Item2 > (y0 - 10) && x.Item2 <= (y0 + 10))
-                .Where(x => IsStreet(x.Item1, x.Item2) && !IsCorner(x.Item1,x.Item2))
+            return elements;
+        }
+
+        public async Task<(long, long)> GetNewHeadquartersPosition()
+        {
+            var allMapElements = await _unitOfWork.MapElements.GetAllAsync();
+            var allHeadquarters = allMapElements.Where(x => x.Type == MapElementType.Headquarters);
+            var tempNewHeadquartersPosition = allHeadquarters
+                .SelectMany(x => GetElementsAroundThePoint(x.X, x.Y, 15))
+                .Distinct();
+
+            var positionsToRemove = allHeadquarters
+                .SelectMany(x => GetElementsAroundThePoint(x.X, x.Y, 10))
+                .Distinct();
+
+            var allPossiblePositions =
+                tempNewHeadquartersPosition
+                .Except(positionsToRemove)
+                .Except(allMapElements.Select(x => (x.X, x.Y)))
+                .Where(x => IsStreet(x.Item1, x.Item2) && !IsCorner(x.Item1, x.Item2))
                 .ToList();
 
-            return possibilities;
+            var newPosition = allPossiblePositions[_randomizer.Next(allPossiblePositions.Count)];
+            return newPosition;
         }
     }
 }

@@ -118,15 +118,7 @@ namespace MafiaOnline.BusinessLogic.Services
             }
 
             //headquarters creation
-            var allMapElements = await _unitOfWork.MapElements.GetAllAsync();
-            var allHeadquarters = await _unitOfWork.Headquarters.GetAllAsync();
-            var possibleNewHeadquartersPosition = allHeadquarters
-                .SelectMany(x => _mapUtils.GetPossibleNewHeadquartersPositionFromPoint(x.X, x.Y))
-                .Distinct()
-                .Where(x => !allMapElements.Any(y=>y.X==x.Item1 && y.Y == x.Item2))
-                .ToList();
-
-            var newPosition = possibleNewHeadquartersPosition[random.Next(possibleNewHeadquartersPosition.Count)];
+            var newPosition = await _mapUtils.GetNewHeadquartersPosition();
 
             var headquarter = new Headquarters() { X = newPosition.Item1, Y = newPosition.Item2, Type = MapElementType.Headquarters, Name=request.HeadquartersName };
             headquarter.Boss = boss;

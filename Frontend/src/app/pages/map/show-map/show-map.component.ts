@@ -22,7 +22,6 @@ export class ShowMapComponent implements OnInit {
   ngOnInit(): void {
     this.mapService.getEdgeForBoss(this.tokenService.getBossId()).subscribe(x=>
       {
-        console.log(x)
         this.edgeX=x[0]
         this.edgeY=x[1]
         this.refreshMap();
