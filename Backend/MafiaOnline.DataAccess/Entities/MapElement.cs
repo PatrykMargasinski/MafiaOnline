@@ -11,16 +11,9 @@ namespace MafiaOnline.DataAccess.Entities
         public long X { get; set; }
         public long Y { get; set; }
         public MapElementType Type { get; set; }
-
-        public virtual string Description
-        {
-            get { return null; }
-        }
-
-        public virtual long? Owner
-        {
-            get { return null; }
-        }
+        public long? BossId { get; set; }
+        public virtual Boss Boss { get; set; }
+        public virtual Headquarters Headquarters { get; set; }
     }
 
     public enum MapElementType
@@ -36,6 +29,14 @@ namespace MafiaOnline.DataAccess.Entities
             builder.ToTable("MapElement");
 
             builder.Property(x => x.Type).HasConversion<int>();
+
+            builder.HasOne(d => d.Boss)
+               .WithOne()
+               .HasForeignKey<MapElement>(d => d.BossId);
+
+            builder.HasOne(d => d.Headquarters)
+                .WithOne(d => d.MapElement)
+                .HasForeignKey<Headquarters>(d=>d.MapElementId);
         }
     }
 }

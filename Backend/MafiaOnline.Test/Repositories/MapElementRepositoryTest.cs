@@ -38,8 +38,6 @@ namespace MafiaOnline.Test.Repositories
             var player = _fixture.Build<Player>().Without(x => x.Boss).Create();
             var boss = _fixture.Build<Boss>().Without(x=>x.MessageFromBosses).Without(x=>x.MessageToBosses).Without(x=>x.Player).Without(x=>x.Headquarters).Create();
             player.Boss = boss;
-            var headquarters = new Headquarters { Type = MapElementType.Headquarters, X = 2, Y = 1, BossId = boss.Id };
-
             var options = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase("mafia_db")
                 .Options;
@@ -55,6 +53,9 @@ namespace MafiaOnline.Test.Repositories
 
             using (var context = new DataContext(options))
             {
+                var headquarters = new Headquarters { BossId = boss.Id };
+                var mapElement = new MapElement() { Type = MapElementType.Headquarters, X = 2, Y = 1 };
+                headquarters.MapElement = mapElement;
                 IHeadquartersRepository repository = new HeadquartersRepository(context);
                 var headquartersReturned = await repository.GetAllAsync();
                 repository.Create(headquarters);

@@ -6,21 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MafiaOnline.DataAccess.Entities
 {
-    public class Headquarters : MapElement
+    public class Headquarters : Entity
     {
+        public long MapElementId { get; set; }
         public string Name { get; set; }
         public long BossId { get; set; }
         public virtual Boss Boss { get; set; }
-
-        public override string Description
-        {
-            get { return Name; }
-        }
-
-        public override long? Owner
-        {
-            get { return BossId; }
-        }
+        public virtual MapElement MapElement { get; set; }
     }
 
     public class HeadquarterModelConfiguration : IEntityTypeConfiguration<Headquarters>
@@ -30,8 +22,8 @@ namespace MafiaOnline.DataAccess.Entities
             builder.ToTable("Headquarters");
 
             builder.HasOne(d => d.Boss)
-            .WithOne(p => p.Headquarters)
-            .HasForeignKey<Headquarters>(d => d.BossId);
+                .WithOne(p => p.Headquarters)
+                .HasForeignKey<Headquarters>(d => d.BossId);
         }
     }
 }

@@ -120,9 +120,9 @@ namespace MafiaOnline.BusinessLogic.Services
             //headquarters creation
             var newPosition = await _mapUtils.GetNewHeadquartersPosition();
 
-            var headquarter = new Headquarters() { X = newPosition.Item1, Y = newPosition.Item2, Type = MapElementType.Headquarters, Name=request.HeadquartersName };
-            headquarter.Boss = boss;
-            _unitOfWork.Headquarters.Create(headquarter);
+            var headquarter = new Headquarters() { Name = request.HeadquartersName, Boss = boss };
+            var mapElement = new MapElement() { X = newPosition.Item1, Y = newPosition.Item2, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
+            _unitOfWork.MapElements.Create(mapElement);
 
             _unitOfWork.Commit();
         }
@@ -180,7 +180,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 agent.State = AgentState.Renegate;
             }
 
-            _unitOfWork.Headquarters.DeleteById(headquarters.Id);
+            _unitOfWork.MapElements.DeleteById(headquarters.MapElementId);
             _unitOfWork.Bosses.DeleteById(boss.Id);
             _unitOfWork.Players.DeleteById(player.Id);
 

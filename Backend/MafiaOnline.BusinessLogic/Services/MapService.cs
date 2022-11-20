@@ -34,7 +34,7 @@ namespace MafiaOnline.BusinessLogic.Services
         public async Task<long[]> GetEdgeForBoss(long bossId)
         {
             var headquarters = await _unitOfWork.Headquarters.GetByBossId(bossId);
-            var edge = new long[] {headquarters.X - 10, headquarters.Y - 10};
+            var edge = new long[] {headquarters.MapElement.X - 10, headquarters.MapElement.Y - 10};
             return edge;
         }
 
@@ -64,8 +64,7 @@ namespace MafiaOnline.BusinessLogic.Services
                     {
                         map[i * size + j].MapElement = mapElement.Type;
                         map[i * size + j].Id = mapElement.Id;
-                        map[i * size + j].Owner = mapElement.Owner;
-                        map[i * size + j].Description = mapElement.Description;
+                        map[i * size + j].Owner = mapElement.BossId;
                     }
                     else
                     {

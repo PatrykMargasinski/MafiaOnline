@@ -29,7 +29,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
         public async Task<HeadquartersDTO> GetHeadquartersDetails(long id)
         {
-            var headquarters = await _unitOfWork.Headquarters.GetByIdAsync(id);
+            var headquarters = await _unitOfWork.Headquarters.GetByMapElementIdAsync(id);
             return _mapper.Map<HeadquartersDTO>(headquarters);
         }
     }

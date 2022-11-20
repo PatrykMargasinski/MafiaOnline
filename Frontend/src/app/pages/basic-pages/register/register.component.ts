@@ -21,7 +21,7 @@ export class RegisterComponent implements OnInit {
       'BossFirstName': form.value.firstname,
       'BossLastName': form.value.lastname,
       'AgentNames': [form.value.agent1, form.value.agent2, form.value.agent3],
-      'HeadquartersName':form.value.headquartersname
+      'HeadquartersName':form.value.headquartersName
     }
     this.playerService.register(credentials)
     .subscribe(data=>{

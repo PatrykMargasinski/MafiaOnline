@@ -16,6 +16,7 @@ namespace MafiaOnline.DataAccess.Database
             modelBuilder.Entity<PerformingMission>().HasData(PreparePerformingMissions());
             modelBuilder.Entity<Name>().HasData(PrepareNames());
             modelBuilder.Entity<MissionTemplate>().HasData(PrepareMissionTemplates());
+            modelBuilder.Entity<MapElement>().HasData(PrepareMapElements());
             modelBuilder.Entity<Headquarters>().HasData(PrepareHeadquarters());
         }
 
@@ -250,8 +251,17 @@ namespace MafiaOnline.DataAccess.Database
         {
             return new List<Headquarters>
             {
-                new Headquarters (){Id=1, BossId=1, Type = MapElementType.Headquarters, X = 2, Y = 1, Name="The house of Patricio Rico" },
-                new Headquarters (){Id=2, BossId=2, Type = MapElementType.Headquarters, X = 14, Y = 1, Name="Margherita rules here"  },
+                new Headquarters (){Id=1, MapElementId=1, BossId=1, Name="The house of Patricio Rico" },
+                new Headquarters (){Id=2, MapElementId=2, BossId=2, Name="Margherita rules here"  },
+            };
+        }
+
+        private static IList<MapElement> PrepareMapElements()
+        {
+            return new List<MapElement>
+            {
+                new MapElement (){Id=1, Type = MapElementType.Headquarters, X = 2, Y = 1, BossId=1 },
+                new MapElement (){Id=2, Type = MapElementType.Headquarters, X = 14, Y = 1, BossId=2 },
             };
         }
     }
