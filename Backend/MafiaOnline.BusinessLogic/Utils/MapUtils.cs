@@ -14,6 +14,7 @@ namespace MafiaOnline.BusinessLogic.Utils
         bool IsStreet(long x, long y);
         bool IsRoad(long x, long y);
         Task<(long, long)> GetNewHeadquartersPosition();
+        Task<(long, long)> GetNewMissionPosition();
     }
 
     public class MapUtils : IMapUtils
@@ -63,6 +64,29 @@ namespace MafiaOnline.BusinessLogic.Utils
 
             var positionsToRemove = allHeadquarters
                 .SelectMany(x => GetElementsAroundThePoint(x.X, x.Y, 10))
+                .Distinct();
+
+            var allPossiblePositions =
+                tempNewHeadquartersPosition
+                .Except(positionsToRemove)
+                .Except(allMapElements.Select(x => (x.X, x.Y)))
+                .Where(x => IsStreet(x.Item1, x.Item2) && !IsCorner(x.Item1, x.Item2))
+                .ToList();
+
+            var newPosition = allPossiblePositions[_randomizer.Next(allPossiblePositions.Count)];
+            return newPosition;
+        }
+
+        public async Task<(long, long)> GetNewMissionPosition()
+        {
+            var allMapElements = await _unitOfWork.MapElements.GetAllAsync();
+            var allHeadquarters = allMapElements.Where(x => x.Type == MapElementType.Headquarters);
+            var tempNewHeadquartersPosition = allHeadquarters
+                .SelectMany(x => GetElementsAroundThePoint(x.X, x.Y, 10))
+                .Distinct();
+
+            var positionsToRemove = allHeadquarters
+                .SelectMany(x => GetElementsAroundThePoint(x.X, x.Y, 2))
                 .Distinct();
 
             var allPossiblePositions =

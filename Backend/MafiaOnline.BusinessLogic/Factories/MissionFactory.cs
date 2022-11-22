@@ -20,27 +20,22 @@ namespace MafiaOnline.BusinessLogic.Factories
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRandomizer _randomizer;
+        private readonly IMapUtils _mapUtils;
 
-        public MissionFactory(IUnitOfWork unitOfWork, IRandomizer randomizer)
+        public MissionFactory(IUnitOfWork unitOfWork, IRandomizer randomizer, IMapUtils mapUtils)
         {
             _unitOfWork = unitOfWork;
             _randomizer = randomizer;
+            _mapUtils = mapUtils;
         }
 
         public async Task<Mission> CreateByMissionTemplate(MissionTemplate template)
         {
             if(template == null)
                 template = await _unitOfWork.MissionTemplates.GetRandomAsync();
-            var mission = new Mission()
-            {
-                Name = template.Name,
-                DifficultyLevel = _randomizer.Next(template.MinDifficulty, template.MaxDifficulty),
-                Duration = _randomizer.Next(template.MinDuration, template.MaxDuration),
-                Loot = _randomizer.Next(template.MinLoot, template.MaxLoot),
-                StrengthPercentage = template.StrengthPercentage,
-                DexterityPercentage = template.DexterityPercentage,
-                IntelligencePercentage = template.IntelligencePercentage
-            };
+            var mission = Create(name: template.Name, difficultyLevel: _randomizer.Next(template.MinDuration, template.MaxDuration),
+                duration: _randomizer.Next(template.MinDuration, template.MaxDuration), loot: _randomizer.Next(template.MinLoot, template.MaxLoot),
+                strengthPercentage: template.StrengthPercentage, dexterityPercentage: template.DexterityPercentage, intelligencePercentage: template.IntelligencePercentage);
             return mission;
         }
 
@@ -69,6 +64,11 @@ namespace MafiaOnline.BusinessLogic.Factories
                 DexterityPercentage = dexPerc,
                 IntelligencePercentage = intPerc
             };
+
+            var missionPosition = _mapUtils.GetNewMissionPosition().Result;
+            var mapElement = new MapElement() { X = missionPosition.Item1, Y = missionPosition.Item2, Type = MapElementType.Mission };
+            mission.MapElement = mapElement;
+
             return mission;
         }
     }

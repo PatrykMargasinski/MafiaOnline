@@ -8,6 +8,7 @@ namespace MafiaOnline.DataAccess.Entities
 {
     public class Mission : Entity
     {
+        public long MapElementId { get; set; }
         public string Name { get; set; }
         public int DifficultyLevel { get; set; }
         public int StrengthPercentage { get; set; }
@@ -18,6 +19,7 @@ namespace MafiaOnline.DataAccess.Entities
         public bool RepeatableMission { get; set; }
         public MissionState State { get; set; }
         public virtual PerformingMission PerformingMission { get; set; }
+        public virtual MapElement MapElement { get; set; }
     }
 
     public enum MissionState

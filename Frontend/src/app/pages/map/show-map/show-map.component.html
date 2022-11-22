@@ -15,7 +15,10 @@
     <div class="terrainDiv" [style.background]="getTerrainColor(item.Terrain)">
       <div *ngIf="item.MapElement==1">
         <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myheadquarters.png" alt="MH" style="max-width: 90%; max-height: 90%" (click)="divClick(item.Id, item.MapElement, mapElementContent)">
-        <img *ngIf="item.Owner != getBossId()" src="../../../../assets/headquarters.png" alt="H" style="max-width: 90%; max-height: 90%" (click)="divClick(item.Id, item.MapElement, mapElementContent)">
+        <img *ngIf="item.Owner != getBossId()" src="../../../../assets/headquarters.png" alt="H" style="max-width: 90%; max-height: 90%;" (click)="divClick(item.Id, item.MapElement, mapElementContent)">
+      </div>
+      <div *ngIf="item.MapElement==2">
+        <img src="../../../../assets/missionIcon.png" alt="MH" style="max-width: 90%; max-height: 90%">
       </div>
     </div>
   </div>
