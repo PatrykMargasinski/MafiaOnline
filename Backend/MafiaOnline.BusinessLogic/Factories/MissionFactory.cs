@@ -33,7 +33,7 @@ namespace MafiaOnline.BusinessLogic.Factories
         {
             if(template == null)
                 template = await _unitOfWork.MissionTemplates.GetRandomAsync();
-            var mission = Create(name: template.Name, difficultyLevel: _randomizer.Next(template.MinDuration, template.MaxDuration),
+            var mission = Create(name: template.Name, difficultyLevel: _randomizer.Next(template.MinDifficulty, template.MaxDifficulty),
                 duration: _randomizer.Next(template.MinDuration, template.MaxDuration), loot: _randomizer.Next(template.MinLoot, template.MaxLoot),
                 strengthPercentage: template.StrengthPercentage, dexterityPercentage: template.DexterityPercentage, intelligencePercentage: template.IntelligencePercentage);
             return mission;

@@ -33,8 +33,8 @@ namespace MafiaOnline.DataAccess.Entities
             builder.Property(x => x.Type).HasConversion<int>();
 
             builder.HasOne(d => d.Boss)
-               .WithOne()
-               .HasForeignKey<MapElement>(d => d.BossId);
+               .WithMany(d => d.MapElements)
+               .HasForeignKey(d => d.BossId);
 
             builder.HasOne(d => d.Headquarters)
                 .WithOne(d => d.MapElement)

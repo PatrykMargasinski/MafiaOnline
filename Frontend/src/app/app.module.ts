@@ -36,6 +36,7 @@ import { ChangePasswordComponent } from './pages/account-settings/change-passwor
 import { DeleteAccountComponent } from './pages/account-settings/delete-account/delete-account.component';
 import { MapComponent } from './pages/map/map.component';
 import { ShowMapComponent } from './pages/map/show-map/show-map.component';
+import { MissionDetailsComponent } from './page-elements/map-elements/mission-details/mission-details.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -70,7 +71,8 @@ export function tokenGetter(){
     DeleteAccountComponent,
     MapComponent,
     ShowMapComponent,
-    HeadquartersDetailsComponent
+    HeadquartersDetailsComponent,
+    MissionDetailsComponent
   ],
   imports: [
     BrowserModule,

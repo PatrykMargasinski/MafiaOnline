@@ -24,6 +24,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task StartMission(StartMissionRequest request);
         Task<PerformingMission> DoMission(long agentId, long missionId);
         Task EndMission(long pmId);
+        Task<MissionDTO> GetMissionByMapElement(long mapElementId);
         Task<IList<MissionDTO>> GetAvailableMissions();
         Task<IList<PerformingMissionDTO>> GetPerformingMissions(long bossId);
         Task RefreshMissions();
@@ -77,6 +78,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
             var mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
             DateTime missionFinishTime = DateTime.Now.AddSeconds(mission.Duration);
 
             PerformingMission performingMission = new PerformingMission()
@@ -87,6 +89,8 @@ namespace MafiaOnline.BusinessLogic.Services
             };
             agent.State = AgentState.OnMission;
             mission.State = MissionState.Performing;
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
+            mapElement.Boss = boss;
             _unitOfWork.PerformingMissions.Create(performingMission);
             _unitOfWork.Commit();
             return performingMission;
@@ -107,6 +111,8 @@ namespace MafiaOnline.BusinessLogic.Services
             Boss boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
             string info = "Agent " + agent.FirstName + " " + agent.LastName +
                 " has finished mission: " + mission.Name;
+
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
             if (_missionUtils.IsMissionSuccessfullyCompleted(agent, mission))
             {
                 boss.Money+=mission.Loot;
@@ -125,10 +131,13 @@ namespace MafiaOnline.BusinessLogic.Services
             if (mission.RepeatableMission == true)
             {
                 mission.State = MissionState.Available;
+                mapElement.Boss = null;
+                mapElement.BossId = null;
             }
             else
             {
                 _unitOfWork.Missions.DeleteById(mission.Id);
+                _unitOfWork.MapElements.DeleteById(mission.MapElementId);
             }
             _unitOfWork.Commit();
         }
@@ -140,6 +149,15 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var missions = await _unitOfWork.Missions.GetAvailableMissions();
             return _mapper.Map<IList<MissionDTO>>(missions);
+        }
+
+        /// <summary>
+        /// Returns mission details by map element
+        /// </summary>
+        public async Task<MissionDTO> GetMissionByMapElement(long mapElementId)
+        {
+            var missions = await _unitOfWork.Missions.GetByMapElementIdAsync(mapElementId);
+            return _mapper.Map<MissionDTO>(missions);
         }
 
         /// <summary>

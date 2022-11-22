@@ -13,6 +13,7 @@ namespace MafiaOnline.DataAccess.Repositories
     {
         Task<IList<Mission>> GetAvailableMissions();
         Task<IList<PerformingMission>> GetPerformingMissions(long bossId);
+        Task<Mission> GetByMapElementIdAsync(long id);
     }
 
     public class MissionRepository : CrudRepository<Mission>, IMissionRepository
@@ -38,6 +39,14 @@ namespace MafiaOnline.DataAccess.Repositories
                 .Where(z => z.Agent.BossId == bossId)
                 .ToListAsync();
             return missions;
+        }
+
+        public async Task<Mission> GetByMapElementIdAsync(long id)
+        {
+            return await entities
+                .Include(x => x.MapElement)
+                .Include(x => x.PerformingMission)
+                .SingleOrDefaultAsync(s => s.MapElementId == id);
         }
     }
 }

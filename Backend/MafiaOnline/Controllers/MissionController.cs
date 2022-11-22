@@ -22,6 +22,13 @@ namespace MafiaOnline.Controllers
             _missionService = missionService;
         }
 
+        [HttpGet("mapElement")]
+        public async Task<IActionResult> GetMissionByMapElement(long mapElementId)
+        {
+            var missions = await _missionService.GetMissionByMapElement(mapElementId);
+            return new JsonResult(missions);
+        }
+
         [HttpPost("start")]
         public async Task<IActionResult> StartMission([FromBody] StartMissionRequest request)
         {

@@ -18,7 +18,8 @@
         <img *ngIf="item.Owner != getBossId()" src="../../../../assets/headquarters.png" alt="H" style="max-width: 90%; max-height: 90%;" (click)="divClick(item.Id, item.MapElement, mapElementContent)">
       </div>
       <div *ngIf="item.MapElement==2">
-        <img src="../../../../assets/missionIcon.png" alt="MH" style="max-width: 90%; max-height: 90%">
+        <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myMissionIcon.png" alt="MH" style="max-width: 90%; max-height: 90%" (click)="divClick(item.Id, item.MapElement, mapElementContent)">
+        <img *ngIf="item.Owner != getBossId()" src="../../../../assets/missionIcon.png" alt="H" style="max-width: 90%; max-height: 90%;" (click)="divClick(item.Id, item.MapElement, mapElementContent)">
       </div>
     </div>
   </div>
@@ -43,6 +44,9 @@
   <div class="modal-body">
     <div *ngIf="chosenElementType==1">
       <app-headquarters-details [headquartersId]="chosenMapFieldId" (closeEvent)="closeAndRefresh()"></app-headquarters-details>
+    </div>
+    <div *ngIf="chosenElementType==2">
+      <app-mission-details [missionId]="chosenMapFieldId" (closeEvent)="closeAndRefresh()"></app-mission-details>
     </div>
   </div>
 

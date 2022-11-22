@@ -17,8 +17,8 @@ namespace MafiaOnline.DataAccess.Entities
         public virtual List<Agent> Agents { get; set; }
         public virtual List<Message> MessageFromBosses { get; set; }
         public virtual List<Message> MessageToBosses { get; set; }
-
         public virtual Headquarters Headquarters { get; set; }
+        public virtual List<MapElement> MapElements { get; set; }
     }
 
     public class BossModelConfiguration : IEntityTypeConfiguration<Boss>

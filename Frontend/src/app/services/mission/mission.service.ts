@@ -14,6 +14,14 @@ export class MissionService {
 
   readonly APIUrl = environment.APIEndpoint + '/mission'
 
+  getMissionByMapElement(mapElementId: number): Observable<Mission> {
+    return this.http.get<Mission>(this.APIUrl + '/mapElement?mapElementId='+mapElementId);
+  }
+
+  getMissionDetails(): Observable<Mission[]> {
+    return this.http.get<Mission[]>(this.APIUrl + '/available');
+  }
+
   getAvailableMissions(): Observable<Mission[]> {
     return this.http.get<Mission[]>(this.APIUrl + '/available');
   }
