@@ -1,5 +1,5 @@
 import { MapUtils } from './../../../utils/map-utils';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MapField } from 'src/app/models/map/mapField.models';
 import { MapService } from 'src/app/services/map/map.service';
@@ -20,7 +20,8 @@ export class ShowMapComponent implements OnInit {
   mapFields: MapField[]
   chosenMapFieldId: number
   chosenElementType: number
-  creatingRoadMode: boolean = true
+  creatingAgentRoadMode: boolean = false
+  @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
   ngOnInit(): void {
     this.mapService.getEdgeForBoss(this.tokenService.getBossId()).subscribe(x=>
@@ -86,14 +87,15 @@ export class ShowMapComponent implements OnInit {
     this.refreshMap();
   }
 
-  mapElementClick(mapFieldId: number, elementType: number, mapElementContent: any){
+  mapElementClick(mapFieldId: number, elementType: number){
     this.chosenMapFieldId=mapFieldId
     this.chosenElementType=elementType
-    this.modalService.open(mapElementContent, {ariaLabelledBy: 'modal-basic-title'});
+    console.log(elementType);
+    this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
   }
 
   mapFieldClick(mapFieldId: number, X:number, Y:number, mapElementType: number, terrainType: number){
-    if(this.creatingRoadMode == true)
+    if(this.creatingAgentRoadMode == true)
     {
       if(!this.mapUtils.isRoad(X,Y))
       {
