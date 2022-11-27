@@ -51,24 +51,24 @@ namespace MafiaOnline.BusinessLogic.Services
                     //set terrain
                     if (_mapUtils.IsRoad(i + x, j + y))
                     {
-                        map[i*size+j] = new MapFieldDTO { X = (i + x), Y = (j + y), Terrain = TerrainType.Road};
+                        map[i*size+j] = new MapFieldDTO { X = (i + x), Y = (j + y), TerrainType = TerrainType.Road};
                     }
                     else
                     {
-                        map[i*size+j] = new MapFieldDTO { X = (i + x), Y = (j + y), Terrain = TerrainType.BuildUpArea };
+                        map[i*size+j] = new MapFieldDTO { X = (i + x), Y = (j + y), TerrainType = TerrainType.BuildUpArea };
                     }
 
                     //set map element
                     var mapElement = mapElements.FirstOrDefault(el => el.X == (i + x) && el.Y == (j + y));
                     if (mapElement != null)
                     {
-                        map[i * size + j].MapElement = mapElement.Type;
+                        map[i * size + j].MapElementType = mapElement.Type;
                         map[i * size + j].Id = mapElement.Id;
                         map[i * size + j].Owner = mapElement.BossId;
                     }
                     else
                     {
-                        map[i * size + j].MapElement = MapElementType.None;
+                        map[i * size + j].MapElementType = MapElementType.None;
                     }
                 }
             }

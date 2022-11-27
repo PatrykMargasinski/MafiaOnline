@@ -1,8 +1,10 @@
+import { MapUtils } from './../../../utils/map-utils';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MapField } from 'src/app/models/map/mapField.models';
 import { MapService } from 'src/app/services/map/map.service';
 import { TokenService } from 'src/app/services/auth/token.service';
+import { zip } from 'rxjs';
 
 @Component({
   selector: 'app-show-map',
@@ -14,10 +16,11 @@ export class ShowMapComponent implements OnInit {
   edgeX : number
   edgeY : number
 
-  constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal) { }
+  constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils) { }
   mapFields: MapField[]
   chosenMapFieldId: number
   chosenElementType: number
+  creatingRoadMode: boolean = true
 
   ngOnInit(): void {
     this.mapService.getEdgeForBoss(this.tokenService.getBossId()).subscribe(x=>
@@ -43,8 +46,8 @@ export class ShowMapComponent implements OnInit {
       })
   }
 
-  getTerrainColor(terrainId: number): string{
-    switch(terrainId)
+  getTerrainColor(terrainTypeId: number): string{
+    switch(terrainTypeId)
     {
       case 0:
         return "gray";
@@ -83,9 +86,50 @@ export class ShowMapComponent implements OnInit {
     this.refreshMap();
   }
 
-  divClick(mapFieldId: number, elementType: number, mapElementContent: any){
+  mapElementClick(mapFieldId: number, elementType: number, mapElementContent: any){
     this.chosenMapFieldId=mapFieldId
     this.chosenElementType=elementType
     this.modalService.open(mapElementContent, {ariaLabelledBy: 'modal-basic-title'});
+  }
+
+  mapFieldClick(mapFieldId: number, X:number, Y:number, mapElementType: number, terrainType: number){
+    if(this.creatingRoadMode == true)
+    {
+      if(!this.mapUtils.isRoad(X,Y))
+      {
+        alert('This field is not a road')
+        return
+      }
+
+      var lastElement = this.mapUtils.getLastElementOfAgentRoad();
+
+      if(lastElement!=null && lastElement[0]==X && lastElement[1]==Y)
+      {
+        this.mapUtils.removeAgentRoad(X,Y);
+        return
+      }
+
+      if(this.mapUtils.getAgentRoad().filter(el=>el[0]==X && el[1]==Y).length!=0)
+      {
+        alert('You can remove only last set element')
+        return
+      }
+
+      if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement[0],lastElement[1]))
+      {
+        alert('This field is not adjacent with last field of agent road')
+        return
+      }
+
+      if(!this.mapUtils.isPointAgentRoad(X,Y))
+      {
+        this.mapUtils.addRoadToAgentRoad(X,Y);
+      }
+    }
+  }
+
+  isChosenAsAgentRoad(X: number, Y: number)
+  {
+    return this.mapUtils.isPointAgentRoad(X, Y);
   }
 }
