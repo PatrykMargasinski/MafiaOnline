@@ -107,19 +107,19 @@ export class ShowMapComponent implements OnInit {
 
       var lastElement = this.mapUtils.getLastElementOfAgentPath();
 
-      if(lastElement!=null && lastElement[0]==X && lastElement[1]==Y)
+      if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
       {
         this.mapUtils.removeAgentPath(X,Y);
         return
       }
 
-      if(this.mapUtils.getAgentPath().filter(el=>el[0]==X && el[1]==Y).length!=0)
+      if(this.mapUtils.getAgentPath().filter(el=>el.X==X && el.Y==Y).length!=0)
       {
         alert('You can remove only last set element')
         return
       }
 
-      if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement[0],lastElement[1]))
+      if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement.X,lastElement.Y))
       {
         alert('This field is not adjacent with last field of agent road')
         return

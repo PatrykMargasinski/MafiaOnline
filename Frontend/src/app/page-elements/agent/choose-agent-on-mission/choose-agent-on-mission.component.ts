@@ -59,7 +59,8 @@ export class ChooseAgentOnMissionComponent implements OnInit {
   }
 
   doMission(agentId: number){
-    this.missionService.startMission(agentId, this.missionId).subscribe(it=>{
+    let path = this.mapUtils.getAgentPath()
+    this.missionService.startMission(agentId, this.missionId, path).subscribe(it=>{
       this.someEvent.next(0)
     })
   }

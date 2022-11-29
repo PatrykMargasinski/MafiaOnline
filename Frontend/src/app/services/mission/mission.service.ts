@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Mission, PerformingMission } from 'src/app/models/mission/mission.models';
 import { environment } from 'src/environments/environment';
+import { Point } from 'src/app/models/map/point.models';
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +35,8 @@ export class MissionService {
     return this.http.get<Mission>(this.APIUrl + '/?missionId='+missionId);
   }
 
-  startMission(agentId: number, missionId: number){
-    const request: StartMissionRequest = {MissionId: missionId, AgentId: agentId}
+  startMission(agentId: number, missionId: number, path: Point[]){
+    const request: StartMissionRequest = {MissionId: missionId, AgentId: agentId, Path: path}
     return this.http.post<PerformingMission[]>(this.APIUrl + '/start', request);
   }
 }

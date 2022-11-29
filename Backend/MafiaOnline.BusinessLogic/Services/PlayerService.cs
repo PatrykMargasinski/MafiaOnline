@@ -121,7 +121,7 @@ namespace MafiaOnline.BusinessLogic.Services
             var newPosition = await _mapUtils.GetNewHeadquartersPosition();
 
             var headquarter = new Headquarters() { Name = request.HeadquartersName, Boss = boss };
-            var mapElement = new MapElement() { X = newPosition.Item1, Y = newPosition.Item2, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
+            var mapElement = new MapElement() { X = newPosition.X, Y = newPosition.Y, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
             _unitOfWork.MapElements.Create(mapElement);
 
             _unitOfWork.Commit();

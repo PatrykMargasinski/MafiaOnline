@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Point } from '../models/map/point.models';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,7 @@ export class MapUtils {
   getAgentPath()
   {
     let road = sessionStorage.getItem('agentPath');
-    var roadArray = JSON.parse(road) as number[][];
+    var roadArray = JSON.parse(road) as Point[];
     if(roadArray==null) roadArray=[]
     return roadArray
   }
@@ -45,21 +46,22 @@ export class MapUtils {
   addRoadToAgentPath(x: number, y: number)
   {
     var roadArray = this.getAgentPath()
-    roadArray.push([x,y]);
+    let point: Point = {X:x,Y:y}
+    roadArray.push(point);
     sessionStorage.setItem('agentPath',JSON.stringify(roadArray));
   }
 
   removeAgentPath(x: number, y: number)
   {
     var roadArray = this.getAgentPath()
-    roadArray=roadArray.filter((el) => !(el[0] == x && el[1] == y))
+    roadArray=roadArray.filter((el) => !(el.X == x && el.Y == y))
     sessionStorage.setItem('agentPath',JSON.stringify(roadArray));
   }
 
-  isPointAgentPath(X: number, Y: number)
+  isPointAgentPath(x: number, y: number)
   {
     var roadArray = this.getAgentPath()
-    let point = roadArray.filter((x) => x[0] == X && x[1] == Y)
+    let point = roadArray.filter((el) => el.X == x && el.Y == y)
     return point.length!=0;
   }
 
