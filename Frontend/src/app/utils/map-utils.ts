@@ -29,39 +29,50 @@ export class MapUtils {
     return ((!(Math.abs(X1-X2)==1 && Math.abs(Y1-Y2)==1)) && (Math.abs(X1-X2)==1 || Math.abs(Y1-Y2)==1))
   }
 
-  getAgentRoad()
+  clearAgentPath()
   {
-    let road = sessionStorage.getItem('agentRoad');
+    sessionStorage.setItem('agentPath', null);
+  }
+
+  getAgentPath()
+  {
+    let road = sessionStorage.getItem('agentPath');
     var roadArray = JSON.parse(road) as number[][];
     if(roadArray==null) roadArray=[]
     return roadArray
   }
 
-  addRoadToAgentRoad(x: number, y: number)
+  addRoadToAgentPath(x: number, y: number)
   {
-    var roadArray = this.getAgentRoad()
+    var roadArray = this.getAgentPath()
     roadArray.push([x,y]);
-    sessionStorage.setItem('agentRoad',JSON.stringify(roadArray));
+    sessionStorage.setItem('agentPath',JSON.stringify(roadArray));
   }
 
-  removeAgentRoad(x: number, y: number)
+  removeAgentPath(x: number, y: number)
   {
-    var roadArray = this.getAgentRoad()
+    var roadArray = this.getAgentPath()
     roadArray=roadArray.filter((el) => !(el[0] == x && el[1] == y))
-    sessionStorage.setItem('agentRoad',JSON.stringify(roadArray));
+    sessionStorage.setItem('agentPath',JSON.stringify(roadArray));
   }
 
-  isPointAgentRoad(X: number, Y: number)
+  isPointAgentPath(X: number, Y: number)
   {
-    var roadArray = this.getAgentRoad()
+    var roadArray = this.getAgentPath()
     let point = roadArray.filter((x) => x[0] == X && x[1] == Y)
     return point.length!=0;
   }
 
-  getLastElementOfAgentRoad()
+  getLastElementOfAgentPath()
   {
-    var roadArray = this.getAgentRoad()
+    var roadArray = this.getAgentPath()
     if(roadArray.length==0) return null;
     return roadArray[roadArray.length-1];
+  }
+
+  agentPathExists()
+  {
+    var roadArray = this.getAgentPath()
+    return roadArray.length!=0
   }
 }

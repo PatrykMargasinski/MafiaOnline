@@ -4,7 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MapField } from 'src/app/models/map/mapField.models';
 import { MapService } from 'src/app/services/map/map.service';
 import { TokenService } from 'src/app/services/auth/token.service';
-import { zip } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-show-map',
@@ -16,11 +16,11 @@ export class ShowMapComponent implements OnInit {
   edgeX : number
   edgeY : number
 
-  constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils) { }
+  constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils, private activatedRoute: ActivatedRoute) { }
   mapFields: MapField[]
   chosenMapFieldId: number
   chosenElementType: number
-  creatingAgentRoadMode: boolean = false
+  creatingAgentPathMode: boolean = false
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
   ngOnInit(): void {
@@ -29,20 +29,23 @@ export class ShowMapComponent implements OnInit {
         this.edgeX=x[0]
         this.edgeY=x[1]
         this.refreshMap();
+        this.mapUtils.clearAgentPath();
       })
-
   }
 
-  closeAndRefresh() {
+  closeAndRefresh(operation: number) {
     this.modalService.dismissAll();
     this.refreshMap();
+    if(operation==1)
+    {
+      this.creatingAgentPathMode = true;
+    }
   }
 
   refreshMap(){
     this.mapService.getMap(this.edgeX,this.edgeY,20).subscribe(
       x=>
       {
-        console.log(x)
         this.mapFields=x
       })
   }
@@ -76,7 +79,6 @@ export class ShowMapComponent implements OnInit {
 
   moveUp()
   {
-    console.log("test")
     this.edgeX--;
     this.refreshMap();
   }
@@ -95,7 +97,7 @@ export class ShowMapComponent implements OnInit {
   }
 
   mapFieldClick(mapFieldId: number, X:number, Y:number, mapElementType: number, terrainType: number){
-    if(this.creatingAgentRoadMode == true)
+    if(this.creatingAgentPathMode == true)
     {
       if(!this.mapUtils.isRoad(X,Y))
       {
@@ -103,15 +105,15 @@ export class ShowMapComponent implements OnInit {
         return
       }
 
-      var lastElement = this.mapUtils.getLastElementOfAgentRoad();
+      var lastElement = this.mapUtils.getLastElementOfAgentPath();
 
       if(lastElement!=null && lastElement[0]==X && lastElement[1]==Y)
       {
-        this.mapUtils.removeAgentRoad(X,Y);
+        this.mapUtils.removeAgentPath(X,Y);
         return
       }
 
-      if(this.mapUtils.getAgentRoad().filter(el=>el[0]==X && el[1]==Y).length!=0)
+      if(this.mapUtils.getAgentPath().filter(el=>el[0]==X && el[1]==Y).length!=0)
       {
         alert('You can remove only last set element')
         return
@@ -123,15 +125,29 @@ export class ShowMapComponent implements OnInit {
         return
       }
 
-      if(!this.mapUtils.isPointAgentRoad(X,Y))
+      if(!this.mapUtils.isPointAgentPath(X,Y))
       {
-        this.mapUtils.addRoadToAgentRoad(X,Y);
+        this.mapUtils.addRoadToAgentPath(X,Y);
       }
     }
   }
 
-  isChosenAsAgentRoad(X: number, Y: number)
+  isChosenAsAgentPath(X: number, Y: number)
   {
-    return this.mapUtils.isPointAgentRoad(X, Y);
+    return this.mapUtils.isPointAgentPath(X, Y);
+  }
+
+  roadReadyOperations(operation: number)
+  {
+    console.log(operation)
+    if(operation==1)
+    {
+      this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
+    }
+    if(operation==2)
+    {
+      this.creatingAgentPathMode = false
+      this.mapUtils.clearAgentPath();
+    }
   }
 }

@@ -1,5 +1,7 @@
+import { MapUtils } from './../../../utils/map-utils';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Agent } from 'src/app/models/agent/agent.models';
+import { Mission } from 'src/app/models/mission/mission.models';
 import { AgentService } from 'src/app/services/agent/agent.service';
 import { TokenService } from 'src/app/services/auth/token.service';
 import { MissionService } from 'src/app/services/mission/mission.service';
@@ -12,19 +14,28 @@ import { MissionService } from 'src/app/services/mission/mission.service';
 export class ChooseAgentOnMissionComponent implements OnInit {
 
   @Input() missionId: number
-  @Output() someEvent = new EventEmitter();
+  @Input() mapElementId: number
+  mission: Mission
+  @Output() someEvent = new EventEmitter<number>();
   agents: Agent[]
+  agentPathSet: boolean = false
 
   constructor(
     private agentService: AgentService,
     private missionService: MissionService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private mapUtils: MapUtils
     ) {
 
     }
 
   ngOnInit(): void {
     this.getAgents();
+    if(this.missionId!=null)
+      this.getMissionById();
+    if(this.mapElementId!=null)
+      this.getMissionByMapElement();
+    this.agentPathSet = this.mapUtils.agentPathExists();
   }
 
   getAgents(){
@@ -34,10 +45,28 @@ export class ChooseAgentOnMissionComponent implements OnInit {
     })
   }
 
+  getMissionById(){
+    this.missionService.getMissionById(this.missionId).subscribe(data=>{
+      this.mission = data
+    })
+  }
+
+  getMissionByMapElement(){
+    this.missionService.getMissionByMapElement(this.mapElementId).subscribe(data=>{
+      this.mission = data
+      this.missionId = data.Id
+    })
+  }
+
   doMission(agentId: number){
     this.missionService.startMission(agentId, this.missionId).subscribe(it=>{
-      this.someEvent.next()
+      this.someEvent.next(0)
     })
+  }
+
+  setAgentPath(){
+    this.mapUtils.clearAgentPath();
+      this.someEvent.next(1)
   }
 }
 

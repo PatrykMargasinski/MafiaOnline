@@ -29,6 +29,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<PerformingMissionDTO>> GetPerformingMissions(long bossId);
         Task RefreshMissions();
         Task ScheduleRefreshMissionsJob();
+        Task<MissionDTO> GetMissionById(long missionId);
     }
 
     public class MissionService : IMissionService
@@ -149,6 +150,12 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var missions = await _unitOfWork.Missions.GetAvailableMissions();
             return _mapper.Map<IList<MissionDTO>>(missions);
+        }
+
+        public async Task<MissionDTO> GetMissionById(long missionId)
+        {
+            var mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
+            return _mapper.Map<MissionDTO>(mission);
         }
 
         /// <summary>

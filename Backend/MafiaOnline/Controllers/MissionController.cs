@@ -37,6 +37,13 @@ namespace MafiaOnline.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetMissionById(long missionId)
+        {
+            var mission = await _missionService.GetMissionById(missionId);
+            return new JsonResult(mission);
+        }
+
         [HttpGet("available")]
         public async Task<IActionResult> GetAvailableMissions()
         {

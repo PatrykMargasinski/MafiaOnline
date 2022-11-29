@@ -30,6 +30,10 @@ export class MissionService {
     return this.http.get<PerformingMission[]>(this.APIUrl + '/performing?bossId='+bossId);
   }
 
+  getMissionById(missionId: number): Observable<Mission> {
+    return this.http.get<Mission>(this.APIUrl + '/?missionId='+missionId);
+  }
+
   startMission(agentId: number, missionId: number){
     const request: StartMissionRequest = {MissionId: missionId, AgentId: agentId}
     return this.http.post<PerformingMission[]>(this.APIUrl + '/start', request);

@@ -20,6 +20,6 @@ export class MapService {
 
   getMap(x: number, y:number, size: number):Observable<MapField[]>
   {
-    return this.http.get<MapField[]>(this.APIUrl+'?x=' + x + '&y=' + y +'&size=' + size);
+    return this.http.get<MapField[]>(this.APIUrl+'/generate?x=' + x + '&y=' + y +'&size=' + size);
   }
 }

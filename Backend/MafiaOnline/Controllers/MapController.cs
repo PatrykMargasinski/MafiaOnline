@@ -20,7 +20,7 @@ namespace MafiaOnline.Controllers
             _mapService = mapService;
         }
 
-        [HttpGet]
+        [HttpGet("generate")]
         public async Task<IActionResult> GenerateMap(long x, long y, long size)
         {
             var map = await _mapService.GenerateMap(x, y, size);
