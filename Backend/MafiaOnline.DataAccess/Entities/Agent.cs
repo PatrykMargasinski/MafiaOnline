@@ -12,6 +12,16 @@ namespace MafiaOnline.DataAccess.Entities
         public AgentState State { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
+
+        [NotMapped]
+        public string FullName
+        {
+            get
+            {
+                if (FirstName == null || LastName == null) return null;
+                return $"{FirstName} {LastName}";
+            }
+        }
         public int Strength { get; set; }
         public int Dexterity { get; set; }
         public int Intelligence { get; set; }
@@ -20,6 +30,7 @@ namespace MafiaOnline.DataAccess.Entities
 
         public virtual Boss Boss { get; set; }
         public virtual AgentForSale AgentForSale { get; set; }
+        public virtual MovingAgent MovingAgent { get; set; }
         public virtual PerformingMission PerformingMission { get; set; }
     }
 
@@ -28,7 +39,8 @@ namespace MafiaOnline.DataAccess.Entities
         Renegate,
         ForSale,
         Active,
-        OnMission
+        OnMission,
+        Moving
     }
 
     public class AgentModelConfiguration : IEntityTypeConfiguration<Agent>

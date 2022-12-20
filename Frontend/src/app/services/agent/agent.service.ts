@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Agent, AgentOnMission, AgentForSale } from 'src/app/models/agent/agent.models';
+import { Agent, AgentOnMission, AgentForSale, MovingAgent } from 'src/app/models/agent/agent.models';
 import { DismissAgentRequest, RecruitAgentRequest } from 'src/app/models/agent/agent.requests';
 import { environment } from 'src/environments/environment';
 @Injectable({
@@ -24,6 +24,10 @@ export class AgentService {
 
   getAgentsForSaleList(): Observable<AgentForSale[]> {
     return this.http.get<AgentForSale[]>(this.APIUrl + '/forSale');
+  }
+
+  getMovingAgents(bossId: number): Observable<MovingAgent[]> {
+    return this.http.get<MovingAgent[]>(this.APIUrl + '/moving/' + bossId);
   }
 
   recruitAgent(bossId: number, agentId: number) {

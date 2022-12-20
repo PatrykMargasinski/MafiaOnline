@@ -26,6 +26,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<AgentDTO>> GetActiveAgents(long bossId);
         Task<IList<AgentOnMissionDTO>> GetAgentsOnMission(long bossId);
         Task<IList<AgentForSaleDTO>> GetAgentsForSale();
+        Task<IList<MovingAgentDTO>> GetMovingAgents(long bossId);
         Task<Agent> DismissAgent(DismissAgentRequest request);
         Task<Agent> RecruitAgent(RecruitAgentRequest request);
         Task RefreshAgents();
@@ -81,6 +82,15 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var agents = await _unitOfWork.Agents.GetActiveAgents(bossId);
             return _mapper.Map<IList<AgentDTO>>(agents);
+        }
+
+        /// <summary>
+        /// Returns moving agents belonging to the boss
+        /// </summary>
+        public async Task<IList<MovingAgentDTO>> GetMovingAgents(long bossId)
+        {
+            var agents = await _unitOfWork.Agents.GetMovingAgents(bossId);
+            return _mapper.Map<IList<MovingAgentDTO>>(agents);
         }
 
         /// <summary>

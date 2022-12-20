@@ -29,6 +29,13 @@ namespace MafiaOnline.Controllers
             return new JsonResult(missions);
         }
 
+        [HttpPost("move")]
+        public async Task<IActionResult> MoveOnMission([FromBody] StartMissionRequest request)
+        {
+            await _missionService.MoveOnMission(request);
+            return Ok();
+        }
+
         [HttpPost("start")]
         public async Task<IActionResult> StartMission([FromBody] StartMissionRequest request)
         {

@@ -8,6 +8,7 @@ namespace MafiaOnline.DataAccess.Database
         void Commit();
         IAgentRepository Agents { get; }
         IAgentForSaleRepository AgentsForSale { get; }
+        IMovingAgentRepository MovingAgents { get; }
         IBossRepository Bosses { get; }
         IPlayerRepository Players { get; }
         IMessageRepository Messages { get; }
@@ -27,6 +28,7 @@ namespace MafiaOnline.DataAccess.Database
             _context = context;
             Agents = new AgentRepository(context);
             AgentsForSale = new AgentForSaleRepository(context);
+            MovingAgents = new MovingAgentRepository(context);
             Bosses = new BossRepository(context);
             Players = new PlayerRepository(context);
             Missions = new MissionRepository(context);
@@ -40,6 +42,7 @@ namespace MafiaOnline.DataAccess.Database
 
         public IAgentRepository Agents { get; }
         public IAgentForSaleRepository AgentsForSale { get; }
+        public IMovingAgentRepository MovingAgents { get; }
         public IBossRepository Bosses { get; }
         public IPlayerRepository Players { get; }
         public IMissionRepository Missions { get; }

@@ -30,6 +30,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task RefreshMissions();
         Task ScheduleRefreshMissionsJob();
         Task<MissionDTO> GetMissionById(long missionId);
+        Task MoveOnMission(StartMissionRequest request);
     }
 
     public class MissionService : IMissionService
@@ -44,9 +45,10 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IPerformMissionJobRunner _jobRunner;
         private readonly IMissionFactory _missionFactory;
         private readonly IMissionRefreshJobRunner _missionRefreshJobRunner;
+        private readonly IAgentMovingOnMissionJobRunner _agentMoveJobRunner;
 
         public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter, IMissionValidator missionValidator,
-            IPerformMissionJobRunner jobRunner, ILogger<MissionService> logger, IMissionFactory missionFactory, IMissionRefreshJobRunner missionRefreshJobRunner)
+            IPerformMissionJobRunner jobRunner, ILogger<MissionService> logger, IMissionFactory missionFactory, IMissionRefreshJobRunner missionRefreshJobRunner, IAgentMovingOnMissionJobRunner agentMoveJobRunner)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -58,6 +60,19 @@ namespace MafiaOnline.BusinessLogic.Services
             _logger = logger;
             _missionFactory = missionFactory;
             _missionRefreshJobRunner = missionRefreshJobRunner;
+            _agentMoveJobRunner = agentMoveJobRunner;
+        }
+
+        /// <summary>
+        /// Agents moves on mission. It will be performed when agent reaches a place
+        /// </summary>
+        public async Task MoveOnMission(StartMissionRequest request)
+        {
+            await _missionValidator.ValidateMoveOnMission(request.AgentId, request.MissionId);
+            var movingAgent = await _missionFactory.CreateAgentMovingOnMission(request);
+            _unitOfWork.MovingAgents.Create(movingAgent);
+            _unitOfWork.Commit();
+            await _agentMoveJobRunner.Start(_scheduler, movingAgent.ConstCompletionTime.Value, movingAgent.Id);
         }
 
         /// <summary>
@@ -65,8 +80,28 @@ namespace MafiaOnline.BusinessLogic.Services
         /// </summary>
         public async Task StartMission(StartMissionRequest request)
         {
-            var pm = await DoMission(request.AgentId, request.MissionId);
-            await _jobRunner.Start(_scheduler, pm.Id, pm.CompletionTime);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
+            var mission = await _unitOfWork.Missions.GetByIdAsync(request.MissionId);
+            try
+            {
+                var pm = await DoMission(request.AgentId, request.MissionId);
+                await _jobRunner.Start(_scheduler, pm.Id, pm.CompletionTime);
+            }
+            catch(Exception ex)
+            {
+                string messageContent;
+                messageContent = $"Agent {agent.FullName ?? ""} wanted to perform ";
+                if (mission != null) messageContent += $"mission {mission.Name}";
+                else messageContent += $"some mission";
+                messageContent += ", but there are reasons why he couldn't:\n";
+                messageContent += $"{ex.Message}\n\n";
+                messageContent += "The agent returns to the headquarters";
+                await _reporter.CreateReport(boss.Id, "The agent returns to the headquarters", messageContent);
+                agent.State = AgentState.Active;
+                _unitOfWork.Commit();
+                return;
+            }
         }
 
         /// <summary>
@@ -80,6 +115,11 @@ namespace MafiaOnline.BusinessLogic.Services
             var mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
             var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
+
+            await _reporter.CreateReport(boss.Id, 
+                $"Agent {agent.FullName} starts mission {mission.Name}", 
+                $"Agent {agent.FullName} starts mission {mission.Name}. He/she will finish it in {mission.Duration} seconds and after it he/she will go back to the headquarters");
+
             DateTime missionFinishTime = DateTime.Now.AddSeconds(mission.Duration);
 
             PerformingMission performingMission = new PerformingMission()

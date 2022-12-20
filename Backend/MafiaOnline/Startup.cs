@@ -21,6 +21,7 @@ using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.ErrorHandling;
 using MafiaOnline.BusinessLogic.Factories;
 using MafiaAPI.Jobs;
+using Newtonsoft.Json;
 
 namespace MafiaOnline
 {
@@ -77,6 +78,7 @@ namespace MafiaOnline
             services.AddScoped<IReporter, Reporter>();
             services.AddScoped<IRandomizer, Randomizer>();
             services.AddScoped<IMapUtils, MapUtils>();
+            services.AddScoped<IMovingAgentUtils, MovingAgentUtils>();
 
             //Factories
             services.AddScoped<IAgentFactory, AgentFactory>();
@@ -92,6 +94,7 @@ namespace MafiaOnline
             services.AddScoped<IPerformMissionJobRunner, PerformMissionJobRunner>();
             services.AddScoped<IAgentRefreshJobRunner, AgentRefreshJobRunner>();
             services.AddScoped<IMissionRefreshJobRunner, MissionRefreshJobRunner>();
+            services.AddScoped<IAgentMovingOnMissionJobRunner, AgentMovingOnMissionJobRunner>();
 
             //Hosted service
             services.AddHostedService<MyHostedService>();
@@ -134,6 +137,8 @@ namespace MafiaOnline
                 var loggingSection = Configuration.GetSection("Logging");
                 loggingBuilder.AddFile(loggingSection);
             });
+
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

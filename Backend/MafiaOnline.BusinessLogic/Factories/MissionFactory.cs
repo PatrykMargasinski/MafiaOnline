@@ -1,9 +1,15 @@
 ﻿
+using FluentAssertions.Execution;
+using MafiaOnline.BusinessLogic.Const;
+using MafiaOnline.BusinessLogic.Entities.Mission;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace MafiaOnline.BusinessLogic.Factories
 {
@@ -14,6 +20,7 @@ namespace MafiaOnline.BusinessLogic.Factories
         Task<Mission> CreateByMissionTemplate(MissionTemplate template);
         Mission Create(string name = "Mission with no name", int? difficultyLevel = null, double? duration = null, int? loot = null,
         int? strengthPercentage = null, int? dexterityPercentage = null, int? intelligencePercentage = null);
+        Task<MovingAgent> CreateAgentMovingOnMission(StartMissionRequest request);
     }
 
     public class MissionFactory : IMissionFactory
@@ -70,6 +77,30 @@ namespace MafiaOnline.BusinessLogic.Factories
             mission.MapElement = mapElement;
 
             return mission;
+        }
+
+        public async Task<MovingAgent> CreateAgentMovingOnMission(StartMissionRequest request)
+        {
+            var movingAgent = new MovingAgent()
+            {
+            };
+
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var mission = await _unitOfWork.Missions.GetByIdAsync(request.MissionId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
+            var headquarters = await _unitOfWork.Headquarters.GetByBossId(boss.Id);
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
+
+            movingAgent.ConstCompletionTime = DateTime.Now
+                .AddSeconds((Math.Abs(headquarters.MapElement.X - mapElement.X) + Math.Abs(headquarters.MapElement.Y - mapElement.Y)) * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
+            movingAgent.DestinationPoint = new Point(mapElement.X, mapElement.Y);
+            movingAgent.DestinationDescription = $"Going on mission: {mission.Name}";
+            movingAgent.Path = request.Path;
+            movingAgent.DatasJson = JsonSerializer.Serialize(request);
+
+            movingAgent.Agent = agent;
+            agent.State = AgentState.Moving;
+            return movingAgent;
         }
     }
 }

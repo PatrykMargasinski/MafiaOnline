@@ -39,4 +39,9 @@ export class MissionService {
     const request: StartMissionRequest = {MissionId: missionId, AgentId: agentId, Path: path}
     return this.http.post<PerformingMission[]>(this.APIUrl + '/start', request);
   }
+
+  moveOnMission(agentId: number, missionId: number, path: Point[]){
+    const request: StartMissionRequest = {MissionId: missionId, AgentId: agentId, Path: path}
+    return this.http.post<PerformingMission[]>(this.APIUrl + '/move', request);
+  }
 }

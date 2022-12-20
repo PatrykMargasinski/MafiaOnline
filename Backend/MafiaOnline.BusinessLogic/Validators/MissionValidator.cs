@@ -13,6 +13,7 @@ namespace MafiaOnline.BusinessLogic.Validators
     {
         Task ValidateDoMission(long agentId, long missionId);
         Task ValidateEndMission(long pmId);
+        Task ValidateMoveOnMission(long agentId, long missionId);
     }
 
     public class MissionValidator : IMissionValidator
@@ -24,6 +25,37 @@ namespace MafiaOnline.BusinessLogic.Validators
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+        }
+
+        public async Task ValidateMoveOnMission(long agentId, long missionId)
+        {
+            Mission mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
+            if (mission == null)
+            {
+                throw new Exception("Mission " + missionId + " not found!");
+            }
+
+            if (mission.State != MissionState.Available)
+            {
+                throw new Exception("Mission " + missionId + " is not available");
+            }
+
+            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+
+            if (agent == null)
+            {
+                throw new Exception("Agent with id " + agentId + " not found!");
+            }
+
+            if (agent.BossId == null)
+            {
+                throw new Exception("Agent " + agentId + " is without boss");
+            }
+
+            if (agent.State != AgentState.Active)
+            {
+                throw new Exception("Agent " + agentId + " is not in the active state");
+            }
         }
 
         public async Task ValidateDoMission(long agentId, long missionId)
@@ -51,9 +83,9 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Agent " + agentId + " is without boss");
             }
 
-            if (agent.State != AgentState.Active)
+            if (agent.State != AgentState.Moving)
             {
-                throw new Exception("Agent " + agentId + " is not active");
+                throw new Exception("Agent " + agentId + " is not in the moving state");
             }
         }
 

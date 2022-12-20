@@ -35,11 +35,16 @@ export class ShowMapComponent implements OnInit {
 
   closeAndRefresh(operation: number) {
     this.modalService.dismissAll();
-    this.refreshMap();
     if(operation==1)
     {
       this.creatingAgentPathMode = true;
     }
+    else if(operation==2)
+    {
+      this.creatingAgentPathMode = false;
+      this.mapUtils.clearAgentPath();
+    }
+    this.refreshMap();
   }
 
   refreshMap(){
@@ -139,7 +144,6 @@ export class ShowMapComponent implements OnInit {
 
   roadReadyOperations(operation: number)
   {
-    console.log(operation)
     if(operation==1)
     {
       this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});

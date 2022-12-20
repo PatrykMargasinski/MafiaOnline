@@ -37,3 +37,17 @@ export interface AgentOnMission
   CompletionTime: Date,
   SecondsLeft: number
 }
+
+export interface MovingAgent
+{
+  Id: number,
+  BossId: number,
+  LastName: string,
+  FirstName: string,
+  Strength: number,
+  Dexterity: number,
+  Intelligence: number,
+  Upkeep: number,
+  DestinationDescription: string
+}
+

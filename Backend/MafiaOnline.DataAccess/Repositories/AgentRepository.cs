@@ -16,6 +16,7 @@ namespace MafiaOnline.DataAccess.Repositories
         Task<IList<Agent>> GetBossAgents(long bossId);
         Task<IList<Agent>> GetAgentsOnMission(long bossId);
         Task<IList<Agent>> GetAgentsForSale();
+        Task<IList<Agent>> GetMovingAgents(long bossId);
         Task<IList<Agent>> GetRenegates();
     }
 
@@ -57,6 +58,15 @@ namespace MafiaOnline.DataAccess.Repositories
             var agents = await _context.Agents
                 .Include(x => x.AgentForSale)
                 .Where(z => z.State == AgentState.ForSale)
+                .ToListAsync();
+            return agents;
+        }
+
+        public async Task<IList<Agent>> GetMovingAgents(long bossId)
+        {
+            var agents = await _context.Agents
+                .Include(x => x.AgentForSale)
+                .Where(z => z.State == AgentState.Moving && z.BossId==bossId)
                 .ToListAsync();
             return agents;
         }

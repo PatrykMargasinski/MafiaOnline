@@ -1,3 +1,4 @@
+import { MovingAgentsComponent } from './pages/agent/moving-agents/moving-agents.component';
 import { SendMessageComponent } from './pages/message/send-message/send-message.component';
 import { ShowReportsComponent } from './pages/message/show-reports/show-reports.component';
 import { ShowMessagesComponent } from './pages/message/show-messages/show-messages.component';
@@ -41,6 +42,7 @@ const routes: Routes = [
     {path: 'available', component: AvailableAgentsComponent},
     {path: 'onMission', component: AgentsOnMissionComponent},
     {path: 'forSale', component: AgentsForSaleComponent},
+    {path: 'moving', component: MovingAgentsComponent}
   ]},
   {path:'map',component:MapComponent , canActivate: [GuardService], children:
   [
