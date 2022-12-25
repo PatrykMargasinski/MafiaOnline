@@ -105,5 +105,22 @@ namespace MafiaOnline.BusinessLogic.Utils
             var newPosition = allPossiblePositions[_randomizer.Next(allPossiblePositions.Count)];
             return newPosition;
         }
+
+        public async Task ExposeMapElement(long mapElementId, long bossId)
+        {
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mapElementId);
+            if (mapElement == null)
+                throw new Exception("There is no map element with id: " + mapElementId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
+            if (boss== null)
+                throw new Exception("There is no boss with id: " + mapElementId);
+            var exposedMapElement = new ExposedMapElement()
+            {
+                Boss = boss,
+                MapElement = mapElement
+            };
+            _unitOfWork.ExposedMapElements.Create(exposedMapElement);
+            _unitOfWork.Commit();
+        }
     }
 }

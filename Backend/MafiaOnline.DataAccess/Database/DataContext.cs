@@ -27,6 +27,7 @@ namespace MafiaOnline.DataAccess.Database
         public virtual DbSet<AgentForSale> AgentsForSale { get; set; }
         public virtual DbSet<Name> Names { get; set; }
         public virtual DbSet<MapElement> MapElements { get; set; }
+        public virtual DbSet<ExposedMapElement> ExposedMapElements { get; set; }
         public virtual DbSet<Headquarters> Headquarters { get; set; }
         public virtual DbSet<Ambush> Ambushes { get; set; }
 

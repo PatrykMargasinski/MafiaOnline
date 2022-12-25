@@ -11,7 +11,7 @@ namespace MafiaOnline.DataAccess.Repositories
 {
     public interface IMapElementRepository : ICrudRepository<MapElement>
     {
-        Task<IList<MapElement>> GetInRange(long xMin, long xMax, long yMin, long yMax);
+        Task<IList<MapElement>> GetInRange(long xMin, long xMax, long yMin, long yMax, long bossId);
         Task<MapElement> GetInPoint(long x, long y);
     }
 
@@ -28,9 +28,18 @@ namespace MafiaOnline.DataAccess.Repositories
             return mapElements;
         }
 
-        public async Task<IList<MapElement>> GetInRange(long xMin, long xMax, long yMin, long yMax)
+        public async Task<IList<MapElement>> GetInRange(long xMin, long xMax, long yMin, long yMax, long bossId)
         {
-            var mapElements = await _context.MapElements.Where(x => x.X >= xMin && x.X < xMax && x.Y >= yMin && x.Y < yMax).ToListAsync();
+            var exposedMapElements = _context
+                .ExposedMapElements
+                .Where(x => x.ExposedByBossId == bossId)
+                .Select(x => x.MapElementId);
+
+            var mapElements = await _context
+                .MapElements
+                .Where(x => x.X >= xMin && x.X < xMax && x.Y >= yMin && x.Y < yMax)
+                .Where(x => x.Hidden == false || x.BossId==bossId || exposedMapElements.Contains(x.Id))
+                .ToListAsync();
             return mapElements;
         }
     }

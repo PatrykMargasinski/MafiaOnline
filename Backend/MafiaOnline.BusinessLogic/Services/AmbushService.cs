@@ -109,7 +109,8 @@ namespace MafiaOnline.BusinessLogic.Services
                 Y = request.Point.Y,
                 Boss = boss,
                 Type = MapElementType.Ambush,
-                Ambush = ambush
+                Ambush = ambush,
+                Hidden = true
             };
 
             agent.State = AgentState.Ambushing;

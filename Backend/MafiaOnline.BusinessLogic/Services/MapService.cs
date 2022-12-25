@@ -14,7 +14,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
     public interface IMapService
     {
-        Task<MapFieldDTO[]> GenerateMap(long x, long y, long size);
+        Task<MapFieldDTO[]> GenerateMap(long x, long y, long size, long bossId);
         Task<long[]> GetEdgeForBoss(long bossId);
     }
 
@@ -38,9 +38,9 @@ namespace MafiaOnline.BusinessLogic.Services
             return edge;
         }
 
-        public async Task<MapFieldDTO[]> GenerateMap(long x, long y, long size)
+        public async Task<MapFieldDTO[]> GenerateMap(long x, long y, long size, long bossId)
         {
-            var mapElements = await _unitOfWork.MapElements.GetInRange(x, x + size, y, y + size);
+            var mapElements = await _unitOfWork.MapElements.GetInRange(x, x + size, y, y + size, bossId);
 
             var map = new MapFieldDTO[size * size];
             for (int i = 0; i < size; i++)

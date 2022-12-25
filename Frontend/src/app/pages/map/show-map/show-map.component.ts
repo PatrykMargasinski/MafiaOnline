@@ -55,7 +55,7 @@ export class ShowMapComponent implements OnInit {
   }
 
   refreshMap(){
-    this.mapService.getMap(this.edgeX,this.edgeY,20).subscribe(
+    this.mapService.getMap(this.edgeX,this.edgeY,20, this.tokenService.getBossId()).subscribe(
       x=>
       {
         this.mapFields=x

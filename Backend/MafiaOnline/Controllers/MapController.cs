@@ -21,9 +21,9 @@ namespace MafiaOnline.Controllers
         }
 
         [HttpGet("generate")]
-        public async Task<IActionResult> GenerateMap(long x, long y, long size)
+        public async Task<IActionResult> GenerateMap(long x, long y, long size, long bossId)
         {
-            var map = await _mapService.GenerateMap(x, y, size);
+            var map = await _mapService.GenerateMap(x, y, size, bossId);
             return new JsonResult(map);
         }
 

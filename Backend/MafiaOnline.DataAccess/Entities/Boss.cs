@@ -30,6 +30,7 @@ namespace MafiaOnline.DataAccess.Entities
         public virtual Headquarters Headquarters { get; set; }
         public virtual List<MapElement> MapElements { get; set; }
         public virtual List<Ambush> Ambushes { get; set; }
+        public virtual List<ExposedMapElement> Exposures { get; set; }
     }
 
     public class BossModelConfiguration : IEntityTypeConfiguration<Boss>
