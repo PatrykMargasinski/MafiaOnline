@@ -5,3 +5,8 @@ export interface ArrangeAmbushRequest
   AgentId: number,
   Point: Point
 }
+
+export interface CancelAmbushRequest
+{
+  MapElementId: number
+}

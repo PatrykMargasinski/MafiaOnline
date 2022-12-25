@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Ambush } from 'src/app/models/ambush/ambush.models';
-import { ArrangeAmbushRequest } from 'src/app/models/ambush/ambush.requests';
+import { ArrangeAmbushRequest, CancelAmbushRequest } from 'src/app/models/ambush/ambush.requests';
 import { Point } from 'src/app/models/map/point.models';
 import { environment } from 'src/environments/environment';
 
@@ -23,5 +23,11 @@ export class AmbushService {
   getAmbushDetails(mapElementId: number)
   {
     return this.http.get<Ambush>(this.APIUrl + '?mapElementId=' + mapElementId);
+  }
+
+  cancelAmbush(mapElementId: number)
+  {
+    const request: CancelAmbushRequest = {MapElementId: mapElementId}
+    return this.http.post(this.APIUrl + '/cancel', request);
   }
 }

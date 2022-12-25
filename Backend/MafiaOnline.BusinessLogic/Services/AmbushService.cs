@@ -25,6 +25,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task MoveToArrangeAmbush(ArrangeAmbushRequest request);
         Task ArrangeAmbush(ArrangeAmbushRequest request);
         Task<AmbushDTO> GetAmbushDetailsByMapElementId(long mapElementId);
+        Task CancelAmbush(CancelAmbushRequest request);
 
     }
 
@@ -62,6 +63,16 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.MovingAgents.Create(movingAgent);
             _unitOfWork.Commit();
             await _arrangeAmbushJobRunner.Start(_scheduler, movingAgent.ConstCompletionTime.Value, movingAgent.Id);
+        }
+
+
+        public async Task CancelAmbush(CancelAmbushRequest request)
+        {
+            var ambush = await _unitOfWork.Ambushes.GetByMapElementIdAsync(request.MapElementId);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(ambush.AgentId);
+            agent.State = AgentState.Active;
+            _unitOfWork.MapElements.DeleteById(request.MapElementId);
+            _unitOfWork.Commit();
         }
 
         public async Task ArrangeAmbush(ArrangeAmbushRequest request)
