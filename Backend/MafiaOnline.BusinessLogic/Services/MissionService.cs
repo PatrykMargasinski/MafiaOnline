@@ -2,7 +2,6 @@
 using MafiaAPI.Jobs;
 using MafiaOnline.BusinessLogic.Const;
 using MafiaOnline.BusinessLogic.Entities;
-using MafiaOnline.BusinessLogic.Entities.Mission;
 using MafiaOnline.BusinessLogic.Factories;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;

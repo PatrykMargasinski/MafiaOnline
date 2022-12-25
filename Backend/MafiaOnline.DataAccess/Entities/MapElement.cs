@@ -15,13 +15,15 @@ namespace MafiaOnline.DataAccess.Entities
         public virtual Boss Boss { get; set; }
         public virtual Headquarters Headquarters { get; set; }
         public virtual Mission Mission { get; set; }
+        public virtual Ambush Ambush { get; set; }
     }
 
     public enum MapElementType
     {
         None,
         Headquarters,
-        Mission
+        Mission,
+        Ambush
     }
 
     public class MapElementModelConfiguration : IEntityTypeConfiguration<MapElement>
@@ -43,6 +45,10 @@ namespace MafiaOnline.DataAccess.Entities
             builder.HasOne(d => d.Mission)
                 .WithOne(d => d.MapElement)
                 .HasForeignKey<Mission>(d => d.MapElementId);
+
+            builder.HasOne(d => d.Ambush)
+                .WithOne(d => d.MapElement)
+                .HasForeignKey<Ambush>(d => d.MapElementId);
         }
     }
 }

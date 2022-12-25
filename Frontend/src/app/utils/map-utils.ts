@@ -30,51 +30,58 @@ export class MapUtils {
     return ((!(Math.abs(X1-X2)==1 && Math.abs(Y1-Y2)==1)) && (Math.abs(X1-X2)==1 || Math.abs(Y1-Y2)==1))
   }
 
-  clearAgentPath()
+  clearPath()
   {
-    sessionStorage.setItem('agentPath', null);
+    sessionStorage.setItem('path', null);
   }
 
-  getAgentPath()
+  getPath()
   {
-    let road = sessionStorage.getItem('agentPath');
+    let road = sessionStorage.getItem('path');
     var roadArray = JSON.parse(road) as Point[];
     if(roadArray==null) roadArray=[]
     return roadArray
   }
 
-  addRoadToAgentPath(x: number, y: number)
+  addPointToPath(x: number, y: number)
   {
-    var roadArray = this.getAgentPath()
+    var roadArray = this.getPath()
     let point: Point = {X:x,Y:y}
     roadArray.push(point);
-    sessionStorage.setItem('agentPath',JSON.stringify(roadArray));
+    sessionStorage.setItem('path',JSON.stringify(roadArray));
   }
 
-  removeAgentPath(x: number, y: number)
+  removePath(x: number, y: number)
   {
-    var roadArray = this.getAgentPath()
+    var roadArray = this.getPath()
     roadArray=roadArray.filter((el) => !(el.X == x && el.Y == y))
-    sessionStorage.setItem('agentPath',JSON.stringify(roadArray));
+    sessionStorage.setItem('path',JSON.stringify(roadArray));
   }
 
-  isPointAgentPath(x: number, y: number)
+  isPointPath(x: number, y: number)
   {
-    var roadArray = this.getAgentPath()
+    var roadArray = this.getPath()
     let point = roadArray.filter((el) => el.X == x && el.Y == y)
     return point.length!=0;
   }
 
-  getLastElementOfAgentPath()
+  getFirstElementOfPath()
   {
-    var roadArray = this.getAgentPath()
+    var roadArray = this.getPath()
+    if(roadArray.length==0) return null;
+    return roadArray[0];
+  }
+
+  getLastElementOfPath()
+  {
+    var roadArray = this.getPath()
     if(roadArray.length==0) return null;
     return roadArray[roadArray.length-1];
   }
 
-  agentPathExists()
+  pathExists()
   {
-    var roadArray = this.getAgentPath()
+    var roadArray = this.getPath()
     return roadArray.length!=0
   }
 }

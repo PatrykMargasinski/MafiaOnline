@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace MafiaOnline.BusinessLogic.Entities
 {
-    public class StartMissionRequest
+    public class ArrangeAmbushRequest
     {
         public long AgentId { get; set; }
-        public long MissionId { get; set; }
-        public Point[] Path { get; set; }
+        public Point Point { get; set; }
     }
 }

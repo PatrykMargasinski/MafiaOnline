@@ -69,6 +69,7 @@ namespace MafiaOnline
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IMapService, MapService>();
             services.AddScoped<IHeadquartersService, HeadquartersService>();
+            services.AddScoped<IAmbushService, AmbushService>();
 
             //Utils
             services.AddScoped<ISecurityUtils, SecurityUtils>();
@@ -83,18 +84,22 @@ namespace MafiaOnline
             //Factories
             services.AddScoped<IAgentFactory, AgentFactory>();
             services.AddScoped<IMissionFactory, MissionFactory>();
+            services.AddScoped<IAmbushFactory, AmbushFactory>();
 
             //Validators
             services.AddScoped<IMissionValidator, MissionValidator>();
             services.AddScoped<IAgentValidator, AgentValidator>();
             services.AddScoped<IMessageValidator, MessageValidator>();
             services.AddScoped<IPlayerValidator, PlayerValidator>();
+            services.AddScoped<IAmbushValidator, AmbushValidator>();
 
             //Job runners
             services.AddScoped<IPerformMissionJobRunner, PerformMissionJobRunner>();
             services.AddScoped<IAgentRefreshJobRunner, AgentRefreshJobRunner>();
             services.AddScoped<IMissionRefreshJobRunner, MissionRefreshJobRunner>();
             services.AddScoped<IAgentMovingOnMissionJobRunner, AgentMovingOnMissionJobRunner>();
+            services.AddScoped<IArrangeAmbushJobRunner, ArrangeAmbushJobRunner>();
+
 
             //Hosted service
             services.AddHostedService<MyHostedService>();

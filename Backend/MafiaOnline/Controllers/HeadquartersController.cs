@@ -23,7 +23,7 @@ namespace MafiaOnline.Controllers
         [HttpGet]
         public async Task<IActionResult> GetHeadquartersDetails(long id)
         {
-            var map = await _headquartersService.GetHeadquartersDetails(id);
+            var map = await _headquartersService.GetHeadquartersDetailsByMapElementId(id);
             return new JsonResult(map);
         }
         

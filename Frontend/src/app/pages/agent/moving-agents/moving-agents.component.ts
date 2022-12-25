@@ -15,8 +15,8 @@ export class MovingAgentsComponent implements OnInit {
   bossId: number;
 
   ngOnInit(): void {
-    this.refresh();
     this.bossId = this.tokenService.getBossId();
+    this.refresh();
   }
 
   refresh(){

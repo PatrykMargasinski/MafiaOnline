@@ -38,6 +38,8 @@ import { MapComponent } from './pages/map/map.component';
 import { ShowMapComponent } from './pages/map/show-map/show-map.component';
 import { MissionDetailsComponent } from './page-elements/map-elements/mission-details/mission-details.component';
 import { MovingAgentsComponent } from './pages/agent/moving-agents/moving-agents.component';
+import { ChooseAgentToArrangeAmbushComponent } from './page-elements/ambush/choose-agent-to-arrange-ambush/choose-agent-to-arrange-ambush.component';
+import { AmbushDetailsComponent } from './page-elements/map-elements/ambush-details/ambush-details.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -74,7 +76,9 @@ export function tokenGetter(){
     ShowMapComponent,
     HeadquartersDetailsComponent,
     MissionDetailsComponent,
-    MovingAgentsComponent
+    MovingAgentsComponent,
+    ChooseAgentToArrangeAmbushComponent,
+    AmbushDetailsComponent
   ],
   imports: [
     BrowserModule,

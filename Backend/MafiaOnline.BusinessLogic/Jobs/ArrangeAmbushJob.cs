@@ -13,35 +13,35 @@ namespace MafiaAPI.Jobs
 {
 
     [DisallowConcurrentExecution]
-    public class AgentMovingOnMissionJob : IJob
+    public class ArrangeAmbushJob : IJob
     {
-        private readonly ILogger<AgentMovingOnMissionJob> _logger;
-        private readonly IMissionService _missionService;
+        private readonly ILogger<ArrangeAmbushJob> _logger;
+        private readonly IAmbushService _ambushService;
         private readonly IMovingAgentUtils _movingAgentUtils;
-        public AgentMovingOnMissionJob(
-            ILogger<AgentMovingOnMissionJob> logger,
-            IMissionService missionService,
+        public ArrangeAmbushJob(
+            ILogger<ArrangeAmbushJob> logger,
+            IAmbushService ambushService,
             IMovingAgentUtils movingAgentUtils
             )
         {
             _logger = logger;
-            _missionService = missionService;
+            _ambushService = ambushService;
             _movingAgentUtils = movingAgentUtils;
         }
         public async Task Execute(IJobExecutionContext context)
         {
             JobDataMap dataMap = context.JobDetail.JobDataMap;
             long movingAgentId = long.Parse(dataMap.GetString("movingAgentId"));
-            var datas = JsonSerializer.Deserialize<StartMissionRequest>(_movingAgentUtils.GetDatas(movingAgentId));
+            var datas = JsonSerializer.Deserialize<ArrangeAmbushRequest>(_movingAgentUtils.GetDatas(movingAgentId));
             _movingAgentUtils.RemoveMovingAgent(movingAgentId);
-            await _missionService.StartMission(datas);
+            await _ambushService.ArrangeAmbush(datas);
         }
     }
 
-    public class AgentMovingOnMissionJobRunner : IAgentMovingOnMissionJobRunner
+    public class ArrangeAmbushJobRunner : IArrangeAmbushJobRunner
     {
         private readonly IMovingAgentUtils _movingAgentUtils;
-        public AgentMovingOnMissionJobRunner(IMovingAgentUtils movingAgentUtils)
+        public ArrangeAmbushJobRunner(IMovingAgentUtils movingAgentUtils)
         {
             _movingAgentUtils = movingAgentUtils;   
         }
@@ -50,7 +50,7 @@ namespace MafiaAPI.Jobs
         {
             IScheduler scheduler = await factory.GetScheduler();
 
-            var key = $"moveOnMissionJob{movingAgentId}";
+            var key = $"arrangeAmbushJob{movingAgentId}";
 
             await _movingAgentUtils.SetJobKey(movingAgentId, key);
 
@@ -69,8 +69,8 @@ namespace MafiaAPI.Jobs
 
         private IJobDetail PrepareJobDetail(long movingAgentId)
         {
-            return JobBuilder.Create<AgentMovingOnMissionJob>()
-                .WithIdentity($"moveOnMissionJob{movingAgentId}", "group1")
+            return JobBuilder.Create<ArrangeAmbushJob>()
+                .WithIdentity($"arrangeAmbushJob{movingAgentId}", "group1")
                 .UsingJobData("movingAgentId", movingAgentId.ToString())
                 .Build();
         }
@@ -78,13 +78,13 @@ namespace MafiaAPI.Jobs
         private ITrigger PrepareTrigger(long movingAgentId, DateTime finishTime)
         {
             return TriggerBuilder.Create()
-                .WithIdentity($"moveOnMissionTrigger{movingAgentId}", "group1")
+                .WithIdentity($"arrangeAmbushTrigger{movingAgentId}", "group1")
                 .StartAt(finishTime)
                 .Build();
         }
     }
 
-    public interface IAgentMovingOnMissionJobRunner
+    public interface IArrangeAmbushJobRunner
     {
         Task Start(ISchedulerFactory factory, DateTime finishTime, long movingAgentId);
     }

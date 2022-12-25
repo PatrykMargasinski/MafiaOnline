@@ -1,7 +1,7 @@
 ﻿
 using FluentAssertions.Execution;
 using MafiaOnline.BusinessLogic.Const;
-using MafiaOnline.BusinessLogic.Entities.Mission;
+using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;

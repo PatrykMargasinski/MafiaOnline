@@ -13,6 +13,7 @@ namespace MafiaOnline.BusinessLogic.Utils
         bool IsCorner(long x, long y);
         bool IsStreet(long x, long y);
         bool IsRoad(long x, long y);
+        bool IsCrossroad(long x, long y);
         Task<Point> GetNewHeadquartersPosition();
         Task<Point> GetNewMissionPosition();
     }
@@ -42,6 +43,11 @@ namespace MafiaOnline.BusinessLogic.Utils
         public bool IsRoad(long x, long y)
         {
             return x % 6 == 0 || y % 6 == 0;
+        }
+
+        public bool IsCrossroad(long x, long y)
+        {
+            return x % 6 == 0 && y % 6 == 0;
         }
 
         private List<Point> GetElementsAroundThePoint(long x0, long y0, long size)

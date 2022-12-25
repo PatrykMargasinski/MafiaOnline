@@ -31,12 +31,17 @@ namespace MafiaOnline.BusinessLogic
             CreateMap<Agent, AgentForSaleDTO>()
                 .ForMember(x => x.Price, y => y.MapFrom(z => z.AgentForSale.Price));
 
-            CreateMap<Agent, MovingAgentDTO>();
-               // .ForMember(x => x.DestinationDescription, y => y.MapFrom(z => z.MovingAgent.DestinationDescription));
+            CreateMap<Agent, MovingAgentDTO>()
+                .ForMember(x => x.DestinationDescription, y => y.MapFrom(z => z.MovingAgent.DestinationDescription));
+
+            //Ambush
+            CreateMap<Ambush, AmbushDTO>()
+                .ForMember(x => x.AgentFullName, y => y.MapFrom(z => z.Agent.FullName))
+                .ForMember(x => x.BossLastName, y => y.MapFrom(z => z.Boss.LastName));
 
             //Boss
             CreateMap<Boss, BossDTO>()
-                .ForMember(x => x.Name, y => y.MapFrom(z => z.FirstName + " " + z.LastName));
+                .ForMember(x => x.Name, y => y.MapFrom(z => z.FullName));
 
             //Mission
             CreateMap<Mission, MissionDTO>()

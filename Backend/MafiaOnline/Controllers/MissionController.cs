@@ -1,5 +1,4 @@
 ﻿using MafiaOnline.BusinessLogic.Entities;
-using MafiaOnline.BusinessLogic.Entities.Mission;
 using MafiaOnline.BusinessLogic.Services;
 using MafiaOnline.DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;

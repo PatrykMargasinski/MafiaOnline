@@ -13,7 +13,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
     public interface IHeadquartersService
     {
-        Task<HeadquartersDTO> GetHeadquartersDetails(long id);
+        Task<HeadquartersDTO> GetHeadquartersDetailsByMapElementId(long id);
     }
 
     public class HeadquartersService : IHeadquartersService
@@ -27,7 +27,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<HeadquartersDTO> GetHeadquartersDetails(long id)
+        public async Task<HeadquartersDTO> GetHeadquartersDetailsByMapElementId(long id)
         {
             var headquarters = await _unitOfWork.Headquarters.GetByMapElementIdAsync(id);
             return _mapper.Map<HeadquartersDTO>(headquarters);

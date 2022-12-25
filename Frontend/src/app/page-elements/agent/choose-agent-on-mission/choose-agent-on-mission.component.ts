@@ -35,7 +35,7 @@ export class ChooseAgentOnMissionComponent implements OnInit {
       this.getMissionById();
     if(this.mapElementId!=null)
       this.getMissionByMapElement();
-    this.agentPathSet = this.mapUtils.agentPathExists();
+    this.agentPathSet = this.mapUtils.pathExists();
   }
 
   getAgents(){
@@ -59,7 +59,7 @@ export class ChooseAgentOnMissionComponent implements OnInit {
   }
 
   doMission(agentId: number){
-    let path = this.mapUtils.getAgentPath()
+    let path = this.mapUtils.getPath()
     this.missionService.startMission(agentId, this.missionId, path).subscribe(it=>{
       alert("Agent sent on mission")
       this.someEvent.next(0)
@@ -67,7 +67,7 @@ export class ChooseAgentOnMissionComponent implements OnInit {
   }
 
   moveOnMission(agentId: number){
-    let path = this.mapUtils.getAgentPath()
+    let path = this.mapUtils.getPath()
     this.missionService.moveOnMission(agentId, this.missionId, path).subscribe(it=>{
       alert("Agent sent on mission")
       this.someEvent.next(2)
@@ -75,7 +75,7 @@ export class ChooseAgentOnMissionComponent implements OnInit {
   }
 
   setAgentPath(){
-    this.mapUtils.clearAgentPath();
+    this.mapUtils.clearPath();
       this.someEvent.next(1)
   }
 }

@@ -20,7 +20,7 @@ export class ShowMapComponent implements OnInit {
   mapFields: MapField[]
   chosenMapFieldId: number
   chosenElementType: number
-  creatingAgentPathMode: boolean = false
+  mapMode: number = 0 //0 - nothing, 1 - creating agent path, 2 - set ambush
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
   ngOnInit(): void {
@@ -29,7 +29,7 @@ export class ShowMapComponent implements OnInit {
         this.edgeX=x[0]
         this.edgeY=x[1]
         this.refreshMap();
-        this.mapUtils.clearAgentPath();
+        this.mapUtils.clearPath();
       })
   }
 
@@ -37,13 +37,20 @@ export class ShowMapComponent implements OnInit {
     this.modalService.dismissAll();
     if(operation==1)
     {
-      this.creatingAgentPathMode = true;
+      this.mapMode=1
     }
-    else if(operation==2)
+    else
     {
-      this.creatingAgentPathMode = false;
-      this.mapUtils.clearAgentPath();
+      this.mapMode=0
+      this.mapUtils.clearPath();
     }
+    this.refreshMap();
+  }
+
+  setAmbushMode()
+  {
+    this.mapMode=2
+    this.mapUtils.clearPath();
     this.refreshMap();
   }
 
@@ -102,7 +109,7 @@ export class ShowMapComponent implements OnInit {
   }
 
   mapFieldClick(mapFieldId: number, X:number, Y:number, mapElementType: number, terrainType: number){
-    if(this.creatingAgentPathMode == true)
+    if(this.mapMode==1)
     {
       if(!this.mapUtils.isRoad(X,Y))
       {
@@ -110,15 +117,15 @@ export class ShowMapComponent implements OnInit {
         return
       }
 
-      var lastElement = this.mapUtils.getLastElementOfAgentPath();
+      var lastElement = this.mapUtils.getLastElementOfPath();
 
       if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
       {
-        this.mapUtils.removeAgentPath(X,Y);
+        this.mapUtils.removePath(X,Y);
         return
       }
 
-      if(this.mapUtils.getAgentPath().filter(el=>el.X==X && el.Y==Y).length!=0)
+      if(this.mapUtils.getPath().filter(el=>el.X==X && el.Y==Y).length!=0)
       {
         alert('You can remove only last set element')
         return
@@ -130,19 +137,32 @@ export class ShowMapComponent implements OnInit {
         return
       }
 
-      if(!this.mapUtils.isPointAgentPath(X,Y))
+      if(!this.mapUtils.isPointPath(X,Y))
       {
-        this.mapUtils.addRoadToAgentPath(X,Y);
+        this.mapUtils.addPointToPath(X,Y);
+      }
+    }
+    else if(this.mapMode == 2)
+    {
+      if(!this.mapUtils.isRoad(X,Y))
+      {
+        alert('This field is not a road')
+        return
+      }
+
+      if(!this.mapUtils.isPointPath(X,Y))
+      {
+        this.mapUtils.addPointToPath(X,Y);
       }
     }
   }
 
   isChosenAsAgentPath(X: number, Y: number)
   {
-    return this.mapUtils.isPointAgentPath(X, Y);
+    return this.mapUtils.isPointPath(X, Y);
   }
 
-  roadReadyOperations(operation: number)
+  pathReadyOperations(operation: number)
   {
     if(operation==1)
     {
@@ -150,8 +170,18 @@ export class ShowMapComponent implements OnInit {
     }
     if(operation==2)
     {
-      this.creatingAgentPathMode = false
-      this.mapUtils.clearAgentPath();
+      this.mapMode=0
+      this.mapUtils.clearPath();
+    }
+    if(operation==3)
+    {
+      if(this.mapUtils.getPath().length!=1)
+      {
+        alert('You have to choose 1 point');
+        return;
+      }
+      this.chosenElementType=0;
+      this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
     }
   }
 }

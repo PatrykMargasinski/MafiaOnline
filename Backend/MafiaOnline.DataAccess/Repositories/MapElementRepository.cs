@@ -12,6 +12,7 @@ namespace MafiaOnline.DataAccess.Repositories
     public interface IMapElementRepository : ICrudRepository<MapElement>
     {
         Task<IList<MapElement>> GetInRange(long xMin, long xMax, long yMin, long yMax);
+        Task<MapElement> GetInPoint(long x, long y);
     }
 
     public class MapElementRepository : CrudRepository<MapElement>, IMapElementRepository
@@ -19,6 +20,12 @@ namespace MafiaOnline.DataAccess.Repositories
         public MapElementRepository(DataContext context) : base(context)
         {
 
+        }
+
+        public async Task<MapElement> GetInPoint(long x, long y)
+        {
+            var mapElements = await _context.MapElements.FirstOrDefaultAsync(el => el.X == x && el.Y == y);
+            return mapElements;
         }
 
         public async Task<IList<MapElement>> GetInRange(long xMin, long xMax, long yMin, long yMax)

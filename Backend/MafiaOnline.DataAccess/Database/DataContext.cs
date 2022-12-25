@@ -28,6 +28,7 @@ namespace MafiaOnline.DataAccess.Database
         public virtual DbSet<Name> Names { get; set; }
         public virtual DbSet<MapElement> MapElements { get; set; }
         public virtual DbSet<Headquarters> Headquarters { get; set; }
+        public virtual DbSet<Ambush> Ambushes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

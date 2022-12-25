@@ -29,6 +29,7 @@ namespace MafiaOnline.DataAccess.Entities
         public bool IsFromBossFamily { get; set; }
 
         public virtual Boss Boss { get; set; }
+        public virtual Ambush Ambush { get; set; }
         public virtual AgentForSale AgentForSale { get; set; }
         public virtual MovingAgent MovingAgent { get; set; }
         public virtual PerformingMission PerformingMission { get; set; }
@@ -40,7 +41,8 @@ namespace MafiaOnline.DataAccess.Entities
         ForSale,
         Active,
         OnMission,
-        Moving
+        Moving,
+        Ambushing
     }
 
     public class AgentModelConfiguration : IEntityTypeConfiguration<Agent>

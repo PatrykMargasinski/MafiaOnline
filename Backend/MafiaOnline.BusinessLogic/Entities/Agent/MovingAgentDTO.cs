@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MafiaOnline.BusinessLogic.Entities
 {
-    public class AgentForSaleDTO
+    public class MovingAgentDTO
     {
         public long Id { get; set; }
         public long? BossId { get; set; }
@@ -15,7 +15,6 @@ namespace MafiaOnline.BusinessLogic.Entities
         public int Strength { get; set; }
         public int Dexterity { get; set; }
         public int Intelligence { get; set; }
-        public long Upkeep { get; set; }
-        public long Price { get; set; }
+        public string DestinationDescription{ get; set; }
     }
 }
