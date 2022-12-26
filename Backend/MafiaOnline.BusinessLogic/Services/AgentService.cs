@@ -13,6 +13,7 @@ using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,9 +30,12 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<MovingAgentDTO>> GetMovingAgents(long bossId);
         Task<Agent> DismissAgent(DismissAgentRequest request);
         Task<Agent> RecruitAgent(RecruitAgentRequest request);
+        Task PatrolPoint(Point point, long bossId);
         Task RefreshAgents();
         Task ScheduleRefreshAgentsJob();
+        Task MakeStepDuringPatrolling(long movingAgentId);
 
+        Task SendToPatrol(PatrolRequest request);
     }
 
     public class AgentService : IAgentService
@@ -44,8 +48,13 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IAgentRefreshJobRunner _agentRefreshJobRunner;
         private readonly ILogger<AgentService> _logger;
         private readonly IRandomizer _randomizer;
+        private readonly IPatrolJobRunner _patrolJobRunner;
+        private readonly IReporter _reporter;
+        private readonly IMovingAgentUtils _movingAgentUtils;
 
-        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger, IRandomizer randomizer)
+        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, 
+            IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger, IRandomizer randomizer, IPatrolJobRunner patrolJobRunner, IReporter reporter, 
+            IMovingAgentUtils movingAgentUtils)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -55,6 +64,9 @@ namespace MafiaOnline.BusinessLogic.Services
             _agentRefreshJobRunner = agentRefreshJobRunner;
             _logger = logger;
             _randomizer = randomizer;
+            _patrolJobRunner = patrolJobRunner;
+            _reporter = reporter;
+            _movingAgentUtils = movingAgentUtils;
         }
 
         /// <summary>
@@ -188,6 +200,45 @@ namespace MafiaOnline.BusinessLogic.Services
                 }
                 var agentForSale = await _agentFactory.CreateForSaleInstance(newAgent);
                 _unitOfWork.AgentsForSale.Create(agentForSale);
+            }
+            _unitOfWork.Commit();
+        }
+
+        public async Task SendToPatrol(PatrolRequest request)
+        {
+            await _agentValidator.ValidateSendToPatrol(request);
+            var movingAgent = await _agentFactory.CreateMovingAgentForPatrolInstance(request);
+            _unitOfWork.MovingAgents.Create(movingAgent);
+            _unitOfWork.Commit();
+            await _patrolJobRunner.Start(_scheduler, DateTime.Now.AddSeconds(MapConsts.SECONDS_TO_MAKE_ONE_STEP), movingAgent.Id);
+        }
+
+        public async Task PatrolPoint(Point point, long bossId)
+        {
+            var mapElement = await _unitOfWork.MapElements.GetInPoint(point.X, point.Y);
+            if(mapElement != null && mapElement.Type == MapElementType.Ambush && mapElement.BossId != bossId)
+            {
+                await _movingAgentUtils.ExposeMapElement(mapElement.Id, bossId);
+                await _reporter.CreateReport(bossId, "Ambush exposed", $"Ambush exposed at point [{mapElement.X},{mapElement.Y}]");
+            }
+        }
+
+        public async Task MakeStepDuringPatrolling(long movingAgentId)
+        {
+            var movingAgent = await _unitOfWork.MovingAgents.GetByIdAsync(movingAgentId);
+            if (movingAgent == null)
+                throw new Exception($"Moving agent with id {movingAgentId} not found");
+            var agent = await _unitOfWork.Agents.GetByIdAsync(movingAgent.AgentId);
+            if (movingAgent.Step < movingAgent.Path.Length)
+            {
+                await PatrolPoint(movingAgent.Path[movingAgent.Step.Value], agent.BossId.Value);
+                movingAgent.Step = movingAgent.Step + 1;
+                await _patrolJobRunner.Start(_scheduler, DateTime.Now.AddSeconds(MapConsts.SECONDS_TO_MAKE_ONE_STEP), movingAgent.Id);
+            }
+            else
+            {
+                agent.State = AgentState.Active;
+                _unitOfWork.MovingAgents.DeleteById(movingAgentId);
             }
             _unitOfWork.Commit();
         }

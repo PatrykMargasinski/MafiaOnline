@@ -43,9 +43,11 @@
 
 <div class="container col-1 row">
   <button *ngIf="mapMode == 0" type="button" class="btn btn-outline-dark" (click)="setAmbushMode()">Set ambush</button>
+  <button *ngIf="mapMode == 0" type="button" class="btn btn-outline-dark" (click)="setPatrolMode()">Patrol</button>
   <button *ngIf="mapMode == 1" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(1)">Road ready</button>
   <button *ngIf="mapMode == 2" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(3)">Ambush point ready</button>
-  <button *ngIf="mapMode == 1 || mapMode==2" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(2)">Cancel</button>
+  <button *ngIf="mapMode == 3" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(4)">Patrol path ready</button>
+  <button *ngIf="mapMode != 0" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(2)">Cancel</button>
 </div>
 
 <ng-template #mapElementModal let-modal>
@@ -67,6 +69,9 @@
     </div>
     <div *ngIf="chosenElementType==0 && mapMode == 2">
       <app-choose-agent-to-arrange-ambush [mapElementId]="chosenMapFieldId" (someEvent)="closeAndRefresh($event)"></app-choose-agent-to-arrange-ambush>
+    </div>
+    <div *ngIf="chosenElementType==0 && mapMode == 3">
+      <app-choose-agent-to-patrol [mapElementId]="chosenMapFieldId" (someEvent)="closeAndRefresh($event)"></app-choose-agent-to-patrol>
     </div>
   </div>
   <div class="modal-footer">

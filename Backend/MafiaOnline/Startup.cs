@@ -99,6 +99,7 @@ namespace MafiaOnline
             services.AddScoped<IMissionRefreshJobRunner, MissionRefreshJobRunner>();
             services.AddScoped<IAgentMovingOnMissionJobRunner, AgentMovingOnMissionJobRunner>();
             services.AddScoped<IArrangeAmbushJobRunner, ArrangeAmbushJobRunner>();
+            services.AddScoped<IPatrolJobRunner, PatrolJobRunner>();
 
 
             //Hosted service

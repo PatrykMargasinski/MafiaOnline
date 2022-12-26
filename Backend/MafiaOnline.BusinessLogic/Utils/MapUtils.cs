@@ -14,6 +14,7 @@ namespace MafiaOnline.BusinessLogic.Utils
         bool IsStreet(long x, long y);
         bool IsRoad(long x, long y);
         bool IsCrossroad(long x, long y);
+        bool IsAdjacent(Point p1, Point p2);
         Task<Point> GetNewHeadquartersPosition();
         Task<Point> GetNewMissionPosition();
     }
@@ -48,6 +49,18 @@ namespace MafiaOnline.BusinessLogic.Utils
         public bool IsCrossroad(long x, long y)
         {
             return x % 6 == 0 && y % 6 == 0;
+        }
+
+        public bool IsAdjacent(Point p1, Point p2)
+        {
+            return (p1.X == p2.X &&
+                (
+                    p1.Y == p2.Y - 1 || p1.Y == p2.Y + 1
+                )) ||
+                (p1.Y == p2.Y &&
+                (
+                    p1.X == p2.X - 1 || p1.X == p2.X + 1
+                ));
         }
 
         private List<Point> GetElementsAroundThePoint(long x0, long y0, long size)
@@ -104,23 +117,6 @@ namespace MafiaOnline.BusinessLogic.Utils
 
             var newPosition = allPossiblePositions[_randomizer.Next(allPossiblePositions.Count)];
             return newPosition;
-        }
-
-        public async Task ExposeMapElement(long mapElementId, long bossId)
-        {
-            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mapElementId);
-            if (mapElement == null)
-                throw new Exception("There is no map element with id: " + mapElementId);
-            var boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
-            if (boss== null)
-                throw new Exception("There is no boss with id: " + mapElementId);
-            var exposedMapElement = new ExposedMapElement()
-            {
-                Boss = boss,
-                MapElement = mapElement
-            };
-            _unitOfWork.ExposedMapElements.Create(exposedMapElement);
-            _unitOfWork.Commit();
         }
     }
 }

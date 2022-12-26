@@ -20,7 +20,7 @@ export class ShowMapComponent implements OnInit {
   mapFields: MapField[]
   chosenMapFieldId: number
   chosenElementType: number
-  mapMode: number = 0 //0 - nothing, 1 - creating agent path, 2 - set ambush
+  mapMode: number = 0 //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
   ngOnInit(): void {
@@ -50,6 +50,13 @@ export class ShowMapComponent implements OnInit {
   setAmbushMode()
   {
     this.mapMode=2
+    this.mapUtils.clearPath();
+    this.refreshMap();
+  }
+
+  setPatrolMode()
+  {
+    this.mapMode=3
     this.mapUtils.clearPath();
     this.refreshMap();
   }
@@ -155,6 +162,40 @@ export class ShowMapComponent implements OnInit {
         this.mapUtils.addPointToPath(X,Y);
       }
     }
+
+    else if(this.mapMode == 3)
+    {
+      if(!this.mapUtils.isRoad(X,Y))
+      {
+        alert('This field is not a road')
+        return
+      }
+
+      var lastElement = this.mapUtils.getLastElementOfPath();
+
+      if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
+      {
+        this.mapUtils.removePath(X,Y);
+        return
+      }
+
+      if(this.mapUtils.getPath().filter(el=>el.X==X && el.Y==Y).length!=0)
+      {
+        alert('You can remove only last set element')
+        return
+      }
+
+      if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement.X,lastElement.Y))
+      {
+        alert('This field is not adjacent with last field of agent road')
+        return
+      }
+
+      if(!this.mapUtils.isPointPath(X,Y))
+      {
+        this.mapUtils.addPointToPath(X,Y);
+      }
+    }
   }
 
   isChosenAsAgentPath(X: number, Y: number)
@@ -180,6 +221,12 @@ export class ShowMapComponent implements OnInit {
         alert('You have to choose 1 point');
         return;
       }
+      this.chosenElementType=0;
+      this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
+    }
+
+    if(operation==4)
+    {
       this.chosenElementType=0;
       this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
     }

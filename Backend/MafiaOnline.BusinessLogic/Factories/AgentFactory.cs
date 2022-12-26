@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using MafiaOnline.BusinessLogic.Const;
+using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MafiaOnline.BusinessLogic.Factories
@@ -13,6 +16,7 @@ namespace MafiaOnline.BusinessLogic.Factories
     {
         Task<Agent> Create(string firstName = null, string lastName = null, int? strength = null, int? dexterity = null, int? intelligence = null, int? upkeep = null, bool isFromBossFamily = false, AgentState startingState = AgentState.Renegate);
         Task<AgentForSale> CreateForSaleInstance(Agent agent);
+        Task <MovingAgent> CreateMovingAgentForPatrolInstance(PatrolRequest request);
     }
     public class AgentFactory : IAgentFactory
     {
@@ -69,6 +73,24 @@ namespace MafiaOnline.BusinessLogic.Factories
             agentForSale.Agent = agent;
             agent.State = AgentState.ForSale;
             return agentForSale;
+        }
+
+        public async Task<MovingAgent> CreateMovingAgentForPatrolInstance(PatrolRequest request)
+        {
+            var movingAgent = new MovingAgent()
+            {
+            };
+
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+
+            movingAgent.Step = 0;
+            movingAgent.Path = request.Path;
+            movingAgent.DestinationDescription = "Patrolling";
+            movingAgent.DatasJson = JsonSerializer.Serialize(request);
+
+            movingAgent.Agent = agent;
+            agent.State = AgentState.Moving;
+            return movingAgent;
         }
     }
 }

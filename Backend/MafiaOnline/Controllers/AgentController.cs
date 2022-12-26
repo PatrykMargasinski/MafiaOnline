@@ -83,5 +83,12 @@ namespace MafiaOnline.Controllers
             await _agentService.RefreshAgents();
             return Ok();
         }
+
+        [HttpPost("patrol")]
+        public async Task<IActionResult> SendToPatrol(PatrolRequest request)
+        {
+            await _agentService.SendToPatrol(request);
+            return Ok();
+        }
     }
 }

@@ -40,6 +40,7 @@ import { MissionDetailsComponent } from './page-elements/map-elements/mission-de
 import { MovingAgentsComponent } from './pages/agent/moving-agents/moving-agents.component';
 import { ChooseAgentToArrangeAmbushComponent } from './page-elements/ambush/choose-agent-to-arrange-ambush/choose-agent-to-arrange-ambush.component';
 import { AmbushDetailsComponent } from './page-elements/map-elements/ambush-details/ambush-details.component';
+import { ChooseAgentToPatrolComponent } from './page-elements/agent/choose-agent-to-patrol/choose-agent-to-patrol.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -78,7 +79,8 @@ export function tokenGetter(){
     MissionDetailsComponent,
     MovingAgentsComponent,
     ChooseAgentToArrangeAmbushComponent,
-    AmbushDetailsComponent
+    AmbushDetailsComponent,
+    ChooseAgentToPatrolComponent
   ],
   imports: [
     BrowserModule,

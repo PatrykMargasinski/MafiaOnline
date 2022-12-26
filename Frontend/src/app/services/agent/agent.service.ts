@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Agent, AgentOnMission, AgentForSale, MovingAgent } from 'src/app/models/agent/agent.models';
-import { DismissAgentRequest, RecruitAgentRequest } from 'src/app/models/agent/agent.requests';
+import { DismissAgentRequest, PatrolRequest, RecruitAgentRequest } from 'src/app/models/agent/agent.requests';
+import { Point } from 'src/app/models/map/point.models';
 import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
@@ -38,5 +39,11 @@ export class AgentService {
   dismissAgent(agentId: number) {
     const request: DismissAgentRequest = {AgentId: agentId}
     return this.http.post(this.APIUrl + "/dismiss", request);
+  }
+
+  moveToPatrol(agentId: number, path: Point[])
+  {
+    const request: PatrolRequest = {Path: path, AgentId: agentId}
+    return this.http.post(this.APIUrl + '/patrol', request);
   }
 }
