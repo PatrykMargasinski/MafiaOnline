@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace MafiaOnline.DataAccess.Entities
 {
@@ -42,6 +43,7 @@ namespace MafiaOnline.DataAccess.Entities
         Active,
         OnMission,
         Moving,
+        MovingWithLoot,
         Ambushing
     }
 

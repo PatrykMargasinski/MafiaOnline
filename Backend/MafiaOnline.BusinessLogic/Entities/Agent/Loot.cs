@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MafiaOnline.BusinessLogic.Const
+namespace MafiaOnline.BusinessLogic.Entities
 {
-    public class MapConsts
+    public class Loot
     {
-        public const int SECONDS_TO_MAKE_ONE_STEP = 1;
+        public long Money { get; set; }
     }
 }

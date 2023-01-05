@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MafiaOnline.BusinessLogic.Services
@@ -34,7 +35,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task RefreshAgents();
         Task ScheduleRefreshAgentsJob();
         Task MakeStepDuringPatrolling(long movingAgentId);
-
+        Task MakeStepMovingWithLoot(long movingAgentId);
         Task SendToPatrol(PatrolRequest request);
     }
 
@@ -49,12 +50,14 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ILogger<AgentService> _logger;
         private readonly IRandomizer _randomizer;
         private readonly IPatrolJobRunner _patrolJobRunner;
+        private readonly IReturnWithLootJobRunner _returnWithLootJobRunner;
         private readonly IReporter _reporter;
         private readonly IMovingAgentUtils _movingAgentUtils;
+        private readonly IAgentUtils _agentUtils;
 
         public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, 
             IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger, IRandomizer randomizer, IPatrolJobRunner patrolJobRunner, IReporter reporter, 
-            IMovingAgentUtils movingAgentUtils)
+            IMovingAgentUtils movingAgentUtils, IAgentUtils agentUtils, IReturnWithLootJobRunner returnWithLootJobRunner)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -67,6 +70,8 @@ namespace MafiaOnline.BusinessLogic.Services
             _patrolJobRunner = patrolJobRunner;
             _reporter = reporter;
             _movingAgentUtils = movingAgentUtils;
+            _agentUtils = agentUtils;
+            _returnWithLootJobRunner = returnWithLootJobRunner;
         }
 
         /// <summary>
@@ -234,6 +239,63 @@ namespace MafiaOnline.BusinessLogic.Services
                 await PatrolPoint(movingAgent.Path[movingAgent.Step.Value], agent.BossId.Value);
                 movingAgent.Step = movingAgent.Step + 1;
                 await _patrolJobRunner.Start(_scheduler, DateTime.Now.AddSeconds(MapConsts.SECONDS_TO_MAKE_ONE_STEP), movingAgent.Id);
+            }
+            else
+            {
+                agent.State = AgentState.Active;
+                _unitOfWork.MovingAgents.DeleteById(movingAgentId);
+            }
+            _unitOfWork.Commit();
+        }
+
+        public async Task MakeStepMovingWithLoot(long movingAgentId)
+        {
+            var movingAgent = await _unitOfWork.MovingAgents.GetByIdAsync(movingAgentId);
+            if (movingAgent == null)
+                throw new Exception($"Moving agent with id {movingAgentId} not found");
+            var agent = await _unitOfWork.Agents.GetByIdAsync(movingAgent.AgentId);
+            if (movingAgent.Step < movingAgent.Path.Length)
+            {
+                var point = movingAgent.Path[movingAgent.Step.Value];
+                var mapElement = await _unitOfWork.MapElements.GetInPoint(point.X, point.Y);
+                if (mapElement != null && mapElement.Type == MapElementType.Ambush && mapElement.BossId != agent.BossId)
+                {
+                    var reportForAmbusher = "Your agent's ambush worked. Some other agent busted in with it and there's a chance to take his loot.\n";
+                    var reportForAgentWithLoot = "Your agent was ambushed. There is a chance that he will lose his loot.\n";
+                    var ambush = await _unitOfWork.Ambushes.GetByMapElementIdAsync(mapElement.Id);
+                    var ambushAgent = await _unitOfWork.Agents.GetByIdAsync(ambush.AgentId);
+                    var shootoutResult = await _agentUtils.Shootout(agent.Id, ambush.AgentId, ambush.AgentId);
+                    reportForAmbusher += shootoutResult.Report;
+                    reportForAgentWithLoot += shootoutResult.Report;
+
+                    //ambusher wins
+                    if(shootoutResult.WinnerAgentId == ambushAgent.Id)
+                    {
+                        reportForAmbusher += "\nYour agent won the shootout. You get loot.";
+                        reportForAgentWithLoot += "\nYour agent lost the shootout. His loot was taken by the enemy.";
+                        _unitOfWork.Ambushes.DeleteById(ambush.Id);
+                        ambushAgent.State = AgentState.Active;
+                        var ambushAgentBoss = await _unitOfWork.Bosses.GetByIdAsync(ambushAgent.BossId.Value);
+                        var loot = JsonSerializer.Deserialize<Loot>(movingAgent.DatasJson);
+                        ambushAgentBoss.Money += loot.Money;
+                        _unitOfWork.MovingAgents.DeleteById(movingAgentId);
+                        agent.State = AgentState.Active;
+                        return;
+                    }
+                    //agent with loot wins
+                    else
+                    {
+                        reportForAmbusher += "\nYour agent lost the shootout. He returns to his headquarters.";
+                        _unitOfWork.Ambushes.DeleteById(ambush.Id);
+                        ambushAgent.State = AgentState.Active;
+                        reportForAgentWithLoot += "\nYour agent won the shootout. His loot is still safe.";
+                    }
+
+                    await _reporter.CreateReport(ambushAgent.BossId.Value, "Shootout", reportForAmbusher);
+                    await _reporter.CreateReport(agent.BossId.Value, "Shootout", reportForAgentWithLoot);
+                }
+                movingAgent.Step = movingAgent.Step + 1;
+                await _returnWithLootJobRunner.Start(_scheduler, DateTime.Now.AddSeconds(MapConsts.SECONDS_TO_MAKE_ONE_STEP), movingAgent.Id);
             }
             else
             {

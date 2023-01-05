@@ -80,6 +80,7 @@ namespace MafiaOnline
             services.AddScoped<IRandomizer, Randomizer>();
             services.AddScoped<IMapUtils, MapUtils>();
             services.AddScoped<IMovingAgentUtils, MovingAgentUtils>();
+            services.AddScoped<IAgentUtils, AgentUtils>();
 
             //Factories
             services.AddScoped<IAgentFactory, AgentFactory>();
@@ -100,6 +101,7 @@ namespace MafiaOnline
             services.AddScoped<IAgentMovingOnMissionJobRunner, AgentMovingOnMissionJobRunner>();
             services.AddScoped<IArrangeAmbushJobRunner, ArrangeAmbushJobRunner>();
             services.AddScoped<IPatrolJobRunner, PatrolJobRunner>();
+            services.AddScoped<IReturnWithLootJobRunner, ReturnWithLootJobRunner>();
 
 
             //Hosted service
