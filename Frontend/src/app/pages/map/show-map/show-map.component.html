@@ -14,7 +14,7 @@
 
     <div class="container col-10" style="margin-left: auto; margin-right: auto;">
       <div *ngFor="let item of mapFields">
-        <div class="terrainDiv" [style.background]="getTerrainColor(item.TerrainType)" (click)="mapFieldClick(item.Id, item.X, item.Y, item.MapElementType, item.TerrainType)">
+        <div class="terrainDiv" [style.background]="getTerrainColor(item.X, item.Y, item.TerrainType)" (click)="mapFieldClick(item.Id, item.X, item.Y, item.MapElementType, item.TerrainType)">
           <div *ngIf="item.MapElementType==1">
             <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myheadquarters.png" alt="MH" style="max-width: 90%; max-height: 90%" (click)="mapElementClick(item.Id, item.MapElementType)">
             <img *ngIf="item.Owner != getBossId()" src="../../../../assets/headquarters.png" alt="H" style="max-width: 90%; max-height: 90%;" (click)="mapElementClick(item.Id, item.MapElementType)">
@@ -38,7 +38,7 @@
       <img src="../../../../assets/arrow.png" class="right" alt="Arrow right" style="width:90%;height:90%; margin-top: auto; margin-bottom: auto; clear: both;" (click)="moveRight()">
     </div>
   </div>
-  <div class="clearfix"></div>
+
   <div class="container col-1" style="margin-left: auto; margin-right: auto;">
     <img src="../../../../assets/arrow.png" class="down" alt="Arrow down" style="width:90%;height:90%; margin-top: auto; margin-bottom: auto;" (click)="moveDown()">
   </div>

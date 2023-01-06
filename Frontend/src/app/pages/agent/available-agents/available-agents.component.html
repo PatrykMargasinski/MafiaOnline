@@ -1,10 +1,11 @@
-<br><h3>Your agents</h3><br>
-
+<br><h3>Available agents</h3>
+Idle agents waiting for your orders
+<br>
+<br>
 <table class="table table-striped text-center">
   <thead>
     <tr>
-      <th scope="col">LastName</th>
-      <th scope="col">FirstName</th>
+      <th scope="col">Agent Name</th>
       <th scope="col">Statistics</th>
       <th scope="col">Upkeep</th>
       <th scope="col">Options</th>
@@ -12,8 +13,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let agent of AgentList">
-      <td>{{agent.LastName}}</td>
-      <td>{{agent.FirstName}}</td>
+      <td>{{agent.FirstName}} {{agent.LastName}}</td>
       <td>{{agent.Strength}}/{{agent.Dexterity}}/{{agent.Intelligence}}</td>
       <td>{{agent.Upkeep}}</td>
       <td>

@@ -16,6 +16,9 @@ export class ShowMapComponent implements OnInit {
   edgeX : number
   edgeY : number
 
+  requestedX: number
+  requestedY: number
+
   constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils, private activatedRoute: ActivatedRoute) { }
   mapFields: MapField[]
   chosenMapFieldId: number
@@ -24,13 +27,27 @@ export class ShowMapComponent implements OnInit {
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
   ngOnInit(): void {
-    this.mapService.getEdgeForBoss(this.tokenService.getBossId()).subscribe(x=>
-      {
-        this.edgeX=x[0]
-        this.edgeY=x[1]
-        this.refreshMap();
-        this.mapUtils.clearPath();
-      })
+    this.activatedRoute.queryParams.subscribe(params => {
+        if(params['x']!=null && params['y']!=null)
+        {
+          this.requestedX = Number(params['x']);
+          this.requestedY = Number(params['y']);
+          this.edgeX=this.requestedX-10;
+          this.edgeY=this.requestedY-10;
+          this.refreshMap();
+          this.mapUtils.clearPath();
+        }
+        else
+        {
+          this.mapService.getEdgeForBoss(this.tokenService.getBossId()).subscribe(x=>
+            {
+              this.edgeX=x[0]
+              this.edgeY=x[1]
+              this.refreshMap();
+              this.mapUtils.clearPath();
+            })
+        }
+      });
   }
 
   closeAndRefresh(operation: number) {
@@ -69,12 +86,16 @@ export class ShowMapComponent implements OnInit {
       })
   }
 
-  getTerrainColor(terrainTypeId: number): string{
+  getTerrainColor(x: number, y: number, terrainTypeId: number): string{
+    if(x==this.requestedX && y==this.requestedY)
+    {
+      return "green";
+    }
     switch(terrainTypeId)
     {
-      case 0:
+      case 0: //road
         return "gray";
-      case 1:
+      case 1: //build-up area
         return "darkred";
     }
   }

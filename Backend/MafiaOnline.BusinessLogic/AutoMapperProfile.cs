@@ -45,13 +45,17 @@ namespace MafiaOnline.BusinessLogic
 
             //Mission
             CreateMap<Mission, MissionDTO>()
-                .ForMember(x => x.Name, y => y.MapFrom(z => z.Name + (z.RepeatableMission ? " (repeatable)" : "")));
+                .ForMember(x => x.Name, y => y.MapFrom(z => z.Name + (z.RepeatableMission ? " (repeatable)" : "")))
+                .ForMember(x => x.X, y => y.MapFrom(z => z.MapElement.X))
+                .ForMember(x => x.Y, y => y.MapFrom(z => z.MapElement.Y));
             CreateMap<PerformingMission, PerformingMissionDTO>()
                 .ForMember(x => x.AgentName, y => y.MapFrom(z => z.Agent.FirstName + " " + z.Agent.LastName))
                 .ForMember(x => x.MissionName, y => y.MapFrom(z => z.Mission.Name))
                 .ForMember(x => x.SuccessChance, y => y.MapFrom(z => _missionUtils.CalculateAgentSuccessChance(z.Agent, z.Mission)))
                 .ForMember(x => x.Loot, y => y.MapFrom(z => z.Mission.Loot))
-                .ForMember(x => x.SecondsLeft, y => y.MapFrom(z => (long)DateTime.Now.Subtract(z.CompletionTime).TotalSeconds));
+                .ForMember(x => x.SecondsLeft, y => y.MapFrom(z => (long)DateTime.Now.Subtract(z.CompletionTime).TotalSeconds))
+                .ForMember(x => x.X, y => y.MapFrom(z => z.Mission.MapElement.X))
+                .ForMember(x => x.Y, y => y.MapFrom(z => z.Mission.MapElement.Y));
 
             //Message
             CreateMap<Message, MessageDTO>()

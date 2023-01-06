@@ -1,7 +1,8 @@
+import { Router } from '@angular/router';
 import { TokenService } from 'src/app/services/auth/token.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
-import { PerformingMission } from 'src/app/models/mission/mission.models';
+import { Mission, PerformingMission } from 'src/app/models/mission/mission.models';
 import { MissionService } from 'src/app/services/mission/mission.service';
 
 @Component({
@@ -13,7 +14,7 @@ export class PerformingMissionsComponent implements OnInit {
 
   @Input() performingMissions: PerformingMission[]
 
-  constructor(private missionService: MissionService, private tokenService: TokenService) { }
+  constructor(private missionService: MissionService, private tokenService: TokenService, private router: Router) { }
 
   private refreshPerformingMissions() {
     this.missionService.getPerformingMissions(this.tokenService.getBossId()).subscribe(data => {
@@ -36,6 +37,10 @@ export class PerformingMissionsComponent implements OnInit {
         this.refreshPerformingMissions()
       }
     });
+  }
+
+  showOnMap(mission: PerformingMission) {
+    this.router.navigate(["/map/showMap"], { queryParams: { x: mission.X, y: mission.Y }});
   }
 
   ngOnInit(): void {

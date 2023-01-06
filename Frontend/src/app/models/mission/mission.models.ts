@@ -1,6 +1,8 @@
 export interface Mission
 {
   Id: number,
+  X: number,
+  Y: number,
   Name: string,
   DifficultyLevel: number,
   StrengthPercentage: number,
@@ -13,6 +15,8 @@ export interface Mission
 export interface PerformingMission
 {
   Id: number,
+  X: number,
+  Y: number,
   MissionId: number,
   AgentId: number,
   MissionName: string,

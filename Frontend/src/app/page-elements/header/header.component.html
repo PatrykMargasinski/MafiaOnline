@@ -17,31 +17,31 @@
         class="m-1 btn btn-light btn-outline-primary" Button>Register</button>
       </li>
       <li class="nav-item" *ngIf="isUserAuthenticated()">
-        <button routerLink="boss"
+        <button routerLink="boss/aboutBoss"
         class="m-1 btn btn-light btn-outline-primary" Button>Bosses</button>
       </li>
       <li class="nav-item" *ngIf="isUserAuthenticated()">
-          <button routerLink="agent"
+          <button routerLink="agent/available"
           class="m-1 btn btn-light btn-outline-primary" Button>Agents</button>
       </li>
 
       <li class="nav-item" *ngIf="isUserAuthenticated()">
-          <button routerLink="mission"
+          <button routerLink="mission/available"
           class="m-1 btn btn-light btn-outline-primary" Button>Missions</button>
       </li>
 
       <li class="nav-item" *ngIf="isUserAuthenticated()">
-        <button routerLink="map"
+        <button routerLink="map/showMap"
         class="m-1 btn btn-light btn-outline-primary" Button>Map</button>
       </li>
 
       <li class="nav-item" *ngIf="isUserAuthenticated()">
-        <button routerLink="message"
+        <button routerLink="message/messages"
         class="m-1 btn btn-light btn-outline-primary" Button>Messages</button>
       </li>
 
       <li class="nav-item" *ngIf="isUserAuthenticated()">
-        <button routerLink="accountSettings"
+        <button routerLink="accountSettings/changePassword"
         class="m-1 btn btn-light btn-outline-primary" Button>Account settings</button>
       </li>
 

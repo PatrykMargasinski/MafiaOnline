@@ -10,11 +10,6 @@
   vertical-align:middle;
 }
 
-
-.leftDiv {
-  height: 100%
-}
-
 .right {
   transform: rotate(-270deg);
   -webkit-transform: rotate(-270deg);
@@ -34,5 +29,3 @@
   transform: rotate(180deg);
   -webkit-transform: rotate(180deg);
 }
-
-.close {display: none;}

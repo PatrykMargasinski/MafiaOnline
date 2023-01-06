@@ -1,5 +1,8 @@
 <br><h3>Performing missions</h3><br>
-
+<br><h3>Performing missions</h3>
+Missions performed by your agents
+<br>
+<br>
 <table class="table table-striped text-center">
   <thead>
     <tr>
@@ -17,6 +20,7 @@
       <td>{{mission.SuccessChance}}</td>
       <td>{{mission.SecondsLeft}}</td>
       <td>
+        <button class="btn btn-success" (click)="showOnMap(mission)">Show on map</button>
       </td>
     </tr>
   </tbody>

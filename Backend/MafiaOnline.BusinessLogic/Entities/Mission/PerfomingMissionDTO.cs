@@ -9,6 +9,8 @@ namespace MafiaOnline.BusinessLogic.Entities
     public class PerformingMissionDTO
     {
         public long Id { get; set;  }
+        public long X { get; set; }
+        public long Y { get; set; }
         public long MissionId { get; set; }
         public long AgentId { get; set; }
         public string MissionName { get; set; }
