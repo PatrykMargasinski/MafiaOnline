@@ -8,6 +8,6 @@ namespace MafiaOnline.BusinessLogic.Const
 {
     public class MapConsts
     {
-        public const int SECONDS_TO_MAKE_ONE_STEP = 1;
+        public const int SECONDS_TO_MAKE_ONE_STEP = 20;
     }
 }

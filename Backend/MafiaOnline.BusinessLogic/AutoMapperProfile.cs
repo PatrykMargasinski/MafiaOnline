@@ -32,7 +32,9 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.Price, y => y.MapFrom(z => z.AgentForSale.Price));
 
             CreateMap<Agent, MovingAgentDTO>()
-                .ForMember(x => x.DestinationDescription, y => y.MapFrom(z => z.MovingAgent.DestinationDescription));
+                .ForMember(x => x.DestinationDescription, y => y.MapFrom(z => z.MovingAgent.DestinationDescription))
+                .ForMember(x => x.CurrentPosition, y => y.MapFrom(z => z.MovingAgent.CurrentPoint))
+                .ForMember(x => x.DestinationPosition, y => y.MapFrom(z => z.MovingAgent.DestinationPoint));
 
             //Ambush
             CreateMap<Ambush, AmbushDTO>()

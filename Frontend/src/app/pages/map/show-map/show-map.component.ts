@@ -132,11 +132,13 @@ export class ShowMapComponent implements OnInit {
   mapElementClick(mapFieldId: number, elementType: number){
     this.chosenMapFieldId=mapFieldId
     this.chosenElementType=elementType
-    console.log(elementType);
+    console.log("Map element opened: " + mapFieldId);
+    console.log("Element type: " + elementType);
     this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
   }
 
   mapFieldClick(mapFieldId: number, X:number, Y:number, mapElementType: number, terrainType: number){
+    console.log("Click")
     if(this.mapMode==1)
     {
       if(!this.mapUtils.isRoad(X,Y))

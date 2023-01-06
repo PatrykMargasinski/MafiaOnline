@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MafiaOnline.DataAccess.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,8 @@ namespace MafiaOnline.BusinessLogic.Entities
         public int Strength { get; set; }
         public int Dexterity { get; set; }
         public int Intelligence { get; set; }
+        public Point CurrentPosition { get; set; }
+        public Point DestinationPosition { get; set; }
         public string DestinationDescription{ get; set; }
     }
 }

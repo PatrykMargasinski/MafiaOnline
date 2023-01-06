@@ -274,6 +274,7 @@ namespace MafiaOnline.BusinessLogic.Services
                         reportForAmbusher += "\nYour agent won the shootout. You get loot.";
                         reportForAgentWithLoot += "\nYour agent lost the shootout. His loot was taken by the enemy.";
                         _unitOfWork.Ambushes.DeleteById(ambush.Id);
+                        _unitOfWork.MapElements.DeleteById(ambush.MapElementId);
                         ambushAgent.State = AgentState.Active;
                         var ambushAgentBoss = await _unitOfWork.Bosses.GetByIdAsync(ambushAgent.BossId.Value);
                         var loot = JsonSerializer.Deserialize<Loot>(movingAgent.DatasJson);
@@ -287,6 +288,7 @@ namespace MafiaOnline.BusinessLogic.Services
                     {
                         reportForAmbusher += "\nYour agent lost the shootout. He returns to his headquarters.";
                         _unitOfWork.Ambushes.DeleteById(ambush.Id);
+                        _unitOfWork.MapElements.DeleteById(ambush.MapElementId);
                         ambushAgent.State = AgentState.Active;
                         reportForAgentWithLoot += "\nYour agent won the shootout. His loot is still safe.";
                     }

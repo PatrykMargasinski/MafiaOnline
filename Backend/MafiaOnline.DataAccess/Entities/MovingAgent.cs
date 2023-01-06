@@ -43,6 +43,16 @@ namespace MafiaOnline.DataAccess.Entities
                 DestinationJson = value == null ? null : JsonSerializer.Serialize(value);
             }
         }
+        [NotMapped]
+        public Point CurrentPoint
+        {
+            get
+            {
+                if(Path==null || !Step.HasValue)
+                    return null;
+                return Path[Step.Value];
+            }
+        }
         public string DestinationJson { get; set; }
         public string DestinationDescription { get; set; }
         public string DatasJson { get; set; }
