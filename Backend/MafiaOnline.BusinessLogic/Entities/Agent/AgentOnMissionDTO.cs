@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MafiaOnline.DataAccess.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace MafiaOnline.BusinessLogic.Entities
         public long Id { get; set; }
         public long PerformingMissionId { get; set; }
         public long MissionId { get; set; }
+        public Point MissionPosition { get; set; }
         public string AgentName { get; set; }
         public string MissionName { get; set; }
         public int Strength { get; set; }

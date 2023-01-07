@@ -101,10 +101,15 @@ namespace MafiaOnline.BusinessLogic.Factories
             };
 
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
+            var hq = await _unitOfWork.Headquarters.GetByBossId(boss.Id);
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(hq.MapElementId);
             var loot = new Loot() { Money = money };
             movingAgent.Step = 0;
             movingAgent.Path = path;
-            movingAgent.DestinationDescription = "Moving with loot";
+            movingAgent.DestinationDescription = "Returning with loot to headquarters";
+            movingAgent.DestinationPoint = new Point(mapElement.X, mapElement.Y);
+            movingAgent.ArrivalTime = DateTime.Now.AddSeconds(MapConsts.SECONDS_TO_MAKE_ONE_STEP * path.Length);
             movingAgent.DatasJson = JsonSerializer.Serialize(loot);
 
             movingAgent.Agent = agent;

@@ -19,6 +19,7 @@ Agents performing some mission for you
       <td>{{agent.SecondsLeft}}</td>
       <td>{{agent.SuccessChance}}</td>
       <td>
+        <button class="btn btn-success" (click)="showOnMap(agent.MissionPosition)">Mission on map</button>
       </td>
     </tr>
   </tbody>

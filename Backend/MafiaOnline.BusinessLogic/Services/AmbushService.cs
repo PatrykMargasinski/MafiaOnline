@@ -62,7 +62,7 @@ namespace MafiaOnline.BusinessLogic.Services
             var movingAgent = await _ambushFactory.CreateAgentMovingOnAmbush(request);
             _unitOfWork.MovingAgents.Create(movingAgent);
             _unitOfWork.Commit();
-            await _arrangeAmbushJobRunner.Start(_scheduler, movingAgent.ConstCompletionTime.Value, movingAgent.Id);
+            await _arrangeAmbushJobRunner.Start(_scheduler, movingAgent.ArrivalTime, movingAgent.Id);
         }
 
 

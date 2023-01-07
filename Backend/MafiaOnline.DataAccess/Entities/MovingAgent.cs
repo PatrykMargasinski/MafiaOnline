@@ -29,7 +29,7 @@ namespace MafiaOnline.DataAccess.Entities
         }
         public string PathJson { get; set; }
         public long? Step { get; set; }
-        public DateTime? ConstCompletionTime { get; set; }
+        public DateTime ArrivalTime { get; set; }
         [NotMapped]
         public Point DestinationPoint
         {

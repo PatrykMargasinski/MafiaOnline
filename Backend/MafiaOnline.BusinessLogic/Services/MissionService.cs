@@ -72,11 +72,11 @@ namespace MafiaOnline.BusinessLogic.Services
         /// </summary>
         public async Task MoveOnMission(StartMissionRequest request)
         {
-            await _missionValidator.ValidateMoveOnMission(request.AgentId, request.MissionId);
+            await _missionValidator.ValidateMoveOnMission(request);
             var movingAgent = await _missionFactory.CreateAgentMovingOnMission(request);
             _unitOfWork.MovingAgents.Create(movingAgent);
             _unitOfWork.Commit();
-            await _agentMoveJobRunner.Start(_scheduler, movingAgent.ConstCompletionTime.Value, movingAgent.Id);
+            await _agentMoveJobRunner.Start(_scheduler, movingAgent.ArrivalTime, movingAgent.Id);
         }
 
         /// <summary>

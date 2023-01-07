@@ -4,6 +4,7 @@ import { MovingAgent } from 'src/app/models/agent/agent.models';
 import { Point } from 'src/app/models/map/point.models';
 import { AgentService } from 'src/app/services/agent/agent.service';
 import { TokenService } from 'src/app/services/auth/token.service';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-moving-agents',
@@ -24,6 +25,7 @@ export class MovingAgentsComponent implements OnInit {
   refresh(){
     this.shared.getMovingAgents(this.bossId).subscribe(data=>{
       this.MovingAgents=data;
+      this.countdown()
     });
   }
 
@@ -34,6 +36,23 @@ export class MovingAgentsComponent implements OnInit {
   }
 
   showOnMap(point: Point) {
+    console.log(point)
     this.router.navigate(["/map/showMap"], { queryParams: { x: point.X, y: point.Y }});
+  }
+
+  private countdown() {
+    this.MovingAgents.forEach(it => {
+        interval(1000)
+        .subscribe(x => {this.setTime()})
+    })
+  }
+
+  private setTime() {
+    this.MovingAgents.forEach(agent => {
+      agent.SecondsLeft = Math.ceil((new Date(agent.ArrivalTime).getTime() - Date.now())/1000)
+      if(agent.SecondsLeft <= 0) {
+        this.refresh()
+      }
+    });
   }
 }

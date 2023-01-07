@@ -18,6 +18,7 @@ namespace MafiaOnline.BusinessLogic.Entities
         public int Intelligence { get; set; }
         public Point CurrentPosition { get; set; }
         public Point DestinationPosition { get; set; }
+        public DateTime ArrivalTime { get;set; }
         public string DestinationDescription{ get; set; }
     }
 }

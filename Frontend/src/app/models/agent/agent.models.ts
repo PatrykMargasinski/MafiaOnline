@@ -32,6 +32,7 @@ export interface AgentOnMission
   MissionId: number,
   AgentName: string,
   MissionName: string,
+  MissionPosition: Point,
   Strength: number,
   Dexterity: number,
   Intelligence: number,
@@ -52,6 +53,8 @@ export interface MovingAgent
   Upkeep: number,
   DestinationDescription: string,
   CurrentPosition: Point,
-  DestinationPosition: Point
+  DestinationPosition: Point,
+  ArrivalTime: Date,
+  SecondsLeft: number
 }
 

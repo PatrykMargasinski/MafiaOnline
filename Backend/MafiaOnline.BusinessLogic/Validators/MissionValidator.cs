@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using System;
@@ -13,48 +15,64 @@ namespace MafiaOnline.BusinessLogic.Validators
     {
         Task ValidateDoMission(long agentId, long missionId);
         Task ValidateEndMission(long pmId);
-        Task ValidateMoveOnMission(long agentId, long missionId);
+        Task ValidateMoveOnMission(StartMissionRequest request);
     }
 
     public class MissionValidator : IMissionValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMapUtils _mapUtils;
 
-        public MissionValidator(IUnitOfWork unitOfWork, IMapper mapper)
+        public MissionValidator(IUnitOfWork unitOfWork, IMapper mapper, IMapUtils mapUtils)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _mapUtils = mapUtils;
         }
 
-        public async Task ValidateMoveOnMission(long agentId, long missionId)
+        public async Task ValidateMoveOnMission(StartMissionRequest request)
         {
-            Mission mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
+            Mission mission = await _unitOfWork.Missions.GetByIdAsync(request.MissionId);
             if (mission == null)
             {
-                throw new Exception("Mission " + missionId + " not found!");
+                throw new Exception("Mission " + request.MissionId + " not found!");
             }
 
             if (mission.State != MissionState.Available)
             {
-                throw new Exception("Mission " + missionId + " is not available");
+                throw new Exception("Mission " + request.MissionId + " is not available");
             }
 
-            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
 
             if (agent == null)
             {
-                throw new Exception("Agent with id " + agentId + " not found!");
+                throw new Exception("Agent with id " + request.AgentId + " not found!");
             }
 
             if (agent.BossId == null)
             {
-                throw new Exception("Agent " + agentId + " is without boss");
+                throw new Exception("Agent " + request.AgentId + " is without boss");
             }
 
             if (agent.State != AgentState.Active)
             {
-                throw new Exception("Agent " + agentId + " is not in the active state");
+                throw new Exception("Agent " + request.AgentId + " is not in the active state");
+            }
+
+            if (request.Path == null || request.Path.Length==0)
+            {
+                throw new Exception("Path not provided");
+            }
+
+            //road continuity
+            for (int i = 0; i < request.Path.Length - 1; i++)
+            {
+                if (!_mapUtils.IsAdjacent(request.Path[i], request.Path[i+1]))
+                {
+                    throw new Exception("Path is not continuous");
+                }
             }
         }
 

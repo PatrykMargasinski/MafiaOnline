@@ -49,6 +49,7 @@ namespace MafiaOnline.DataAccess.Repositories
             var agents = await _context.Agents
                 .Include(x => x.PerformingMission)
                 .ThenInclude(y => y.Mission)
+                .ThenInclude(y => y.MapElement)
                 .Where(z => z.BossId == bossId && z.State == AgentState.OnMission)
                 .ToListAsync();
             return agents;
@@ -67,7 +68,7 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var agents = await _context.Agents
                 .Include(x => x.MovingAgent)
-                .Where(z => z.State == AgentState.Moving && z.BossId==bossId)
+                .Where(z => (z.State == AgentState.Moving || z.State == AgentState.MovingWithLoot) && z.BossId==bossId)
                 .ToListAsync();
             return agents;
         }

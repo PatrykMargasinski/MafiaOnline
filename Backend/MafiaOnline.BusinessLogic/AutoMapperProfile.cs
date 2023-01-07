@@ -26,7 +26,8 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.MissionName, y => y.MapFrom(z => z.PerformingMission.Mission.Name))
                 .ForMember(x => x.SuccessChance, y => y.MapFrom(z => _missionUtils.CalculateAgentSuccessChance(z, z.PerformingMission.Mission)))
                 .ForMember(x => x.CompletionTime, y => y.MapFrom(z => z.PerformingMission.CompletionTime))
-                .ForMember(x => x.SecondsLeft, y => y.MapFrom(z => (long) DateTime.Now.Subtract(z.PerformingMission.CompletionTime).TotalSeconds));
+                .ForMember(x => x.SecondsLeft, y => y.MapFrom(z => (long) DateTime.Now.Subtract(z.PerformingMission.CompletionTime).TotalSeconds))
+                .ForMember(x => x.MissionPosition, y => y.MapFrom(z => z.PerformingMission.Mission.MapElement.Position));
 
             CreateMap<Agent, AgentForSaleDTO>()
                 .ForMember(x => x.Price, y => y.MapFrom(z => z.AgentForSale.Price));
@@ -34,7 +35,8 @@ namespace MafiaOnline.BusinessLogic
             CreateMap<Agent, MovingAgentDTO>()
                 .ForMember(x => x.DestinationDescription, y => y.MapFrom(z => z.MovingAgent.DestinationDescription))
                 .ForMember(x => x.CurrentPosition, y => y.MapFrom(z => z.MovingAgent.CurrentPoint))
-                .ForMember(x => x.DestinationPosition, y => y.MapFrom(z => z.MovingAgent.DestinationPoint));
+                .ForMember(x => x.DestinationPosition, y => y.MapFrom(z => z.MovingAgent.DestinationPoint))
+                .ForMember(x => x.ArrivalTime, y => y.MapFrom(z => z.MovingAgent.ArrivalTime));
 
             //Ambush
             CreateMap<Ambush, AmbushDTO>()

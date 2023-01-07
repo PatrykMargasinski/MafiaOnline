@@ -1,3 +1,5 @@
+import { Router } from '@angular/router';
+import { Point } from './../../../models/map/point.models';
 import { TokenService } from 'src/app/services/auth/token.service';
 import { AgentOnMission } from 'src/app/models/agent/agent.models';
 import { Component, OnInit } from '@angular/core';
@@ -11,7 +13,7 @@ import { interval, Subscription } from 'rxjs';
 })
 export class AgentsOnMissionComponent implements OnInit {
 
-  constructor(private shared: AgentService, private tokenService: TokenService) { }
+  constructor(private shared: AgentService, private tokenService: TokenService, private router: Router) { }
 
   agentsOnMission: AgentOnMission[]
 
@@ -40,6 +42,10 @@ export class AgentsOnMissionComponent implements OnInit {
         this.refreshAgentsOnMission()
       }
     });
+  }
+
+  showOnMap(point: Point) {
+    this.router.navigate(["/map/showMap"], { queryParams: { x: point.X, y: point.Y }});
   }
 
 }

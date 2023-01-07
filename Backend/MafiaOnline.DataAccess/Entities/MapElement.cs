@@ -10,6 +10,14 @@ namespace MafiaOnline.DataAccess.Entities
     {
         public long X { get; set; }
         public long Y { get; set; }
+        [NotMapped]
+        public Point Position
+        {
+            get
+            {
+                return new Point(X, Y);
+            }
+        }
         public MapElementType Type { get; set; }
         public long? BossId { get; set; }
         public bool Hidden { get; set; }

@@ -91,7 +91,7 @@ namespace MafiaOnline.BusinessLogic.Factories
             var headquarters = await _unitOfWork.Headquarters.GetByBossId(boss.Id);
             var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
 
-            movingAgent.ConstCompletionTime = DateTime.Now
+            movingAgent.ArrivalTime = DateTime.Now
                 .AddSeconds((Math.Abs(headquarters.MapElement.X - mapElement.X) + Math.Abs(headquarters.MapElement.Y - mapElement.Y)) * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
             movingAgent.DestinationPoint = new Point(mapElement.X, mapElement.Y);
             movingAgent.DestinationDescription = $"Going on mission: {mission.Name}";
