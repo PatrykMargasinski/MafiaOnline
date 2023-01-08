@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MafiaOnline.BusinessLogic.Entities;
-using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
@@ -16,6 +15,8 @@ namespace MafiaOnline.BusinessLogic.Validators
     {
         Task ValidateMoveToArrangeAmbush(ArrangeAmbushRequest request);
         Task ValidateArrangeAmbush(ArrangeAmbushRequest request);
+        Task ValidateAttackAmbush(AttackAmbushRequest request);
+        Task ValidateMoveOnAttackAmbush(AttackAmbushRequest request);
     }
 
     public class AmbushValidator : IAmbushValidator
@@ -62,6 +63,40 @@ namespace MafiaOnline.BusinessLogic.Validators
 
             if (mapElement != null)
                 throw new Exception("There is some map element in this point");
+        }
+
+        public async Task ValidateAttackAmbush(AttackAmbushRequest request)
+        {
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(request.MapElementId);
+            if (agent == null)
+                throw new Exception("Agent not found");
+            if (agent.BossId == null)
+                throw new Exception("Agent has no boss");
+            if (mapElement == null)
+                throw new Exception("Map element not found. It's possible ambush was cancelled during your agent's move");
+            if (mapElement.Type != MapElementType.Ambush)
+                throw new Exception("This map element is not an ambush");
+            if (mapElement.BossId == agent.BossId)
+                throw new Exception("You cannot attack your own ambush");
+        }
+
+        public async Task ValidateMoveOnAttackAmbush(AttackAmbushRequest request)
+        {
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(request.MapElementId);
+            if (agent == null)
+                throw new Exception("Agent not found");
+            if (agent.State != AgentState.Active)
+                throw new Exception("Agent is not active");
+            if (agent.BossId == null)
+                throw new Exception("Agent has no boss");
+            if (mapElement == null)
+                throw new Exception("Map element not found");
+            if (mapElement.Type != MapElementType.Ambush)
+                throw new Exception("This map element is not an ambush");
+            if (mapElement.BossId == agent.BossId)
+                throw new Exception("You cannot attack your own ambush");
         }
     }
 }

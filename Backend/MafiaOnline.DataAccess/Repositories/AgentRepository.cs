@@ -103,6 +103,7 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var agent = await _context.Agents
                 .Include(x => x.AgentForSale)
+                .Where(x=>agentsId.Contains(x.Id))
                 .ToListAsync();
             return agent;
         }

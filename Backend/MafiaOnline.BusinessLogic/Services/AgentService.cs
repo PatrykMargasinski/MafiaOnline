@@ -13,6 +13,7 @@ using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
@@ -56,7 +57,7 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IAgentUtils _agentUtils;
 
         public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, 
-            IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger, IRandomizer randomizer, IPatrolJobRunner patrolJobRunner, IReporter reporter, 
+            IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger, IRandomizer randomizer, IPatrolJobRunner patrolJobRunner, IReporter reporter,
             IMovingAgentUtils movingAgentUtils, IAgentUtils agentUtils, IReturnWithLootJobRunner returnWithLootJobRunner)
         {
             _unitOfWork = unitOfWork;

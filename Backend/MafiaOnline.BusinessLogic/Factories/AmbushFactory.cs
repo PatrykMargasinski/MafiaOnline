@@ -18,6 +18,7 @@ namespace MafiaOnline.BusinessLogic.Factories
     public interface IAmbushFactory
     {
         Task<MovingAgent> CreateAgentMovingOnAmbush(ArrangeAmbushRequest request);
+        Task<MovingAgent> CreateMovingAgentForAttackingAmbush(AttackAmbushRequest request);
     }
 
     public class AmbushFactory : IAmbushFactory
@@ -47,6 +48,26 @@ namespace MafiaOnline.BusinessLogic.Factories
                 .AddSeconds((Math.Abs(headquarters.MapElement.X - request.Point.X) + Math.Abs(headquarters.MapElement.Y - request.Point.Y)) * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
             movingAgent.DestinationPoint = new Point(request.Point.X, request.Point.Y);
             movingAgent.DestinationDescription = $"Going to arrange ambush";
+            movingAgent.DatasJson = JsonSerializer.Serialize(request);
+
+            movingAgent.Agent = agent;
+            agent.State = AgentState.Moving;
+            return movingAgent;
+        }
+
+        public async Task<MovingAgent> CreateMovingAgentForAttackingAmbush(AttackAmbushRequest request)
+        {
+            var movingAgent = new MovingAgent()
+            {
+            };
+
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(request.MapElementId);
+            var hq = await _unitOfWork.Headquarters.GetByBossId(agent.BossId.Value);
+            movingAgent.ArrivalTime = DateTime.Now
+                .AddSeconds((Math.Abs(mapElement.X - hq.MapElement.X) + Math.Abs(mapElement.Y - hq.MapElement.Y)) * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
+            movingAgent.DestinationPoint = new Point(mapElement.X, mapElement.Y);
+            movingAgent.DestinationDescription = $"Attacking ambush";
             movingAgent.DatasJson = JsonSerializer.Serialize(request);
 
             movingAgent.Agent = agent;

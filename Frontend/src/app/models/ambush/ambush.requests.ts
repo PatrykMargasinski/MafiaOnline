@@ -10,3 +10,9 @@ export interface CancelAmbushRequest
 {
   MapElementId: number
 }
+
+export interface AttackAmbushRequest
+{
+  AgentId: number,
+  MapElementId: number,
+}

@@ -88,7 +88,7 @@ namespace MafiaOnline.BusinessLogic.Factories
             movingAgent.Path = request.Path;
             movingAgent.DestinationDescription = "Patrolling";
             movingAgent.DatasJson = JsonSerializer.Serialize(request);
-
+            movingAgent.ArrivalTime = DateTime.Now.AddSeconds(request.Path.Length * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
             movingAgent.Agent = agent;
             agent.State = AgentState.Moving;
             return movingAgent;

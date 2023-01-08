@@ -41,5 +41,12 @@ namespace MafiaOnline.Controllers
             await _ambushService.CancelAmbush(request);
             return Ok();
         }
+
+        [HttpPost("attack")]
+        public async Task<IActionResult> MoveToAttackAmbush([FromBody] AttackAmbushRequest request)
+        {
+            await _ambushService.MoveToAttackAmbush(request);
+            return Ok();
+        }
     }
 }

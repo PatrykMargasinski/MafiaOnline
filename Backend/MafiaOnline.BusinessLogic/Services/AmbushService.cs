@@ -26,6 +26,8 @@ namespace MafiaOnline.BusinessLogic.Services
         Task ArrangeAmbush(ArrangeAmbushRequest request);
         Task<AmbushDTO> GetAmbushDetailsByMapElementId(long mapElementId);
         Task CancelAmbush(CancelAmbushRequest request);
+        Task AttackAmbush(AttackAmbushRequest request);
+        Task MoveToAttackAmbush(AttackAmbushRequest request);
 
     }
 
@@ -38,8 +40,11 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ISchedulerFactory _scheduler;
         private readonly IReporter _reporter;
         private readonly IMapper _mapper;
+        private readonly IAttackAmbushJobRunner _attackAmbushJobRunner;
+        private readonly IAgentUtils _agentUtils;
 
-        public AmbushService(IUnitOfWork unitOfWork, IAmbushValidator ambushValidator, IAmbushFactory ambushFactory, ISchedulerFactory scheduler, IReporter reporter, IArrangeAmbushJobRunner arrangeAmbushJobRunner, IMapper mapper)
+        public AmbushService(IUnitOfWork unitOfWork, IAmbushValidator ambushValidator, IAmbushFactory ambushFactory, ISchedulerFactory scheduler, 
+            IReporter reporter, IArrangeAmbushJobRunner arrangeAmbushJobRunner, IMapper mapper, IAttackAmbushJobRunner attackAmbushJobRunner, IAgentUtils agentUtils)
         {
             _unitOfWork = unitOfWork;
             _ambushValidator = ambushValidator;
@@ -48,6 +53,8 @@ namespace MafiaOnline.BusinessLogic.Services
             _reporter = reporter;
             _arrangeAmbushJobRunner = arrangeAmbushJobRunner;
             _mapper = mapper;
+            _agentUtils = agentUtils;
+            _attackAmbushJobRunner = attackAmbushJobRunner;
         }
 
         public async Task<AmbushDTO> GetAmbushDetailsByMapElementId(long mapElementId)
@@ -117,6 +124,62 @@ namespace MafiaOnline.BusinessLogic.Services
 
             _unitOfWork.MapElements.Create(mapElement);
             _unitOfWork.Commit();
+        }
+
+
+        public async Task MoveToAttackAmbush(AttackAmbushRequest request)
+        {
+            await _ambushValidator.ValidateMoveOnAttackAmbush(request);
+            var movingAgent = await _ambushFactory.CreateMovingAgentForAttackingAmbush(request);
+            _unitOfWork.MovingAgents.Create(movingAgent);
+            _unitOfWork.Commit();
+            await _attackAmbushJobRunner.Start(_scheduler, movingAgent.ArrivalTime, movingAgent.Id);
+        }
+
+        public async Task AttackAmbush(AttackAmbushRequest request)
+        {
+            var attacker = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var ambush = await _unitOfWork.Ambushes.GetByMapElementIdAsync(request.MapElementId);
+            var defender = await _unitOfWork.Agents.GetByIdAsync(ambush.AgentId);
+            try
+            {
+                await _ambushValidator.ValidateAttackAmbush(request);
+                var shootoutResult = await _agentUtils.Shootout(attacker.Id, defender.Id, attacker.Id);
+                var reportForAttacker = "Your agent's attacked ambush.\n";
+                var reportForDefender = "Your ambush has been attacked.\n";
+
+                //attacker wins
+                if (shootoutResult.WinnerAgentId == attacker.Id)
+                {
+                    reportForAttacker += "\nYour agent won the shootout. Ambush has been destroyed.\nAgent returns the the headquarters.";
+                    reportForDefender += "\nYour agent lost the shootout. Your ambush has been destroyed.\nAgent returns the the headquarters.";
+                    _unitOfWork.Ambushes.DeleteById(ambush.Id);
+                    _unitOfWork.MapElements.DeleteById(ambush.MapElementId);
+                    attacker.State = AgentState.Active;
+                    defender.State = AgentState.Active;
+                    return;
+                }
+                //defender wins
+                else
+                {
+                    reportForAttacker += "\nYour agent lost the shootout. The ambush still exists.\nAgent returns the the headquarters.";
+                    reportForDefender += "\nYour agent won the shootout. The ambush still exists.";
+                    attacker.State = AgentState.Active;
+                }
+                await _reporter.CreateReport(attacker.BossId.Value, "Shootout", reportForAttacker);
+                await _reporter.CreateReport(defender.BossId.Value, "Shootout", reportForDefender);
+            }
+            catch (Exception ex)
+            {
+                string messageContent;
+                messageContent = $"Agent {attacker.FullName ?? ""} wanted to attack ambush, but there are reasons why he couldn't:\n";
+                messageContent += $"{ex.Message}\n\n";
+                messageContent += "The agent returns to the headquarters";
+                await _reporter.CreateReport(attacker.BossId.Value, "The agent returns to the headquarters", messageContent);
+                attacker.State = AgentState.Active;
+                _unitOfWork.Commit();
+                return;
+            }
         }
     }
 }

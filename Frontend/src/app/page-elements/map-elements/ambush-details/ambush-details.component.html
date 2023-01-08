@@ -2,4 +2,38 @@
 <h4>Arranged by {{ambush.AgentFullName}}</h4>
 <br><br>
 This is {{ambush.BossLastName}}'s family ambush. Agent {{ambush.AgentFullName}} waits for someone with money to enter this map field and share the wealth...
-<button class="mt-2 mb-5 pt-2 pb-2 btn w-100 h-100 btn-success" (click)="cancelAmbush()">Cancel ambush</button>
+<button *ngIf="yourAmbush==true"class="mt-2 mb-5 pt-2 pb-2 btn w-100 h-100 btn-success" (click)="cancelAmbush()">Cancel ambush</button>
+<div *ngIf="yourAmbush==false">
+  You discovered this ambush, so you can attack it. Choose agent to do so.
+  <table class="table text-center">
+    <thead>
+      <tr>
+        <th scope="col">Agent</th>
+        <th scope="col">Strength</th>
+        <th scope="col">Intelligence</th>
+        <th scope="col">Dexterity</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let agent of agents">
+      <td>
+        <img src="assets/mafioso.jpg" class="rounded-circle img-fluid">
+        <p>{{agent.FirstName}} {{agent.LastName}}</p>
+      </td>
+      <td>
+        <p class="pt-5">{{agent.Strength}}</p>
+      </td>
+      <td>
+        <p class="pt-5">{{agent.Intelligence}}</p>
+      </td>
+      <td>
+        <p class="pt-5">{{agent.Dexterity}}</p>
+      </td>
+      <td class="h-100">
+        <button class="mt-2 mb-5 pt-2 pb-2 btn w-100 h-100 btn-success" (click)="attackAmbush(agent.Id)">Attack</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
