@@ -21,6 +21,7 @@ using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.ErrorHandling;
 using MafiaOnline.BusinessLogic.Factories;
 using MafiaAPI.Jobs;
+using Newtonsoft.Json;
 
 namespace MafiaOnline
 {
@@ -66,6 +67,9 @@ namespace MafiaOnline
             services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IMissionService, MissionService>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IMapService, MapService>();
+            services.AddScoped<IHeadquartersService, HeadquartersService>();
+            services.AddScoped<IAmbushService, AmbushService>();
 
             //Utils
             services.AddScoped<ISecurityUtils, SecurityUtils>();
@@ -74,21 +78,32 @@ namespace MafiaOnline
             services.AddScoped<IBasicUtils, BasicUtils>();
             services.AddScoped<IReporter, Reporter>();
             services.AddScoped<IRandomizer, Randomizer>();
+            services.AddScoped<IMapUtils, MapUtils>();
+            services.AddScoped<IMovingAgentUtils, MovingAgentUtils>();
+            services.AddScoped<IAgentUtils, AgentUtils>();
 
             //Factories
             services.AddScoped<IAgentFactory, AgentFactory>();
             services.AddScoped<IMissionFactory, MissionFactory>();
+            services.AddScoped<IAmbushFactory, AmbushFactory>();
 
             //Validators
             services.AddScoped<IMissionValidator, MissionValidator>();
             services.AddScoped<IAgentValidator, AgentValidator>();
             services.AddScoped<IMessageValidator, MessageValidator>();
             services.AddScoped<IPlayerValidator, PlayerValidator>();
+            services.AddScoped<IAmbushValidator, AmbushValidator>();
 
             //Job runners
             services.AddScoped<IPerformMissionJobRunner, PerformMissionJobRunner>();
             services.AddScoped<IAgentRefreshJobRunner, AgentRefreshJobRunner>();
             services.AddScoped<IMissionRefreshJobRunner, MissionRefreshJobRunner>();
+            services.AddScoped<IAgentMovingOnMissionJobRunner, AgentMovingOnMissionJobRunner>();
+            services.AddScoped<IArrangeAmbushJobRunner, ArrangeAmbushJobRunner>();
+            services.AddScoped<IPatrolJobRunner, PatrolJobRunner>();
+            services.AddScoped<IReturnWithLootJobRunner, ReturnWithLootJobRunner>();
+            services.AddScoped<IAttackAmbushJobRunner, AttackAmbushJobRunner>();
+
 
             //Hosted service
             services.AddHostedService<MyHostedService>();
@@ -131,6 +146,8 @@ namespace MafiaOnline
                 var loggingSection = Configuration.GetSection("Logging");
                 loggingBuilder.AddFile(loggingSection);
             });
+
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

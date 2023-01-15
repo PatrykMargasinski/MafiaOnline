@@ -16,6 +16,8 @@ namespace MafiaOnline.DataAccess.Database
             modelBuilder.Entity<PerformingMission>().HasData(PreparePerformingMissions());
             modelBuilder.Entity<Name>().HasData(PrepareNames());
             modelBuilder.Entity<MissionTemplate>().HasData(PrepareMissionTemplates());
+            modelBuilder.Entity<MapElement>().HasData(PrepareMapElements());
+            modelBuilder.Entity<Headquarters>().HasData(PrepareHeadquarters());
         }
 
         private static IList<Boss> PrepareBosses()
@@ -50,13 +52,13 @@ namespace MafiaOnline.DataAccess.Database
         private static IList<Mission> PrepareMissions()
         {
             return new List<Mission> {
-                new Mission{Id=1, Name="Bank robbery", DifficultyLevel=7, Loot=5000, Duration=30, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=2, Name="Senator assassination", DifficultyLevel=9, Loot=10000, Duration=10, StrengthPercentage=80, DexterityPercentage=20, IntelligencePercentage=0, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=3, Name="Party", DifficultyLevel=2, Loot=100, Duration=10, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=4, Name="Buy a coffee", DifficultyLevel=1, Loot=10, Duration=5, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=5, Name="Money laundering", DifficultyLevel=5, Loot=1000, Duration=55, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=6, Name="Car theft", DifficultyLevel=6, Loot=2000, Duration=3600, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=7, Name="Arms trade", DifficultyLevel=8, Loot=4000, Duration=15, StrengthPercentage=40, DexterityPercentage=20, IntelligencePercentage=40, State=MissionState.Available, RepeatableMission = true}
+                new Mission{Id=1, MapElementId=3, Name="Bank robbery", DifficultyLevel=7, Loot=5000, Duration=30, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=2, MapElementId=4, Name="Senator assassination", DifficultyLevel=9, Loot=10000, Duration=10, StrengthPercentage=80, DexterityPercentage=20, IntelligencePercentage=0, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=3, MapElementId=5, Name="Party", DifficultyLevel=2, Loot=100, Duration=10, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=4, MapElementId=6, Name="Buy a coffee", DifficultyLevel=1, Loot=10, Duration=5, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=5, MapElementId=7, Name="Money laundering", DifficultyLevel=5, Loot=1000, Duration=55, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=6, MapElementId=8, Name="Car theft", DifficultyLevel=6, Loot=2000, Duration=3600, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=7, MapElementId=9, Name="Arms trade", DifficultyLevel=8, Loot=4000, Duration=15, StrengthPercentage=40, DexterityPercentage=20, IntelligencePercentage=40, State=MissionState.Available, RepeatableMission = true}
             };
         }
 
@@ -242,6 +244,31 @@ namespace MafiaOnline.DataAccess.Database
                 new MissionTemplate (){ Id=10, Name = "Blackmail", MinDifficulty=4, MaxDifficulty=6, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=40, DexterityPercentage=30, IntelligencePercentage=30, MinDuration=10, MaxDuration=30 },
                 new MissionTemplate (){ Id=11, Name = "Drug smuggling", MinDifficulty=4, MaxDifficulty=6, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=30, DexterityPercentage=40, IntelligencePercentage=30, MinDuration=10, MaxDuration=30 },
                 new MissionTemplate (){ Id=12, Name = "Deal you can not throw away", MinDifficulty=6, MaxDifficulty=7, MinLoot = 3000, MaxLoot=5000, StrengthPercentage=30, DexterityPercentage=30, IntelligencePercentage=40, MinDuration=10, MaxDuration=30 },
+            };
+        }
+
+        private static IList<Headquarters> PrepareHeadquarters()
+        {
+            return new List<Headquarters>
+            {
+                new Headquarters (){Id=1, MapElementId=1, BossId=1, Name="The house of Patricio Rico" },
+                new Headquarters (){Id=2, MapElementId=2, BossId=2, Name="Margherita rules here"  },
+            };
+        }
+
+        private static IList<MapElement> PrepareMapElements()
+        {
+            return new List<MapElement>
+            {
+                new MapElement (){Id=1, Type = MapElementType.Headquarters, X = 2, Y = 1, BossId=1 },
+                new MapElement (){Id=2, Type = MapElementType.Headquarters, X = 14, Y = 1, BossId=2 },
+                new MapElement (){Id=3, Type = MapElementType.Mission, X = 1, Y = 3 },
+                new MapElement (){Id=4, Type = MapElementType.Mission, X = 3, Y = 5 },
+                new MapElement (){Id=5, Type = MapElementType.Mission, X = 3, Y = 7 },
+                new MapElement (){Id=6, Type = MapElementType.Mission, X = 5, Y = 3 },
+                new MapElement (){Id=7, Type = MapElementType.Mission, X = 14, Y = 1 },
+                new MapElement (){Id=8, Type = MapElementType.Mission, X = 13, Y = 3 },
+                new MapElement (){Id=9, Type = MapElementType.Mission, X = 14, Y = 5 },
             };
         }
     }

@@ -1,3 +1,4 @@
+import { HeadquartersDetailsComponent } from './page-elements/map-elements/headquarters-details/headquarters-details.component';
 import { BossRankingComponent } from './pages/boss/boss-ranking/boss-ranking.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
@@ -33,6 +34,13 @@ import { ShowReportsComponent } from './pages/message/show-reports/show-reports.
 import { AccountSettingsComponent } from './pages/account-settings/account-settings.component';
 import { ChangePasswordComponent } from './pages/account-settings/change-password/change-password.component';
 import { DeleteAccountComponent } from './pages/account-settings/delete-account/delete-account.component';
+import { MapComponent } from './pages/map/map.component';
+import { ShowMapComponent } from './pages/map/show-map/show-map.component';
+import { MissionDetailsComponent } from './page-elements/map-elements/mission-details/mission-details.component';
+import { MovingAgentsComponent } from './pages/agent/moving-agents/moving-agents.component';
+import { ChooseAgentToArrangeAmbushComponent } from './page-elements/ambush/choose-agent-to-arrange-ambush/choose-agent-to-arrange-ambush.component';
+import { AmbushDetailsComponent } from './page-elements/map-elements/ambush-details/ambush-details.component';
+import { ChooseAgentToPatrolComponent } from './page-elements/agent/choose-agent-to-patrol/choose-agent-to-patrol.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -64,7 +72,15 @@ export function tokenGetter(){
     ShowReportsComponent,
     AccountSettingsComponent,
     ChangePasswordComponent,
-    DeleteAccountComponent
+    DeleteAccountComponent,
+    MapComponent,
+    ShowMapComponent,
+    HeadquartersDetailsComponent,
+    MissionDetailsComponent,
+    MovingAgentsComponent,
+    ChooseAgentToArrangeAmbushComponent,
+    AmbushDetailsComponent,
+    ChooseAgentToPatrolComponent
   ],
   imports: [
     BrowserModule,

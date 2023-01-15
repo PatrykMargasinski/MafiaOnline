@@ -1,0 +1,29 @@
+<br><h3>Moving agents</h3>
+Agents going to a specific place
+<br>
+<br>
+<table class="table table-striped text-center">
+  <thead>
+    <tr>
+      <th scope="col">Agent Name</th>
+      <th scope="col">Current position</th>
+      <th scope="col">Destination description</th>
+      <th scope="col">Destination position</th>
+      <th scope="col">Seconds to arrival</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let agent of MovingAgents">
+      <td>{{agent.FirstName}} {{agent.LastName}}</td>
+      <td>{{getPosition(agent.CurrentPosition)}}</td>
+      <td>{{agent.DestinationDescription}}</td>
+      <td>{{getPosition(agent.DestinationPosition)}}</td>
+      <td>{{agent.SecondsLeft}}</td>
+      <td>
+        <button *ngIf="agent.CurrentPosition!=null" class="btn btn-success" (click)="showOnMap(agent.CurrentPosition)">Current position</button>
+        <button class="btn btn-warning" style="margin-left: 1px" (click)="showOnMap(agent.DestinationPosition)">Destination position</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

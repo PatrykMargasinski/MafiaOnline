@@ -34,8 +34,4 @@ export class AvailableMissionsComponent implements OnInit {
     this.modalService.dismissAll();
     this.refreshMissions();
   }
-
-  changeMissionId(missionId: number){
-    this.missionId = missionId
-  }
 }

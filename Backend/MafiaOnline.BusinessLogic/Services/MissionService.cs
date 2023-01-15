@@ -2,7 +2,6 @@
 using MafiaAPI.Jobs;
 using MafiaOnline.BusinessLogic.Const;
 using MafiaOnline.BusinessLogic.Entities;
-using MafiaOnline.BusinessLogic.Entities.Mission;
 using MafiaOnline.BusinessLogic.Factories;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
@@ -22,12 +21,15 @@ namespace MafiaOnline.BusinessLogic.Services
     public interface IMissionService
     {
         Task StartMission(StartMissionRequest request);
-        Task<PerformingMission> DoMission(long agentId, long missionId);
+        Task<PerformingMission> DoMission(long agentId, long missionId, Point[] path);
         Task EndMission(long pmId);
+        Task<MissionDTO> GetMissionByMapElement(long mapElementId);
         Task<IList<MissionDTO>> GetAvailableMissions();
         Task<IList<PerformingMissionDTO>> GetPerformingMissions(long bossId);
         Task RefreshMissions();
         Task ScheduleRefreshMissionsJob();
+        Task<MissionDTO> GetMissionById(long missionId);
+        Task MoveOnMission(StartMissionRequest request);
     }
 
     public class MissionService : IMissionService
@@ -41,10 +43,14 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ILogger<MissionService> _logger;
         private readonly IPerformMissionJobRunner _jobRunner;
         private readonly IMissionFactory _missionFactory;
+        private readonly IAgentFactory _agentFactory;
         private readonly IMissionRefreshJobRunner _missionRefreshJobRunner;
+        private readonly IAgentMovingOnMissionJobRunner _agentMoveJobRunner;
+        private readonly IReturnWithLootJobRunner _returnWithLootJobRunner;
 
         public MissionService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulerFactory scheluder, IMissionUtils missionUtils, IReporter reporter, IMissionValidator missionValidator,
-            IPerformMissionJobRunner jobRunner, ILogger<MissionService> logger, IMissionFactory missionFactory, IMissionRefreshJobRunner missionRefreshJobRunner)
+            IPerformMissionJobRunner jobRunner, ILogger<MissionService> logger, IMissionFactory missionFactory, IMissionRefreshJobRunner missionRefreshJobRunner, IAgentMovingOnMissionJobRunner agentMoveJobRunner,
+            IReturnWithLootJobRunner returnWithLootJobRunner, IAgentFactory agentFactory)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -56,6 +62,21 @@ namespace MafiaOnline.BusinessLogic.Services
             _logger = logger;
             _missionFactory = missionFactory;
             _missionRefreshJobRunner = missionRefreshJobRunner;
+            _agentMoveJobRunner = agentMoveJobRunner;
+            _returnWithLootJobRunner = returnWithLootJobRunner;
+            _agentFactory = agentFactory;
+        }
+
+        /// <summary>
+        /// Agents moves on mission. It will be performed when agent reaches a place
+        /// </summary>
+        public async Task MoveOnMission(StartMissionRequest request)
+        {
+            await _missionValidator.ValidateMoveOnMission(request);
+            var movingAgent = await _missionFactory.CreateAgentMovingOnMission(request);
+            _unitOfWork.MovingAgents.Create(movingAgent);
+            _unitOfWork.Commit();
+            await _agentMoveJobRunner.Start(_scheduler, movingAgent.ArrivalTime, movingAgent.Id);
         }
 
         /// <summary>
@@ -63,30 +84,59 @@ namespace MafiaOnline.BusinessLogic.Services
         /// </summary>
         public async Task StartMission(StartMissionRequest request)
         {
-            var pm = await DoMission(request.AgentId, request.MissionId);
-            await _jobRunner.Start(_scheduler, pm.Id, pm.CompletionTime);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
+            var mission = await _unitOfWork.Missions.GetByIdAsync(request.MissionId);
+            try
+            {
+                var pm = await DoMission(request.AgentId, request.MissionId, request.Path);
+                await _jobRunner.Start(_scheduler, pm.Id, pm.CompletionTime);
+            }
+            catch(Exception ex)
+            {
+                string messageContent;
+                messageContent = $"Agent {agent.FullName ?? ""} wanted to perform ";
+                if (mission != null) messageContent += $"mission {mission.Name}";
+                else messageContent += $"some mission";
+                messageContent += ", but there are reasons why he couldn't:\n";
+                messageContent += $"{ex.Message}\n\n";
+                messageContent += "The agent returns to the headquarters";
+                await _reporter.CreateReport(boss.Id, "The agent returns to the headquarters", messageContent);
+                agent.State = AgentState.Active;
+                _unitOfWork.Commit();
+                return;
+            }
         }
 
         /// <summary>
         /// Creates PerformingMission instance
         /// </summary>
-        public async Task<PerformingMission> DoMission(long agentId, long missionId)
+        public async Task<PerformingMission> DoMission(long agentId, long missionId, Point[] path)
         {
 
             await _missionValidator.ValidateDoMission(agentId, missionId);
 
             var mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
+
+            await _reporter.CreateReport(boss.Id, 
+                $"Agent {agent.FullName} starts mission {mission.Name}", 
+                $"Agent {agent.FullName} starts mission {mission.Name}. He/she will finish it in {mission.Duration} seconds and after it he/she will go back to the headquarters");
+
             DateTime missionFinishTime = DateTime.Now.AddSeconds(mission.Duration);
 
             PerformingMission performingMission = new PerformingMission()
             {
                 MissionId = missionId,
                 AgentId = agentId,
-                CompletionTime = missionFinishTime
+                CompletionTime = missionFinishTime,
+                WayBack = path
             };
             agent.State = AgentState.OnMission;
             mission.State = MissionState.Performing;
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
+            mapElement.Boss = boss;
             _unitOfWork.PerformingMissions.Create(performingMission);
             _unitOfWork.Commit();
             return performingMission;
@@ -107,29 +157,40 @@ namespace MafiaOnline.BusinessLogic.Services
             Boss boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
             string info = "Agent " + agent.FirstName + " " + agent.LastName +
                 " has finished mission: " + mission.Name;
+
+            var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
             if (_missionUtils.IsMissionSuccessfullyCompleted(agent, mission))
             {
-                boss.Money+=mission.Loot;
-                info += "\nMission success! \n";
+                info += "\nMission success!\n";
                 info += boss.LastName +
-                " family has earned " + mission.Loot + "$";
-            }
-            else
-            {
-                info += ("\nMission failed.\n");
-            }
-            await _reporter.CreateReport(bossId, "Mission: " + mission.Name, info);
+                "family has chance to earn " + mission.Loot +
+                "\nNow the agent returns to the headquarters with the loot. Let's hope he doesn't fall into any ambush";
+                var movingAgent = await _agentFactory.CreateMovingAgentWithLoot(agent.Id, mission.Loot, pm.WayBack);
+                _unitOfWork.MovingAgents.Create(movingAgent);
+                _unitOfWork.Commit();
+                await _returnWithLootJobRunner.Start(_scheduler, DateTime.Now.AddSeconds(MapConsts.SECONDS_TO_MAKE_ONE_STEP), movingAgent.Id);
 
-            agent.State = AgentState.Active;
-            _unitOfWork.PerformingMissions.DeleteById(pm.Id);
-            if (mission.RepeatableMission == true)
-            {
-                mission.State = MissionState.Available;
+                if (mission.RepeatableMission == true)
+                {
+                    mission.State = MissionState.Available;
+                    mapElement.Boss = null;
+                    mapElement.BossId = null;
+                }
+                else
+                {
+                    _unitOfWork.Missions.DeleteById(mission.Id);
+                    _unitOfWork.MapElements.DeleteById(mission.MapElementId);
+                }
             }
             else
             {
-                _unitOfWork.Missions.DeleteById(mission.Id);
+                info += ("\nMission failed!\nThe agent returns to the headquarters\n");
+                agent.State = AgentState.Active;
             }
+
+            _unitOfWork.PerformingMissions.DeleteById(pm.Id);
+            await _reporter.CreateReport(bossId, "Mission completed: " + mission.Name, info);
+
             _unitOfWork.Commit();
         }
 
@@ -140,6 +201,21 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var missions = await _unitOfWork.Missions.GetAvailableMissions();
             return _mapper.Map<IList<MissionDTO>>(missions);
+        }
+
+        public async Task<MissionDTO> GetMissionById(long missionId)
+        {
+            var mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
+            return _mapper.Map<MissionDTO>(mission);
+        }
+
+        /// <summary>
+        /// Returns mission details by map element
+        /// </summary>
+        public async Task<MissionDTO> GetMissionByMapElement(long mapElementId)
+        {
+            var missions = await _unitOfWork.Missions.GetByMapElementIdAsync(mapElementId);
+            return _mapper.Map<MissionDTO>(missions);
         }
 
         /// <summary>

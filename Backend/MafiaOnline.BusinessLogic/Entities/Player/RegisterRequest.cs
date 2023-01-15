@@ -12,6 +12,7 @@ namespace MafiaOnline.BusinessLogic.Entities
         public string Password { get; set; }
         public string BossFirstName { get; set; }
         public string BossLastName { get; set; }
+        public string HeadquartersName { get; set; }
         public string[] AgentNames { get; set; }
     }
 }

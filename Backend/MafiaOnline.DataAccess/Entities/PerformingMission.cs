@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace MafiaOnline.DataAccess.Entities
 {
@@ -11,6 +12,20 @@ namespace MafiaOnline.DataAccess.Entities
         public long MissionId { get; set; }
         public long AgentId { get; set; }
         public DateTime CompletionTime { get; set; }
+        [NotMapped]
+        public Point[] WayBack
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(WayBackJson)) return null;
+                return JsonSerializer.Deserialize<Point[]>(WayBackJson);
+            }
+            set
+            {
+                WayBackJson = value == null ? null : JsonSerializer.Serialize(value);
+            }
+        }
+        public string WayBackJson { get; set; }
         public virtual Agent Agent { get; set; }
         public virtual Mission Mission { get; set; }
     }

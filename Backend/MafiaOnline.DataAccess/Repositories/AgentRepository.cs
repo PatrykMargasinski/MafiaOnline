@@ -16,7 +16,9 @@ namespace MafiaOnline.DataAccess.Repositories
         Task<IList<Agent>> GetBossAgents(long bossId);
         Task<IList<Agent>> GetAgentsOnMission(long bossId);
         Task<IList<Agent>> GetAgentsForSale();
+        Task<IList<Agent>> GetMovingAgents(long bossId);
         Task<IList<Agent>> GetRenegates();
+        Task<IList<Agent>> GetAmbushingAgents(long bossId);
     }
 
     public class AgentRepository : CrudRepository<Agent>, IAgentRepository
@@ -47,6 +49,7 @@ namespace MafiaOnline.DataAccess.Repositories
             var agents = await _context.Agents
                 .Include(x => x.PerformingMission)
                 .ThenInclude(y => y.Mission)
+                .ThenInclude(y => y.MapElement)
                 .Where(z => z.BossId == bossId && z.State == AgentState.OnMission)
                 .ToListAsync();
             return agents;
@@ -57,6 +60,25 @@ namespace MafiaOnline.DataAccess.Repositories
             var agents = await _context.Agents
                 .Include(x => x.AgentForSale)
                 .Where(z => z.State == AgentState.ForSale)
+                .ToListAsync();
+            return agents;
+        }
+
+        public async Task<IList<Agent>> GetMovingAgents(long bossId)
+        {
+            var agents = await _context.Agents
+                .Include(x => x.MovingAgent)
+                .Where(z => (z.State == AgentState.Moving || z.State == AgentState.MovingWithLoot) && z.BossId==bossId)
+                .ToListAsync();
+            return agents;
+        }
+
+
+        public async Task<IList<Agent>> GetAmbushingAgents(long bossId)
+        {
+            var agents = await _context.Agents
+                .Include(x => x.AgentForSale)
+                .Where(z => z.State == AgentState.Ambushing && z.BossId == bossId)
                 .ToListAsync();
             return agents;
         }
@@ -81,6 +103,7 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var agent = await _context.Agents
                 .Include(x => x.AgentForSale)
+                .Where(x=>agentsId.Contains(x.Id))
                 .ToListAsync();
             return agent;
         }

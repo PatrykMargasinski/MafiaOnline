@@ -42,6 +42,13 @@ namespace MafiaOnline.Controllers
             return new JsonResult(agents);
         }
 
+        [HttpGet("moving/{bossId}")]
+        public async Task<IActionResult> GetMovingAgents(long bossId)
+        {
+            var agents = await _agentService.GetMovingAgents(bossId);
+            return new JsonResult(agents);
+        }
+
         [HttpGet("onMission/{bossId}")]
         public async Task<IActionResult> GetAgentsOnMission(long bossId)
         {
@@ -74,6 +81,13 @@ namespace MafiaOnline.Controllers
         public async Task<IActionResult> RefreshAgents()
         {
             await _agentService.RefreshAgents();
+            return Ok();
+        }
+
+        [HttpPost("patrol")]
+        public async Task<IActionResult> SendToPatrol(PatrolRequest request)
+        {
+            await _agentService.SendToPatrol(request);
             return Ok();
         }
     }

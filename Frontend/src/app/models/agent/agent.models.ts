@@ -1,3 +1,5 @@
+import { Point } from "../map/point.models"
+
 export interface Agent
 {
   Id: number,
@@ -30,6 +32,7 @@ export interface AgentOnMission
   MissionId: number,
   AgentName: string,
   MissionName: string,
+  MissionPosition: Point,
   Strength: number,
   Dexterity: number,
   Intelligence: number,
@@ -37,3 +40,21 @@ export interface AgentOnMission
   CompletionTime: Date,
   SecondsLeft: number
 }
+
+export interface MovingAgent
+{
+  Id: number,
+  BossId: number,
+  LastName: string,
+  FirstName: string,
+  Strength: number,
+  Dexterity: number,
+  Intelligence: number,
+  Upkeep: number,
+  DestinationDescription: string,
+  CurrentPosition: Point,
+  DestinationPosition: Point,
+  ArrivalTime: Date,
+  SecondsLeft: number
+}
+

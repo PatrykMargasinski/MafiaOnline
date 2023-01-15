@@ -1,3 +1,4 @@
+import { MovingAgentsComponent } from './pages/agent/moving-agents/moving-agents.component';
 import { SendMessageComponent } from './pages/message/send-message/send-message.component';
 import { ShowReportsComponent } from './pages/message/show-reports/show-reports.component';
 import { ShowMessagesComponent } from './pages/message/show-messages/show-messages.component';
@@ -22,6 +23,8 @@ import { MessageComponent } from './pages/message/message.component';
 import { AccountSettingsComponent } from './pages/account-settings/account-settings.component';
 import { ChangePasswordComponent } from './pages/account-settings/change-password/change-password.component';
 import { DeleteAccountComponent } from './pages/account-settings/delete-account/delete-account.component';
+import { MapComponent } from './pages/map/map.component';
+import { ShowMapComponent } from './pages/map/show-map/show-map.component';
 
 
 
@@ -39,6 +42,11 @@ const routes: Routes = [
     {path: 'available', component: AvailableAgentsComponent},
     {path: 'onMission', component: AgentsOnMissionComponent},
     {path: 'forSale', component: AgentsForSaleComponent},
+    {path: 'moving', component: MovingAgentsComponent}
+  ]},
+  {path:'map',component:MapComponent , canActivate: [GuardService], children:
+  [
+    {path: 'showMap', component: ShowMapComponent},
   ]},
   {path:'mission',component: MissionComponent, canActivate: [GuardService], children:
   [

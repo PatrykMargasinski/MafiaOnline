@@ -4,6 +4,7 @@ using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using NUnit.Framework;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -31,11 +32,12 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IBasicUtils _basicUtils;
         private readonly IPlayerValidator _playerValidator;
         private readonly ISchedulerFactory _factory;
+        private readonly IMapUtils _mapUtils;
 
         public PlayerService(IUnitOfWork unitOfWork, IMapper mapper, 
             ISecurityUtils securityUtils, ITokenUtils tokenUtils, 
             IBasicUtils basicUtils, IPlayerValidator playerValidator,
-            ISchedulerFactory factory)
+            ISchedulerFactory factory, IMapUtils mapUtils)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -44,6 +46,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _basicUtils = basicUtils;
             _playerValidator = playerValidator;
             _factory = factory;
+            _mapUtils = mapUtils;
         }
 
         /// <summary>
@@ -75,6 +78,7 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             await _playerValidator.ValidateRegister(request);
 
+            //boss creation
             Boss boss = new Boss()
             {
                 FirstName = _basicUtils.UppercaseFirst(request.BossFirstName),
@@ -82,6 +86,8 @@ namespace MafiaOnline.BusinessLogic.Services
                 Money = 5000
             };
             _unitOfWork.Bosses.Create(boss);
+
+            //player creation
             Player player = new Player()
             {
                 Nick = request.Nick,
@@ -93,6 +99,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
             Random random = new Random();
 
+            //agents creation
             foreach (var agentName in request.AgentNames)
             {
                 var newAgent = new Agent()
@@ -109,6 +116,13 @@ namespace MafiaOnline.BusinessLogic.Services
                 };
                 _unitOfWork.Agents.Create(newAgent);
             }
+
+            //headquarters creation
+            var newPosition = await _mapUtils.GetNewHeadquartersPosition();
+
+            var headquarter = new Headquarters() { Name = request.HeadquartersName, Boss = boss };
+            var mapElement = new MapElement() { X = newPosition.X, Y = newPosition.Y, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
+            _unitOfWork.MapElements.Create(mapElement);
 
             _unitOfWork.Commit();
         }
@@ -134,6 +148,7 @@ namespace MafiaOnline.BusinessLogic.Services
             var player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
             var boss = await _unitOfWork.Bosses.GetByIdAsync(player.BossId);
             var agents = await _unitOfWork.Agents.GetBossAgents(boss.Id);
+            var headquarters = await _unitOfWork.Headquarters.GetByBossId(boss.Id);
 
             //removing PerformingMission instances and mission jobs
             var agentsOnMission = agents.Where(x => x.State == AgentState.OnMission);
@@ -164,8 +179,11 @@ namespace MafiaOnline.BusinessLogic.Services
                 agent.Boss = null;
                 agent.State = AgentState.Renegate;
             }
+
+            _unitOfWork.MapElements.DeleteById(headquarters.MapElementId);
             _unitOfWork.Bosses.DeleteById(boss.Id);
             _unitOfWork.Players.DeleteById(player.Id);
+
 
             _unitOfWork.Agents.UpdateRange(othersAgents.ToArray());
             _unitOfWork.Commit();

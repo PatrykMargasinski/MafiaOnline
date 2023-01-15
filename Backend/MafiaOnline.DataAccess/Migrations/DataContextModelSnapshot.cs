@@ -168,6 +168,36 @@ namespace MafiaOnline.DataAccess.Migrations
                     b.ToTable("AgentForSale", (string)null);
                 });
 
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Ambush", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("AgentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("BossId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MapElementId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId")
+                        .IsUnique();
+
+                    b.HasIndex("BossId");
+
+                    b.HasIndex("MapElementId")
+                        .IsUnique();
+
+                    b.ToTable("Ambush", (string)null);
+                });
+
             modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Boss", b =>
                 {
                     b.Property<long>("Id")
@@ -208,6 +238,179 @@ namespace MafiaOnline.DataAccess.Migrations
                             LastName = "Margherita",
                             LastSeen = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Money = 5000L
+                        });
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.ExposedMapElement", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("ExposedByBossId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MapElementId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExposedByBossId");
+
+                    b.HasIndex("MapElementId");
+
+                    b.ToTable("ExposedMapElement", (string)null);
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Headquarters", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("BossId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MapElementId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BossId")
+                        .IsUnique();
+
+                    b.HasIndex("MapElementId")
+                        .IsUnique();
+
+                    b.ToTable("Headquarters", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            BossId = 1L,
+                            MapElementId = 1L,
+                            Name = "The house of Patricio Rico"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            BossId = 2L,
+                            MapElementId = 2L,
+                            Name = "Margherita rules here"
+                        });
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.MapElement", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long?>("BossId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("Hidden")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<long>("X")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Y")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BossId");
+
+                    b.ToTable("MapElement", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            BossId = 1L,
+                            Hidden = false,
+                            Type = 1,
+                            X = 2L,
+                            Y = 1L
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            BossId = 2L,
+                            Hidden = false,
+                            Type = 1,
+                            X = 14L,
+                            Y = 1L
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Hidden = false,
+                            Type = 2,
+                            X = 1L,
+                            Y = 3L
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            Hidden = false,
+                            Type = 2,
+                            X = 3L,
+                            Y = 5L
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            Hidden = false,
+                            Type = 2,
+                            X = 3L,
+                            Y = 7L
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            Hidden = false,
+                            Type = 2,
+                            X = 5L,
+                            Y = 3L
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            Hidden = false,
+                            Type = 2,
+                            X = 14L,
+                            Y = 1L
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            Hidden = false,
+                            Type = 2,
+                            X = 13L,
+                            Y = 3L
+                        },
+                        new
+                        {
+                            Id = 9L,
+                            Hidden = false,
+                            Type = 2,
+                            X = 14L,
+                            Y = 5L
                         });
                 });
 
@@ -272,6 +475,9 @@ namespace MafiaOnline.DataAccess.Migrations
                     b.Property<int>("Loot")
                         .HasColumnType("int");
 
+                    b.Property<long>("MapElementId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -286,6 +492,9 @@ namespace MafiaOnline.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MapElementId")
+                        .IsUnique();
+
                     b.ToTable("Mission", (string)null);
 
                     b.HasData(
@@ -297,6 +506,7 @@ namespace MafiaOnline.DataAccess.Migrations
                             Duration = 30.0,
                             IntelligencePercentage = 20,
                             Loot = 5000,
+                            MapElementId = 3L,
                             Name = "Bank robbery",
                             RepeatableMission = true,
                             State = 0,
@@ -310,6 +520,7 @@ namespace MafiaOnline.DataAccess.Migrations
                             Duration = 10.0,
                             IntelligencePercentage = 0,
                             Loot = 10000,
+                            MapElementId = 4L,
                             Name = "Senator assassination",
                             RepeatableMission = true,
                             State = 0,
@@ -323,6 +534,7 @@ namespace MafiaOnline.DataAccess.Migrations
                             Duration = 10.0,
                             IntelligencePercentage = 20,
                             Loot = 100,
+                            MapElementId = 5L,
                             Name = "Party",
                             RepeatableMission = true,
                             State = 0,
@@ -336,6 +548,7 @@ namespace MafiaOnline.DataAccess.Migrations
                             Duration = 5.0,
                             IntelligencePercentage = 20,
                             Loot = 10,
+                            MapElementId = 6L,
                             Name = "Buy a coffee",
                             RepeatableMission = true,
                             State = 0,
@@ -349,6 +562,7 @@ namespace MafiaOnline.DataAccess.Migrations
                             Duration = 55.0,
                             IntelligencePercentage = 60,
                             Loot = 1000,
+                            MapElementId = 7L,
                             Name = "Money laundering",
                             RepeatableMission = true,
                             State = 0,
@@ -362,6 +576,7 @@ namespace MafiaOnline.DataAccess.Migrations
                             Duration = 3600.0,
                             IntelligencePercentage = 20,
                             Loot = 2000,
+                            MapElementId = 8L,
                             Name = "Car theft",
                             RepeatableMission = true,
                             State = 0,
@@ -375,6 +590,7 @@ namespace MafiaOnline.DataAccess.Migrations
                             Duration = 15.0,
                             IntelligencePercentage = 40,
                             Loot = 4000,
+                            MapElementId = 9L,
                             Name = "Arms trade",
                             RepeatableMission = true,
                             State = 0,
@@ -593,6 +809,46 @@ namespace MafiaOnline.DataAccess.Migrations
                             Name = "Deal you can not throw away",
                             StrengthPercentage = (short)30
                         });
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.MovingAgent", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("AgentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DatasJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DestinationDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DestinationJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PathJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("Step")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId")
+                        .IsUnique();
+
+                    b.ToTable("MovingAgent", (string)null);
                 });
 
             modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Name", b =>
@@ -1545,6 +1801,9 @@ namespace MafiaOnline.DataAccess.Migrations
                     b.Property<long>("MissionId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("WayBackJson")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AgentId")
@@ -1625,6 +1884,80 @@ namespace MafiaOnline.DataAccess.Migrations
                     b.Navigation("Agent");
                 });
 
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Ambush", b =>
+                {
+                    b.HasOne("MafiaOnline.DataAccess.Entities.Agent", "Agent")
+                        .WithOne("Ambush")
+                        .HasForeignKey("MafiaOnline.DataAccess.Entities.Ambush", "AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MafiaOnline.DataAccess.Entities.Boss", "Boss")
+                        .WithMany("Ambushes")
+                        .HasForeignKey("BossId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MafiaOnline.DataAccess.Entities.MapElement", "MapElement")
+                        .WithOne("Ambush")
+                        .HasForeignKey("MafiaOnline.DataAccess.Entities.Ambush", "MapElementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+
+                    b.Navigation("Boss");
+
+                    b.Navigation("MapElement");
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.ExposedMapElement", b =>
+                {
+                    b.HasOne("MafiaOnline.DataAccess.Entities.Boss", "Boss")
+                        .WithMany("Exposures")
+                        .HasForeignKey("ExposedByBossId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MafiaOnline.DataAccess.Entities.MapElement", "MapElement")
+                        .WithMany("Exposures")
+                        .HasForeignKey("MapElementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Boss");
+
+                    b.Navigation("MapElement");
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Headquarters", b =>
+                {
+                    b.HasOne("MafiaOnline.DataAccess.Entities.Boss", "Boss")
+                        .WithOne("Headquarters")
+                        .HasForeignKey("MafiaOnline.DataAccess.Entities.Headquarters", "BossId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MafiaOnline.DataAccess.Entities.MapElement", "MapElement")
+                        .WithOne("Headquarters")
+                        .HasForeignKey("MafiaOnline.DataAccess.Entities.Headquarters", "MapElementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Boss");
+
+                    b.Navigation("MapElement");
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.MapElement", b =>
+                {
+                    b.HasOne("MafiaOnline.DataAccess.Entities.Boss", "Boss")
+                        .WithMany("MapElements")
+                        .HasForeignKey("BossId");
+
+                    b.Navigation("Boss");
+                });
+
             modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Message", b =>
                 {
                     b.HasOne("MafiaOnline.DataAccess.Entities.Boss", "FromBoss")
@@ -1640,6 +1973,28 @@ namespace MafiaOnline.DataAccess.Migrations
                     b.Navigation("FromBoss");
 
                     b.Navigation("ToBoss");
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Mission", b =>
+                {
+                    b.HasOne("MafiaOnline.DataAccess.Entities.MapElement", "MapElement")
+                        .WithOne("Mission")
+                        .HasForeignKey("MafiaOnline.DataAccess.Entities.Mission", "MapElementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MapElement");
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.MovingAgent", b =>
+                {
+                    b.HasOne("MafiaOnline.DataAccess.Entities.Agent", "Agent")
+                        .WithOne("MovingAgent")
+                        .HasForeignKey("MafiaOnline.DataAccess.Entities.MovingAgent", "AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
                 });
 
             modelBuilder.Entity("MafiaOnline.DataAccess.Entities.PerformingMission", b =>
@@ -1676,6 +2031,10 @@ namespace MafiaOnline.DataAccess.Migrations
                 {
                     b.Navigation("AgentForSale");
 
+                    b.Navigation("Ambush");
+
+                    b.Navigation("MovingAgent");
+
                     b.Navigation("PerformingMission");
                 });
 
@@ -1683,11 +2042,30 @@ namespace MafiaOnline.DataAccess.Migrations
                 {
                     b.Navigation("Agents");
 
+                    b.Navigation("Ambushes");
+
+                    b.Navigation("Exposures");
+
+                    b.Navigation("Headquarters");
+
+                    b.Navigation("MapElements");
+
                     b.Navigation("MessageFromBosses");
 
                     b.Navigation("MessageToBosses");
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("MafiaOnline.DataAccess.Entities.MapElement", b =>
+                {
+                    b.Navigation("Ambush");
+
+                    b.Navigation("Exposures");
+
+                    b.Navigation("Headquarters");
+
+                    b.Navigation("Mission");
                 });
 
             modelBuilder.Entity("MafiaOnline.DataAccess.Entities.Mission", b =>

@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { BasicUtils } from './../../../utils/basic-utils';
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,22 +13,16 @@ export class MissionCardComponent implements OnInit {
 
   @Input() mission: Mission;
   @Input() content: any;
-  @Output() getMissionId = new EventEmitter<number>();
 
-  constructor(private modalService: NgbModal, private basicUtils: BasicUtils) { }
+  constructor(private router: Router, private basicUtils: BasicUtils) { }
 
   ngOnInit(): void {
 
   }
 
 
-  open(content) {
-    this.getMissionId.emit(this.mission.Id)
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-
-    }, (reason) => {
-
-    });
+  showOnMap() {
+    this.router.navigate(["/map/showMap"], { queryParams: { x: this.mission.X, y: this.mission.Y }});
   }
 
   printMissionPercentagesWithColors(diff: number, str: number, dex: number, int: number)
