@@ -161,7 +161,6 @@ namespace MafiaOnline.BusinessLogic.Services
             var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
             if (_missionUtils.IsMissionSuccessfullyCompleted(agent, mission))
             {
-                boss.Money += mission.Loot;
                 info += "\nMission success!\n";
                 info += boss.LastName +
                 "family has chance to earn " + mission.Loot +

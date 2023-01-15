@@ -12,6 +12,7 @@ namespace MafiaOnline.BusinessLogic.Utils
     public interface IMovingAgentUtils
     {
         string GetDatas(long movingAgentId);
+        Task<MovingAgent> GetMovingAgent(long movingAgentId);
         Task SetJobKey(long movingAgentId, string jobKey);
         void RemoveMovingAgent(long movingAgentId);
         Task ExposeMapElement(long mapElementId, long bossId);
@@ -24,6 +25,11 @@ namespace MafiaOnline.BusinessLogic.Utils
         {
             _unitOfWork = unitOfWork;
         }
+        public async Task<MovingAgent> GetMovingAgent(long movingAgentId)
+        {
+            return await _unitOfWork.MovingAgents.GetByIdAsync(movingAgentId);
+        }
+
         public string GetDatas(long movingAgentId)
         {
             return _unitOfWork.MovingAgents.GetDatas(movingAgentId);

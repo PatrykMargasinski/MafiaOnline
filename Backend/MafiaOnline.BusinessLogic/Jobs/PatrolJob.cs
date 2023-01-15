@@ -57,9 +57,9 @@ namespace MafiaAPI.Jobs
             {
                 await scheduler.DeleteJob(jobKey);
             }
-
+            var movingAgent = await _movingAgentUtils.GetMovingAgent(movingAgentId);
             IJobDetail newJob = PrepareJobDetail(movingAgentId);
-            ITrigger trigger = PrepareTrigger(movingAgentId, finishTime);
+            ITrigger trigger = PrepareTrigger(movingAgent, finishTime);
 
             await scheduler.ScheduleJob(newJob, trigger);
             await scheduler.Start();
@@ -73,11 +73,17 @@ namespace MafiaAPI.Jobs
                 .Build();
         }
 
-        private ITrigger PrepareTrigger(long movingAgentId, DateTime finishTime)
+        private ITrigger PrepareTrigger(MovingAgent movingAgent, DateTime finishTime)
         {
             return TriggerBuilder.Create()
-                .WithIdentity($"patrolTrigger{movingAgentId}", "group1")
+                .WithIdentity($"patrolTrigger{movingAgent.Id}", "group1")
                 .StartAt(finishTime)
+                .WithSimpleSchedule(
+                    x => x
+                    .WithIntervalInSeconds(MapConsts.SECONDS_TO_MAKE_ONE_STEP)
+                    .WithRepeatCount(movingAgent.Path.Length)
+                    .WithMisfireHandlingInstructionIgnoreMisfires()
+                )
                 .Build();
         }
     }
