@@ -68,6 +68,9 @@ namespace MafiaOnline.Test.Repositories
             Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer)
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => fixture.Behaviors.Remove(b));
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             BossService sut = new BossService(_unitOfWork, _mapper);
             for(int i=0;i<10;i++)
@@ -94,6 +97,10 @@ namespace MafiaOnline.Test.Repositories
             Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer)
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
+
+            fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => fixture.Behaviors.Remove(b));
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             BossService sut = new BossService(_unitOfWork, _mapper);
 

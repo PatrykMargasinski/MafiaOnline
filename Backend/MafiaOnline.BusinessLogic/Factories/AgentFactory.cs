@@ -22,12 +22,10 @@ namespace MafiaOnline.BusinessLogic.Factories
     public class AgentFactory : IAgentFactory
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public AgentFactory(IUnitOfWork unitOfWork, IMapper mapper)
+        public AgentFactory(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Agent> Create(string firstName = null, string lastName = null, int? strength = null, int? dexterity = null, int? intelligence = null, int? upkeep = null, bool isFromBossFamily = false, AgentState startingState = AgentState.Renegate)

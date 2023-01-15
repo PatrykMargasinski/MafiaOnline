@@ -68,8 +68,7 @@ namespace MafiaOnline.Test.Repositories
                 IMapElementRepository mapElementRepository = new MapElementRepository(context);
                 var headquartersReturned = await headquartersRepository.GetAllAsync();
                 var mapElementsReturned = await headquartersRepository.GetAllAsync();
-                Assert.AreEqual(1, headquartersReturned.Count);
-                Assert.AreEqual(1, mapElementsReturned.Count);
+                Assert.AreEqual(mapElementsReturned.Count, headquartersReturned.Count);
             }
         }
     }

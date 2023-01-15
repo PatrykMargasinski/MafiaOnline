@@ -31,6 +31,11 @@ namespace MafiaOnline.Test.Database
             MissionTemplates = new MissionTemplateRepository(context);
             PerformingMissions = new PerformingMissionRepository(context);
             Names = new NameRepository(context);
+            MovingAgents = new MovingAgentRepository(context);
+            Headquarters = new HeadquartersRepository(context);
+            MapElements = new MapElementRepository(context);
+            ExposedMapElements = new ExposedMapElementRepository(context);
+            Ambushes = new AmbushRepository(context);
         }
 
         public IAgentRepository Agents { get; }
@@ -50,6 +55,16 @@ namespace MafiaOnline.Test.Database
         public IPerformingMissionRepository PerformingMissions { get; }
 
         public INameRepository Names { get; }
+
+        public IMovingAgentRepository MovingAgents { get; }
+
+        public IHeadquartersRepository Headquarters { get; }
+
+        public IMapElementRepository MapElements { get; }
+
+        public IExposedMapElementRepository ExposedMapElements { get; }
+
+        public IAmbushRepository Ambushes { get; }
 
         public void Commit()
         {
