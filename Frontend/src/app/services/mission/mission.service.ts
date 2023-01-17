@@ -27,8 +27,8 @@ export class MissionService {
     return this.http.get<Mission[]>(this.APIUrl + '/available');
   }
 
-  getPerformingMissions(bossId: number): Observable<PerformingMission[]> {
-    return this.http.get<PerformingMission[]>(this.APIUrl + '/performing?bossId='+bossId);
+  getPerformingMissions(): Observable<PerformingMission[]> {
+    return this.http.get<PerformingMission[]>(this.APIUrl + '/performing');
   }
 
   getMissionById(missionId: number): Observable<Mission> {

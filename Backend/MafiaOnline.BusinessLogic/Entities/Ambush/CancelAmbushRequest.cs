@@ -9,6 +9,7 @@ namespace MafiaOnline.BusinessLogic.Entities
 {
     public class CancelAmbushRequest
     {
+        public long BossId { get; set; }
         public long MapElementId { get; set; }
     }
 }

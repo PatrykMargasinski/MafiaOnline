@@ -51,9 +51,9 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Agent with id " + request.AgentId + " not found!");
             }
 
-            if (agent.BossId == null)
+            if (agent.BossId != request.BossId)
             {
-                throw new Exception("Agent " + request.AgentId + " is without boss");
+                throw new Exception("You're not a boss of this agent. You cannot give him orders.");
             }
 
             if (agent.State != AgentState.Active)

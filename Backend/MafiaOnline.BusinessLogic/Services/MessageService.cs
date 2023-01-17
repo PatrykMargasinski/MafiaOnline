@@ -5,6 +5,7 @@ using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using NUnit.Framework;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -24,11 +25,11 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<MessageDTO>> GetReports(long bossId);
         Task<IList<MessageDTO>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen);
         Task<IList<MessageDTO>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen);
-        void DeleteMessage(long messageId);
-        void DeleteMessages(string messageIds);
+        void DeleteMessage(long messageId, long bossId);
+        void DeleteMessages(string messageIds, long bossId);
         long CountMessages(long bossId);
         long CountReports(long bossId);
-        Task SetSeen(long messageId);
+        Task SetSeen(SetSeenRequest request);
 
     }
 
@@ -116,15 +117,17 @@ namespace MafiaOnline.BusinessLogic.Services
             return _mapper.Map<IList<MessageDTO>>(reports);
         }
 
-        public void DeleteMessage(long messageId)
+        public void DeleteMessage(long messageId, long bossId)
         {
+            _messageValidator.ValidateDeleteMessages(new long[] {messageId}, bossId);
             _unitOfWork.Messages.DeleteById(messageId);
             _unitOfWork.Commit();
         }
 
-        public void DeleteMessages(string messageIds)
+        public void DeleteMessages(string messageIds, long bossId)
         {
             var ids = messageIds.Split('i').Select(x => long.Parse(x)).ToArray();
+            _messageValidator.ValidateDeleteMessages(ids, bossId);
             _unitOfWork.Messages.DeleteByIds(ids);
             _unitOfWork.Commit();
         }
@@ -139,9 +142,10 @@ namespace MafiaOnline.BusinessLogic.Services
             return _unitOfWork.Messages.CountMessages(bossId);
         }
 
-        public async Task SetSeen(long messageId)
+        public async Task SetSeen(SetSeenRequest request)
         {
-            var message = await _unitOfWork.Messages.GetByIdAsync(messageId);
+            await _messageValidator.ValidateSetSeen(request);
+            var message = await _unitOfWork.Messages.GetByIdAsync(request.MessageId);
             message.Seen = true;
             _unitOfWork.Commit();
         }

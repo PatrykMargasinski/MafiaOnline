@@ -75,6 +75,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
         public async Task CancelAmbush(CancelAmbushRequest request)
         {
+            await _ambushValidator.ValidateCancelAmbush(request);
             var ambush = await _unitOfWork.Ambushes.GetByMapElementIdAsync(request.MapElementId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(ambush.AgentId);
             agent.State = AgentState.Active;

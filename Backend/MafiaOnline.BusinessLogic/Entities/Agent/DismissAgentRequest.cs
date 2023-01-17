@@ -9,5 +9,6 @@ namespace MafiaOnline.BusinessLogic.Entities
     public class DismissAgentRequest
     {
         public long AgentId { get; set; }
+        public long BossId { get; set; }
     }
 }

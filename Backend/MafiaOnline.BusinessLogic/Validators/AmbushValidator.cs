@@ -17,6 +17,7 @@ namespace MafiaOnline.BusinessLogic.Validators
         Task ValidateArrangeAmbush(ArrangeAmbushRequest request);
         Task ValidateAttackAmbush(AttackAmbushRequest request);
         Task ValidateMoveOnAttackAmbush(AttackAmbushRequest request);
+        Task ValidateCancelAmbush(CancelAmbushRequest request);
     }
 
     public class AmbushValidator : IAmbushValidator
@@ -39,6 +40,8 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Agent not found");
             if (agent.BossId == null)
                 throw new Exception("Agent has no boss");
+            if (agent.BossId != request.BossId)
+                throw new Exception("It's not your agent. You cannot give him orders.");
             if (agent.State != AgentState.Active)
                 throw new Exception("Agent is not active");
             if (!_mapUtils.IsRoad(request.Point.X, request.Point.Y))
@@ -91,12 +94,24 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Agent is not active");
             if (agent.BossId == null)
                 throw new Exception("Agent has no boss");
+            if (agent.BossId != request.BossId)
+                throw new Exception("It's not your agent. You cannot give him orders.");
             if (mapElement == null)
                 throw new Exception("Map element not found");
             if (mapElement.Type != MapElementType.Ambush)
                 throw new Exception("This map element is not an ambush");
             if (mapElement.BossId == agent.BossId)
                 throw new Exception("You cannot attack your own ambush");
+        }
+
+        public async Task ValidateCancelAmbush(CancelAmbushRequest request)
+        {
+            var ambush = await _unitOfWork.Ambushes.GetByMapElementIdAsync(request.MapElementId);
+            var agent = await _unitOfWork.Agents.GetByIdAsync(ambush.AgentId);
+            if (ambush == null)
+                throw new Exception("This map element is not an ambush.");
+            if (agent.BossId != request.BossId)
+                throw new Exception("It's not your agent. You cannot give him orders.");
         }
     }
 }

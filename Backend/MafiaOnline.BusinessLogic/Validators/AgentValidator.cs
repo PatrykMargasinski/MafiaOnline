@@ -36,6 +36,8 @@ namespace MafiaOnline.BusinessLogic.Validators
             var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
             if (agent == null)
                 throw new Exception("Agent not found");
+            if (agent.BossId != request.BossId)
+                throw new Exception("It's not your agent. You cannot dismiss him.");
             if (agent.State != AgentState.Active)
                 throw new Exception("Agent isn't active - he cannot be abandoned");
             if (agent.BossId == null)
@@ -69,6 +71,8 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Agent is not active");
             if (agent.BossId == null)
                 throw new Exception("Agent has no boss");
+            if (agent.BossId != request.BossId)
+                throw new Exception("It's not your agent. You cannot give him orders.");
             var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
             if (boss == null)
                 throw new Exception("Boss not found");

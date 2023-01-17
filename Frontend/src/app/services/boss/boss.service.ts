@@ -13,9 +13,9 @@ export class BossService {
 
   constructor(private http:HttpClient) { }
 
-  getBoss(id:number):Observable<Boss>
+  getBoss():Observable<Boss>
   {
-    return this.http.get<Boss>(this.APIUrl+'/'+id);
+    return this.http.get<Boss>(this.APIUrl+'/datas');
   }
 
   findBossNamesStartingWith(startingWith:string):Observable<string[]>

@@ -1,6 +1,8 @@
-﻿using MafiaOnline.DataAccess.Entities;
+﻿using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.DataAccess.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,6 +20,7 @@ namespace MafiaOnline.BusinessLogic.Utils
         public string CreateToken(Player player);
         public string GenerateRefreshToken();
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        public TokenDatas DecodeToken(string jwt);
     }
 
     public class TokenUtils : ITokenUtils
@@ -47,8 +50,6 @@ namespace MafiaOnline.BusinessLogic.Utils
             };
 
             var tokenOptions = new JwtSecurityToken(
-                issuer: "http://localhost:40872",
-                audience: "http://localhost:40872",
                 expires: DateTime.Now.AddHours(1),
                 claims: claims,
                 signingCredentials: signingCredentials
@@ -90,6 +91,21 @@ namespace MafiaOnline.BusinessLogic.Utils
             if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
             return principal;
+        }
+
+        public TokenDatas DecodeToken(string jwt)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var decodedValue = handler.ReadJwtToken(jwt.Substring(7));
+            var claims = decodedValue.Claims;
+            var datas = new TokenDatas()
+            {
+                BossId = long.Parse(claims.FirstOrDefault(x => x.Type == "bossId").Value),
+                PlayerId = long.Parse(claims.FirstOrDefault(x => x.Type == "playerId").Value),
+                PlayerNick = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value,
+                PlayerRole = claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value
+            };
+            return datas;
         }
     }
 }

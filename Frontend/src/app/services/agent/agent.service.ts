@@ -16,11 +16,11 @@ export class AgentService {
 
 
   getAvailableAgents(bossId: number): Observable<Agent[]> {
-    return this.http.get<Agent[]>(this.APIUrl + '/active/' + bossId);
+    return this.http.get<Agent[]>(this.APIUrl + '/active');
   }
 
   getAgentsOnMission(bossId: number): Observable<AgentOnMission[]> {
-    return this.http.get<AgentOnMission[]>(this.APIUrl + '/onMission/' + bossId);
+    return this.http.get<AgentOnMission[]>(this.APIUrl + '/onMission');
   }
 
   getAgentsForSaleList(): Observable<AgentForSale[]> {
@@ -28,7 +28,7 @@ export class AgentService {
   }
 
   getMovingAgents(bossId: number): Observable<MovingAgent[]> {
-    return this.http.get<MovingAgent[]>(this.APIUrl + '/moving/' + bossId);
+    return this.http.get<MovingAgent[]>(this.APIUrl + '/moving');
   }
 
   recruitAgent(bossId: number, agentId: number) {

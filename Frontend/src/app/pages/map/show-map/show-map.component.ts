@@ -39,7 +39,7 @@ export class ShowMapComponent implements OnInit {
         }
         else
         {
-          this.mapService.getEdgeForBoss(this.tokenService.getBossId()).subscribe(x=>
+          this.mapService.getEdgeForBoss().subscribe(x=>
             {
               this.edgeX=x[0]
               this.edgeY=x[1]
@@ -79,7 +79,7 @@ export class ShowMapComponent implements OnInit {
   }
 
   refreshMap(){
-    this.mapService.getMap(this.edgeX,this.edgeY,20, this.tokenService.getBossId()).subscribe(
+    this.mapService.getMap(this.edgeX,this.edgeY,20).subscribe(
       x=>
       {
         this.mapFields=x

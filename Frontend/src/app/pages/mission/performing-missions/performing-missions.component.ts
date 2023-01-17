@@ -17,7 +17,7 @@ export class PerformingMissionsComponent implements OnInit {
   constructor(private missionService: MissionService, private tokenService: TokenService, private router: Router) { }
 
   private refreshPerformingMissions() {
-    this.missionService.getPerformingMissions(this.tokenService.getBossId()).subscribe(data => {
+    this.missionService.getPerformingMissions().subscribe(data => {
       this.performingMissions = data
       this.countdown()
     })

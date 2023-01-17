@@ -1,6 +1,8 @@
 ﻿using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Services;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,35 +14,41 @@ namespace MafiaOnline.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = "Player")]
     public class MessageController : ControllerBase
     {
         private readonly IMessageService _messageService;
+        private readonly ITokenUtils _tokenUtils;
 
-        public MessageController(IMessageService messageService)
+        public MessageController(IMessageService messageService, ITokenUtils tokenUtils)
         {
             _messageService = messageService;
+            _tokenUtils = tokenUtils;
         }
 
 
         [HttpGet("toBoss/{bossId}")]
-        public async Task<IActionResult> GetMessagesToBoss(long bossId)
+        public async Task<IActionResult> GetMessagesToBoss()
         {
-            var messages = await _messageService.GetMessagesToBoss(bossId);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var messages = await _messageService.GetMessagesToBoss(jwtDatas.BossId);
             return Ok(messages);
         }
 
         [HttpGet("bossMessagesTo")]
-        public async Task<IActionResult> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter = "", bool onlyUnseen = false)
+        public async Task<IActionResult> GetAllMessagesToInRange(int? fromRange, int? toRange, string bossNameFilter = "", bool onlyUnseen = false)
         {
-            var messages = await _messageService.GetAllMessagesToInRange(bossId, fromRange.Value, toRange.Value, bossNameFilter, onlyUnseen);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var messages = await _messageService.GetAllMessagesToInRange(jwtDatas.BossId, fromRange.Value, toRange.Value, bossNameFilter, onlyUnseen);
             return new JsonResult(messages);
         }
 
 
         [HttpGet("reportsTo")]
-        public async Task<IActionResult> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter = "", bool onlyUnseen = false)
+        public async Task<IActionResult> GetAllReportsToInRange(int? fromRange, int? toRange, bool onlyUnseen = false)
         {
-            var messages = await _messageService.GetAllReportsToInRange(bossId, fromRange.Value, toRange.Value, onlyUnseen);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var messages = await _messageService.GetAllReportsToInRange(jwtDatas.BossId, fromRange.Value, toRange.Value, onlyUnseen);
             return new JsonResult(messages);
         }
 
@@ -54,6 +62,8 @@ namespace MafiaOnline.Controllers
         [HttpPost("send")]
         public async Task<IActionResult> SendMessage([FromBody] SendMessageRequest request)
         {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            request.BossId = jwtDatas.BossId;
             await _messageService.SendMessage(request);
             return Ok();
         }
@@ -62,14 +72,16 @@ namespace MafiaOnline.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteMessage(long messageId)
         {
-            _messageService.DeleteMessage(messageId);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            _messageService.DeleteMessage(messageId, jwtDatas.BossId);
             return Ok();
         }
 
         [HttpDelete("messages")]
         public async Task<IActionResult> DeleteMessages(string messageIds)
         {
-            _messageService.DeleteMessages(messageIds);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            _messageService.DeleteMessages(messageIds, jwtDatas.BossId);
             return Ok();
         }
 
@@ -87,10 +99,12 @@ namespace MafiaOnline.Controllers
             return Ok(count);
         }
 
-        [HttpGet("seen")]
-        public IActionResult SetSeen(long messageId)
+        [HttpPost("seen")]
+        public IActionResult SetSeen([FromBody] SetSeenRequest request)
         {
-            var count = _messageService.SetSeen(messageId);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            request.BossId = jwtDatas.BossId;
+            var count = _messageService.SetSeen(request);
             return Ok(count);
         }
     }

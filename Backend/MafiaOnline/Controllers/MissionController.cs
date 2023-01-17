@@ -1,6 +1,8 @@
 ﻿using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Services;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,13 +14,16 @@ namespace MafiaOnline.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = "Player")]
     public class MissionController : ControllerBase
     {
         private readonly IMissionService _missionService;
+        private readonly ITokenUtils _tokenUtils;
 
-        public MissionController(IMissionService missionService)
+        public MissionController(IMissionService missionService, ITokenUtils tokenUtils)
         {
             _missionService = missionService;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpGet("mapElement")]
@@ -31,6 +36,8 @@ namespace MafiaOnline.Controllers
         [HttpPost("move")]
         public async Task<IActionResult> MoveOnMission([FromBody] StartMissionRequest request)
         {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            request.BossId = jwtDatas.BossId;
             await _missionService.MoveOnMission(request);
             return Ok();
         }
@@ -58,9 +65,10 @@ namespace MafiaOnline.Controllers
         }
 
         [HttpGet("performing")]
-        public async Task<IActionResult> GetPerformingMissions(long bossId)
+        public async Task<IActionResult> GetPerformingMissions()
         {
-            var missions = await _missionService.GetPerformingMissions(bossId);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var missions = await _missionService.GetPerformingMissions(jwtDatas.BossId);
             return new JsonResult(missions);
         }
     }

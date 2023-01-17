@@ -15,7 +15,7 @@ export class AboutBossComponent implements OnInit {
   constructor(private bossService: BossService, private tokenService: TokenService) { }
 
   ngOnInit(): void {
-    this.bossService.getBoss(Number(this.tokenService.getBossId())).subscribe(data=>{
+    this.bossService.getBoss().subscribe(data=>{
       this.boss=data;
     })
   }

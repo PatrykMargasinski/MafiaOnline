@@ -13,13 +13,13 @@ export class MapService {
 
   constructor(private http:HttpClient) { }
 
-  getEdgeForBoss(bossId: number):Observable<number[]>
+  getEdgeForBoss():Observable<number[]>
   {
-    return this.http.get<number[]>(this.APIUrl+'/edge?bossId=' + bossId);
+    return this.http.get<number[]>(this.APIUrl+'/edge');
   }
 
-  getMap(x: number, y:number, size: number, bossId: number):Observable<MapField[]>
+  getMap(x: number, y:number, size: number):Observable<MapField[]>
   {
-    return this.http.get<MapField[]>(this.APIUrl+'/generate?x=' + x + '&y=' + y +'&size=' + size + '&bossId=' + bossId);
+    return this.http.get<MapField[]>(this.APIUrl+'/generate?x=' + x + '&y=' + y +'&size=' + size);
   }
 }

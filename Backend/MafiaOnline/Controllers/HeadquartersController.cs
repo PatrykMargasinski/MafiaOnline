@@ -1,5 +1,6 @@
 ﻿using MafiaOnline.BusinessLogic.Services;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,6 +12,7 @@ namespace MafiaOnline.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = "Player")]
     public class HeadquartersController : ControllerBase
     {
         private readonly IHeadquartersService _headquartersService;

@@ -41,6 +41,8 @@ import { MovingAgentsComponent } from './pages/agent/moving-agents/moving-agents
 import { ChooseAgentToArrangeAmbushComponent } from './page-elements/ambush/choose-agent-to-arrange-ambush/choose-agent-to-arrange-ambush.component';
 import { AmbushDetailsComponent } from './page-elements/map-elements/ambush-details/ambush-details.component';
 import { ChooseAgentToPatrolComponent } from './page-elements/agent/choose-agent-to-patrol/choose-agent-to-patrol.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './utils/token-interceptor';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -90,14 +92,16 @@ export function tokenGetter(){
     FormsModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: tokenGetter,
-        allowedDomains: [environment.APIEndpoint],
-        disallowedRoutes: []
+        tokenGetter: tokenGetter
       }
     }),
     NgbModule
   ],
-  providers: [ { provide: ErrorHandler, useClass: CustomErrorHandler }],
+  providers: [ { provide: ErrorHandler, useClass: CustomErrorHandler },     {
+    provide: HTTP_INTERCEPTORS,
+    useClass: TokenInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

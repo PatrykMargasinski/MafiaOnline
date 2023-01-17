@@ -1,5 +1,7 @@
 ﻿using MafiaOnline.BusinessLogic.Services;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,28 +13,30 @@ namespace MafiaOnline.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = "Player")]
     public class BossController : ControllerBase
     {
         private readonly IBossService _bossService;
+        private readonly ITokenUtils _tokenUtils;
 
-        public BossController(IBossService bossService)
+        public BossController(IBossService bossService, ITokenUtils tokenUtils)
         {
             _bossService = bossService;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpGet("best")]
-        public async Task<IActionResult> GetBestBosses(int? from, int? to)
+        public async Task<IActionResult> GetBestBosses(int from, int to)
         {
-            if (!from.HasValue || !to.HasValue)
-                throw new Exception("No range was specified");
-            var bosses = await _bossService.GetBestBosses(from.Value, to.Value);
+            var bosses = await _bossService.GetBestBosses(from, to);
             return new JsonResult(bosses);
         }
 
-        [HttpGet("{bossId}")]
-        public async Task<IActionResult> GetBossDatas(long bossId)
+        [HttpGet("datas")]
+        public async Task<IActionResult> GetBossDatas()
         {
-            var boss = await _bossService.GetBossDatas(bossId);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var boss = await _bossService.GetBossDatas(jwtDatas.BossId);
             return new JsonResult(boss);
         }
 

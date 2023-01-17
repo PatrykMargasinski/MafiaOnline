@@ -1,6 +1,8 @@
 ﻿using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Services;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,10 +17,12 @@ namespace MafiaOnline.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly IPlayerService _playerService;
+        private readonly ITokenUtils _tokenUtils;
 
-        public PlayerController(IPlayerService playerService)
+        public PlayerController(IPlayerService playerService, ITokenUtils tokenUtils)
         {
             _playerService = playerService;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost("/login")]
@@ -35,16 +39,22 @@ namespace MafiaOnline.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Player")]
         [HttpPost("/changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest user)
         {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            user.PlayerId = jwtDatas.PlayerId;
             await _playerService.ChangePassword(user);
             return Ok();
         }
 
+        [Authorize(Roles = "Player")]
         [HttpPost("/deleteAccount")]
         public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest user)
         {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            user.PlayerId = jwtDatas.PlayerId;
             await _playerService.DeleteAccount(user);
             return Ok();
         }

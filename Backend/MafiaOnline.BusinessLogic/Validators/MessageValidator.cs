@@ -13,6 +13,8 @@ namespace MafiaOnline.BusinessLogic.Validators
     public interface IMessageValidator
     {
         Task ValidateSendMessage(SendMessageRequest request);
+        Task ValidateDeleteMessages(long[] messageIds, long bossId);
+        Task ValidateSetSeen(SetSeenRequest request);
     }
 
     public class MessageValidator : IMessageValidator
@@ -30,6 +32,9 @@ namespace MafiaOnline.BusinessLogic.Validators
         {
             var toBoss = await _unitOfWork.Bosses.GetByFullName(request.ToBossFullName);
 
+            if (request.BossId != request.FromBossId)
+                throw new Exception("You cannot send this message. You are not assigned as its sender.");
+
             if (toBoss == null)
                 throw new Exception("Recipient not found");
 
@@ -38,6 +43,25 @@ namespace MafiaOnline.BusinessLogic.Validators
 
             if (string.IsNullOrEmpty(request.Content))
                 throw new Exception("Content cannot be empty");
+        }
+
+        public async Task ValidateDeleteMessages(long[] messageIds, long bossId)
+        {
+            var messages = await _unitOfWork.Messages.GetByIdsAsync(messageIds);
+            foreach (var message in messages)
+            {
+                if (message.ToBossId != bossId)
+                {
+                    throw new Exception($"Message: \"{message.Subject}\". You cannot remove it, because you're not a recipient of this message");
+                }
+            }
+        }
+
+        public async Task ValidateSetSeen(SetSeenRequest request)
+        {
+            var message = await _unitOfWork.Messages.GetByIdAsync(request.MessageId);
+            if (request.BossId != message.ToBossId)
+                throw new Exception($"You cannot see this message, because you're not a recipient of this message");
         }
     }
 }

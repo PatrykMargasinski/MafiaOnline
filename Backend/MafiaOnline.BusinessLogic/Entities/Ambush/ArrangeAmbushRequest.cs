@@ -10,6 +10,7 @@ namespace MafiaOnline.BusinessLogic.Entities
     public class ArrangeAmbushRequest
     {
         public long AgentId { get; set; }
+        public long BossId { get; set; }
         public Point Point { get; set; }
     }
 }

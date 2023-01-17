@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Message, MessageToSend } from 'src/app/models/message/message.models';
+import { SetSeenRequest } from 'src/app/models/message/message.requests';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -22,12 +23,12 @@ export class MessageService {
   }
 
   getAllMessages(bossId: number, fromRange: number, toRange:number, bossNameFilter):Observable<Message[]>{
-    return this.http.get<Message[]>(this.APIUrl+'/bossMessagesTo?bossId=' + bossId + '&fromRange=' + fromRange + '&toRange=' + toRange
+    return this.http.get<Message[]>(this.APIUrl+'/bossMessagesTo?'+'fromRange=' + fromRange + '&toRange=' + toRange
      + (bossNameFilter==='' ? '' : '&bossNameFilter=' + bossNameFilter));
   }
 
   getAllReports(bossId: number, fromRange: number, toRange:number, bossNameFilter):Observable<Message[]>{
-    return this.http.get<Message[]>(this.APIUrl+'/reportsTo?bossId=' + bossId + '&fromRange=' + fromRange + '&toRange=' + toRange
+    return this.http.get<Message[]>(this.APIUrl+'/reportsTo?' + 'fromRange=' + fromRange + '&toRange=' + toRange
      + (bossNameFilter==='' ? '' : '&bossNameFilter=' + bossNameFilter));
   }
 
@@ -48,6 +49,7 @@ export class MessageService {
   }
 
   setSeen(val: number){
-    return this.http.get<string>(this.APIUrl+'/seen?messageId='+val);
+    var request : SetSeenRequest = {MessageId: val}
+    return this.http.post<string>(this.APIUrl+'/seen', request);
   }
 }

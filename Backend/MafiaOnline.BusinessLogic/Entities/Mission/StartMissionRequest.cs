@@ -10,6 +10,7 @@ namespace MafiaOnline.BusinessLogic.Entities
     public class StartMissionRequest
     {
         public long AgentId { get; set; }
+        public long BossId { get; set; }
         public long MissionId { get; set; }
         public Point[] Path { get; set; }
     }

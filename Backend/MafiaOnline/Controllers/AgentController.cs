@@ -7,18 +7,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using MafiaOnline.BusinessLogic.Utils;
 
 namespace MafiaOnline.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = "Player")]
     public class AgentController : ControllerBase
     {
         private readonly IAgentService _agentService;
+        private readonly ITokenUtils _tokenUtils;
 
-        public AgentController(IAgentService agentService)
+        public AgentController(IAgentService agentService, ITokenUtils tokenUtils)
         {
             _agentService = agentService;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpGet]
@@ -28,31 +33,27 @@ namespace MafiaOnline.Controllers
             return new JsonResult(agents);
         }
 
-        [HttpGet("{bossId}")]
-        public async Task<IActionResult> GetBossAgents(long bossId)
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveAgents()
         {
-            var agents = await _agentService.GetBossAgents(bossId);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var agents = await _agentService.GetActiveAgents(jwtDatas.BossId);
             return new JsonResult(agents);
         }
 
-        [HttpGet("active/{bossId}")]
-        public async Task<IActionResult> GetActiveAgents(long bossId)
+        [HttpGet("moving")]
+        public async Task<IActionResult> GetMovingAgents()
         {
-            var agents = await _agentService.GetActiveAgents(bossId);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var agents = await _agentService.GetMovingAgents(jwtDatas.BossId);
             return new JsonResult(agents);
         }
 
-        [HttpGet("moving/{bossId}")]
-        public async Task<IActionResult> GetMovingAgents(long bossId)
+        [HttpGet("onMission")]
+        public async Task<IActionResult> GetAgentsOnMission()
         {
-            var agents = await _agentService.GetMovingAgents(bossId);
-            return new JsonResult(agents);
-        }
-
-        [HttpGet("onMission/{bossId}")]
-        public async Task<IActionResult> GetAgentsOnMission(long bossId)
-        {
-            var agents = await _agentService.GetAgentsOnMission(bossId);
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var agents = await _agentService.GetAgentsOnMission(jwtDatas.BossId);
             return new JsonResult(agents);
         }
 
@@ -66,6 +67,8 @@ namespace MafiaOnline.Controllers
         [HttpPost("dismiss")]
         public async Task<IActionResult> DismissAgent([FromBody] DismissAgentRequest request)
         {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            request.BossId = jwtDatas.BossId;
             var agents = await _agentService.DismissAgent(request);
             return new JsonResult(agents);
         }
@@ -73,6 +76,8 @@ namespace MafiaOnline.Controllers
         [HttpPost("recruit")]
         public async Task<IActionResult> RecruitAgent([FromBody] RecruitAgentRequest request)
         {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            request.BossId = jwtDatas.BossId;
             var agent = await _agentService.RecruitAgent(request);
             return new JsonResult($"Agent {agent.FirstName} {agent.LastName} is at your service.");
         }
@@ -87,6 +92,8 @@ namespace MafiaOnline.Controllers
         [HttpPost("patrol")]
         public async Task<IActionResult> SendToPatrol(PatrolRequest request)
         {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            request.BossId = jwtDatas.BossId;
             await _agentService.SendToPatrol(request);
             return Ok();
         }

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace MafiaOnline.BusinessLogic.Entities
 {
-    public class TokenDatas
+    public class SetSeenRequest
     {
+        public long BossId { get; set; }
+        public long MessageId { get; set; }
     }
 }
