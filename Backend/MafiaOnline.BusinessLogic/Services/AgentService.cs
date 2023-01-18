@@ -31,6 +31,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<IList<AgentOnMissionDTO>> GetAgentsOnMission(long bossId);
         Task<IList<AgentForSaleDTO>> GetAgentsForSale();
         Task<IList<MovingAgentDTO>> GetMovingAgents(long bossId);
+        Task<IList<AmbushingAgentDTO>> GetAmbushingAgents(long bossId);
         Task<Agent> DismissAgent(DismissAgentRequest request);
         Task<Agent> RecruitAgent(RecruitAgentRequest request);
         Task<bool> PatrolPoint(Point point, long bossId);
@@ -119,6 +120,15 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var agents = await _unitOfWork.Agents.GetAgentsOnMission(bossId);
             return _mapper.Map<IList<AgentOnMissionDTO>>(agents);
+        }
+
+        /// <summary>
+        /// Returns ambushing agents belonging to the boss
+        /// </summary>
+        public async Task<IList<AmbushingAgentDTO>> GetAmbushingAgents(long bossId)
+        {
+            var agents = await _unitOfWork.Agents.GetAmbushingAgents(bossId);
+            return _mapper.Map<IList<AmbushingAgentDTO>>(agents);
         }
 
         /// <summary>
@@ -239,6 +249,7 @@ namespace MafiaOnline.BusinessLogic.Services
             var agent = await _unitOfWork.Agents.GetByIdAsync(movingAgent.AgentId);
             await PatrolPoint(movingAgent.Path[movingAgent.Step.Value], agent.BossId.Value);
             movingAgent.Step = movingAgent.Step + 1;
+            movingAgent.ArrivalTime = DateTime.Now.AddSeconds(movingAgent.StepsLeft.Value * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
             if (movingAgent.Step >= movingAgent.Path.Length)
             {
                 agent.State = AgentState.Active;
@@ -300,6 +311,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 await _reporter.CreateReport(agent.BossId.Value, "Shootout", reportForAgentWithLoot);
             }
             movingAgent.Step = movingAgent.Step + 1;
+            movingAgent.ArrivalTime = DateTime.Now.AddSeconds(movingAgent.StepsLeft.Value * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
 
             if (movingAgent.Step >= movingAgent.Path.Length)
             {

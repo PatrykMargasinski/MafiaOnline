@@ -64,6 +64,14 @@ namespace MafiaOnline.Controllers
             return new JsonResult(agents);
         }
 
+        [HttpGet("ambushing")]
+        public async Task<IActionResult> GetAmbushingAgents()
+        {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var agents = await _agentService.GetAmbushingAgents(jwtDatas.BossId);
+            return new JsonResult(agents);
+        }
+
         [HttpPost("dismiss")]
         public async Task<IActionResult> DismissAgent([FromBody] DismissAgentRequest request)
         {

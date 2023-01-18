@@ -38,6 +38,11 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.DestinationPosition, y => y.MapFrom(z => z.MovingAgent.DestinationPoint))
                 .ForMember(x => x.ArrivalTime, y => y.MapFrom(z => z.MovingAgent.ArrivalTime));
 
+            CreateMap<Agent, AmbushingAgentDTO>()
+                .ForMember(x => x.Position, y => y.MapFrom(z => z.Ambush.MapElement.Position))
+                .ForMember(x => x.AmbushId, y => y.MapFrom(z => z.Ambush.Id))
+                .ForMember(x => x.MapElementId, y => y.MapFrom(z => z.Ambush.MapElementId));
+
             //Ambush
             CreateMap<Ambush, AmbushDTO>()
                 .ForMember(x => x.AgentFullName, y => y.MapFrom(z => z.Agent.FullName))

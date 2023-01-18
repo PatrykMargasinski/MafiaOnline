@@ -29,6 +29,16 @@ namespace MafiaOnline.DataAccess.Entities
         }
         public string PathJson { get; set; }
         public long? Step { get; set; }
+        [NotMapped]
+        public long? StepsLeft
+        {
+            get
+            {
+                if (!Step.HasValue || string.IsNullOrEmpty(PathJson))
+                    return null;
+                return Path.Length - Step.Value;
+            }
+        }
         public DateTime ArrivalTime { get; set; }
         [NotMapped]
         public Point DestinationPoint

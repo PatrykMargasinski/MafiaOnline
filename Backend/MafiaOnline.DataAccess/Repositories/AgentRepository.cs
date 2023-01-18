@@ -77,7 +77,8 @@ namespace MafiaOnline.DataAccess.Repositories
         public async Task<IList<Agent>> GetAmbushingAgents(long bossId)
         {
             var agents = await _context.Agents
-                .Include(x => x.AgentForSale)
+                .Include(x => x.Ambush)
+                .ThenInclude(x => x.MapElement)
                 .Where(z => z.State == AgentState.Ambushing && z.BossId == bossId)
                 .ToListAsync();
             return agents;
