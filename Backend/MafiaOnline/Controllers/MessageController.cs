@@ -14,7 +14,7 @@ namespace MafiaOnline.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = "Player")]
+    [Authorize(Roles = "Player,Administrator")]
     public class MessageController : ControllerBase
     {
         private readonly IMessageService _messageService;

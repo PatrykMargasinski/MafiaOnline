@@ -88,10 +88,14 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.Bosses.Create(boss);
 
             //player creation
+
+            var playerRole = await _unitOfWork.Roles.GetByNameAsync(RoleConsts.Player);
+
             Player player = new Player()
             {
                 Nick = request.Nick,
                 HashedPassword = _securityUtils.Hash(request.Password),
+                Role = playerRole
             };
             player.Boss = boss;
 

@@ -161,7 +161,7 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             await _agentValidator.ValidateRecruitAgent(request);
             var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
-            var boss = await _unitOfWork.Bosses.GetByIdAsync(request.BossId);
+            var boss = agent.Boss;
             boss.Money -= agent.AgentForSale.Price;
             _unitOfWork.AgentsForSale.DeleteByAgentId(request.AgentId);
             agent.Boss = boss;

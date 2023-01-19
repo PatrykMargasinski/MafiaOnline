@@ -30,6 +30,7 @@ namespace MafiaOnline.DataAccess.Database
         public virtual DbSet<ExposedMapElement> ExposedMapElements { get; set; }
         public virtual DbSet<Headquarters> Headquarters { get; set; }
         public virtual DbSet<Ambush> Ambushes { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +38,5 @@ namespace MafiaOnline.DataAccess.Database
             base.OnModelCreating(modelBuilder);
             modelBuilder.Seed();
         }
-
     }
 }

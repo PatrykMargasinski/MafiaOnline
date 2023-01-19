@@ -20,6 +20,7 @@ namespace MafiaOnline.DataAccess.Database
         IMapElementRepository MapElements { get; }
         IExposedMapElementRepository ExposedMapElements { get; }
         IAmbushRepository Ambushes { get; }
+        IRoleRepository Roles { get; }
     }
     public class UnitOfWork : IUnitOfWork
     {
@@ -42,6 +43,7 @@ namespace MafiaOnline.DataAccess.Database
             MapElements = new MapElementRepository(context);
             ExposedMapElements = new ExposedMapElementRepository(context);
             Ambushes = new AmbushRepository(context);
+            Roles = new RoleRepository(context);
         }
 
         public IAgentRepository Agents { get; }
@@ -60,6 +62,7 @@ namespace MafiaOnline.DataAccess.Database
         public IMapElementRepository MapElements { get; }
         public IExposedMapElementRepository ExposedMapElements { get; }
         public IAmbushRepository Ambushes { get; }
+        public IRoleRepository Roles { get; }
 
         public void Commit()
         {

@@ -9,6 +9,10 @@ namespace MafiaOnline.DataAccess.Entities
 {
     public partial class Agent : Entity
     {
+        public Agent()
+        {
+
+        }
         public long? BossId { get; set; }
         public AgentState State { get; set; }
         public string LastName { get; set; }

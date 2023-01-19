@@ -12,7 +12,7 @@ namespace MafiaOnline.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = "Player")]
+    [Authorize(Roles = "Player,Administrator")]
     public class HeadquartersController : ControllerBase
     {
         private readonly IHeadquartersService _headquartersService;

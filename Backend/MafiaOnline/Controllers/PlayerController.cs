@@ -39,7 +39,7 @@ namespace MafiaOnline.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "Player")]
+        [Authorize(Roles = "Player,Administrator")]
         [HttpPost("/changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest user)
         {
@@ -49,7 +49,7 @@ namespace MafiaOnline.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "Player")]
+        [Authorize(Roles = "Player,Administrator")]
         [HttpPost("/deleteAccount")]
         public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest user)
         {

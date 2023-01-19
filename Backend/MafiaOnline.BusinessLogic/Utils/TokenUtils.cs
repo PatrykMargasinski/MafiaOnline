@@ -1,4 +1,5 @@
 ﻿using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -26,9 +27,11 @@ namespace MafiaOnline.BusinessLogic.Utils
     public class TokenUtils : ITokenUtils
     {
         private readonly IConfiguration _config;
-        public TokenUtils(IConfiguration config)
+        private readonly IUnitOfWork _unitOfWork;
+        public TokenUtils(IConfiguration config, IUnitOfWork unitOfWork)
         {
             _config = config;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -40,11 +43,11 @@ namespace MafiaOnline.BusinessLogic.Utils
             var key = _config.GetValue<string>("Security:AuthKey");
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
+            var playerRole = _unitOfWork.Roles.GetByIdAsync(player.RoleId).Result;
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, player.Nick),
-                new Claim(ClaimTypes.Role, "Player"),
+                new Claim(ClaimTypes.Role, playerRole.Name),
                 new Claim(type: "bossId",value: player.BossId.ToString()),
                 new Claim(type: "playerId",value: player.Id.ToString())
             };

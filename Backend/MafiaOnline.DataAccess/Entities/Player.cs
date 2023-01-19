@@ -13,6 +13,8 @@ namespace MafiaOnline.DataAccess.Entities
         public long BossId { get; set; }
         public virtual Boss Boss { get; set; }
         public string RefreshToken { get; set; }
+        public long RoleId { get; set; }
+        public virtual Role Role { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
     }
 
@@ -25,6 +27,10 @@ namespace MafiaOnline.DataAccess.Entities
             builder.HasOne(d => d.Boss)
                 .WithOne(p => p.Player)
                 .HasForeignKey<Player>(d => d.BossId);
+
+            builder.HasOne(d => d.Role)
+                .WithMany(p => p.Players)
+                .HasForeignKey(d => d.RoleId);
         }
     }
 }
