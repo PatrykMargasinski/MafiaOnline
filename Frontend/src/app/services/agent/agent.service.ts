@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Agent, AgentOnMission, AgentForSale, MovingAgent } from 'src/app/models/agent/agent.models';
+import { Agent, AgentOnMission, AgentForSale, MovingAgent, AmbushingAgent } from 'src/app/models/agent/agent.models';
 import { DismissAgentRequest, PatrolRequest, RecruitAgentRequest } from 'src/app/models/agent/agent.requests';
 import { Point } from 'src/app/models/map/point.models';
 import { environment } from 'src/environments/environment';
@@ -15,11 +15,11 @@ export class AgentService {
   constructor(private http:HttpClient) { }
 
 
-  getAvailableAgents(bossId: number): Observable<Agent[]> {
+  getAvailableAgents(): Observable<Agent[]> {
     return this.http.get<Agent[]>(this.APIUrl + '/active');
   }
 
-  getAgentsOnMission(bossId: number): Observable<AgentOnMission[]> {
+  getAgentsOnMission(): Observable<AgentOnMission[]> {
     return this.http.get<AgentOnMission[]>(this.APIUrl + '/onMission');
   }
 
@@ -27,12 +27,16 @@ export class AgentService {
     return this.http.get<AgentForSale[]>(this.APIUrl + '/forSale');
   }
 
-  getMovingAgents(bossId: number): Observable<MovingAgent[]> {
+  getMovingAgents(): Observable<MovingAgent[]> {
     return this.http.get<MovingAgent[]>(this.APIUrl + '/moving');
   }
 
-  recruitAgent(bossId: number, agentId: number) {
-    const request: RecruitAgentRequest = {AgentId: agentId, BossId: bossId}
+  getAmbushingAgents(): Observable<AmbushingAgent[]> {
+    return this.http.get<AmbushingAgent[]>(this.APIUrl + '/ambushing');
+  }
+
+  recruitAgent(agentId: number) {
+    const request: RecruitAgentRequest = {AgentId: agentId, BossId: 0}
     return this.http.post(this.APIUrl + "/recruit", request);
   }
 

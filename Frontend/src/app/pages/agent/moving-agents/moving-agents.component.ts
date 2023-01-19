@@ -23,7 +23,7 @@ export class MovingAgentsComponent implements OnInit {
   }
 
   refresh(){
-    this.shared.getMovingAgents(this.bossId).subscribe(data=>{
+    this.shared.getMovingAgents().subscribe(data=>{
       this.MovingAgents=data;
       this.countdown()
     });

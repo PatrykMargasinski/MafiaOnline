@@ -1,0 +1,25 @@
+<br><h3>Ambushing agents</h3>
+Agents preparing for an ambush
+<br>
+<br>
+<table class="table table-striped text-center">
+  <thead>
+    <tr>
+      <th scope="col">Agent Name</th>
+      <th scope="col">Statistics</th>
+      <th scope="col">Position</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let agent of AmbushingAgents">
+      <td>{{agent.FirstName}} {{agent.LastName}}</td>
+      <td>{{agent.Strength}}/{{agent.Dexterity}}/{{agent.Intelligence}}</td>
+      <td>[{{agent.Position.X}},{{agent.Position.Y}}]</td>
+      <td>
+        <button class="btn btn-danger" (click)="cancelAmbush(agent.MapElementId)">Cancel ambush</button>
+        <button class="btn btn-warning" style="margin-left: 1px" (click)="showOnMap(agent.Position)">Ambush position</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

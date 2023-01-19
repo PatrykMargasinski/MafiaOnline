@@ -25,6 +25,7 @@ import { ChangePasswordComponent } from './pages/account-settings/change-passwor
 import { DeleteAccountComponent } from './pages/account-settings/delete-account/delete-account.component';
 import { MapComponent } from './pages/map/map.component';
 import { ShowMapComponent } from './pages/map/show-map/show-map.component';
+import { AmbushingAgentsComponent } from './pages/agent/ambushing-agents/ambushing-agents.component';
 
 
 
@@ -42,7 +43,8 @@ const routes: Routes = [
     {path: 'available', component: AvailableAgentsComponent},
     {path: 'onMission', component: AgentsOnMissionComponent},
     {path: 'forSale', component: AgentsForSaleComponent},
-    {path: 'moving', component: MovingAgentsComponent}
+    {path: 'moving', component: MovingAgentsComponent},
+    {path: 'ambushing', component: AmbushingAgentsComponent}
   ]},
   {path:'map',component:MapComponent , canActivate: [GuardService], children:
   [

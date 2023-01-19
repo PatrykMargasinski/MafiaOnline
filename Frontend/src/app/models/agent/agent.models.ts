@@ -58,3 +58,15 @@ export interface MovingAgent
   SecondsLeft: number
 }
 
+export interface AmbushingAgent
+{
+  Id: number,
+  AmbushId: number,
+  MapElementId: number,
+  LastName: string,
+  FirstName: string,
+  Strength: number,
+  Dexterity: number,
+  Intelligence: number,
+  Position: Point
+}

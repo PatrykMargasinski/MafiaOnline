@@ -22,7 +22,7 @@ export class AgentsOnMissionComponent implements OnInit {
   }
 
   refreshAgentsOnMission() {
-    this.shared.getAgentsOnMission(this.tokenService.getBossId()).subscribe(data => {
+    this.shared.getAgentsOnMission().subscribe(data => {
       this.agentsOnMission = data;
       this.countdown()
     })

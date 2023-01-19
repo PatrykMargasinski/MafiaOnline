@@ -14,11 +14,9 @@ export class AgentsForSaleComponent implements OnInit {
 
   constructor(private shared: AgentService, private tokenService: TokenService) { }
   AgentsForSale:AgentForSale[];
-  bossId: number;
 
   ngOnInit(): void {
     this.refresh();
-    this.bossId = this.tokenService.getBossId();
   }
 
   refresh(){
@@ -30,7 +28,7 @@ export class AgentsForSaleComponent implements OnInit {
   recruitAgent(agentId: number): void
   {
     if(confirm('Are you sure??')){
-        this.shared.recruitAgent(this.bossId, agentId).subscribe(data=>{
+        this.shared.recruitAgent(agentId).subscribe(data=>{
           alert(data.toString());
           this.refresh();
         })

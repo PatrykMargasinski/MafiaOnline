@@ -30,7 +30,7 @@ export class AmbushDetailsComponent implements OnInit {
         else
         {
           this.yourAmbush = false;
-          this.agentService.getAvailableAgents(bossId).subscribe(data=>{
+          this.agentService.getAvailableAgents().subscribe(data=>{
             this.agents = data
           })
         }

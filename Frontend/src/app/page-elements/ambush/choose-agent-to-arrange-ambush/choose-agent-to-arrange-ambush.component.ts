@@ -33,8 +33,7 @@ export class ChooseAgentToArrangeAmbushComponent implements OnInit {
   }
 
   getAgents(){
-    const bossId = Number(this.tokenService.getBossId())
-    this.agentService.getAvailableAgents(bossId).subscribe(data=>{
+    this.agentService.getAvailableAgents().subscribe(data=>{
       this.agents = data
     })
   }

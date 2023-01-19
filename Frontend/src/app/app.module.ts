@@ -43,6 +43,7 @@ import { AmbushDetailsComponent } from './page-elements/map-elements/ambush-deta
 import { ChooseAgentToPatrolComponent } from './page-elements/agent/choose-agent-to-patrol/choose-agent-to-patrol.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './utils/token-interceptor';
+import { AmbushingAgentsComponent } from './pages/agent/ambushing-agents/ambushing-agents.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -82,7 +83,8 @@ export function tokenGetter(){
     MovingAgentsComponent,
     ChooseAgentToArrangeAmbushComponent,
     AmbushDetailsComponent,
-    ChooseAgentToPatrolComponent
+    ChooseAgentToPatrolComponent,
+    AmbushingAgentsComponent
   ],
   imports: [
     BrowserModule,

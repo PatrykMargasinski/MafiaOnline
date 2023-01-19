@@ -18,8 +18,7 @@ export class AvailableAgentsComponent implements OnInit {
   }
 
   refreshAgentList(){
-    const bossId = Number(this.tokenService.getBossId())
-    this.shared.getAvailableAgents(bossId).subscribe(data=>{
+    this.shared.getAvailableAgents().subscribe(data=>{
       this.AgentList=data;
     });
   }
