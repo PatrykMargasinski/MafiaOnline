@@ -1,9 +1,10 @@
 <h1>This is home page</h1>
-And it's task is to convince you to play this amazing game. Why you still are not logged in.
-Don't tell me you're still wondering if it's worth it. I tell you - it's definitely worth it.
-I know you may be wondering whether or not you have to pay someone for this miracle.
-The answer is no. This game is 100% free.<br>
-Take on the role of a mafia boss
-<br><br>
-Have you made up your mind already?
+W are glad that you visited Mafia Online again. If you have visited this page for the first time - give this great game a chance. We think it's worth a try.<br> If you want to register, go to the <strong>Register</strong> section.
+<br> If you have registered already, go to the <strong>Login</strong> section and login.
+<br> If you want to know the rules of this game, go to the <strong>About</strong> section
 <br>
+<br>
+<h2>Last news</h2>
+<div *ngFor="let news of newsList" >
+  <app-news-card [news]="news"></app-news-card>
+</div>

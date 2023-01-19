@@ -52,6 +52,9 @@ namespace MafiaOnline.BusinessLogic
             CreateMap<Boss, BossDTO>()
                 .ForMember(x => x.Name, y => y.MapFrom(z => z.FullName));
 
+            //News
+            CreateMap<News, NewsDTO>();
+
             //Mission
             CreateMap<Mission, MissionDTO>()
                 .ForMember(x => x.Name, y => y.MapFrom(z => z.Name + (z.RepeatableMission ? " (repeatable)" : "")))
