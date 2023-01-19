@@ -180,6 +180,8 @@ export class ShowMapComponent implements OnInit {
         return
       }
 
+      this.mapUtils.clearPath();
+
       if(!this.mapUtils.isPointPath(X,Y))
       {
         this.mapUtils.addPointToPath(X,Y);

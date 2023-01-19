@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -8,12 +9,10 @@ export class BasicUtils {
 
   constructor(private sanitized: DomSanitizer) { }
 
-  stringDateConvert(stringDate: string) {
-    var d = new Date(stringDate);
-    let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-    let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
-    let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-    return `${da}-${mo}-${ye}`
+  dateFormat(date: Date) {
+    const datepipe: DatePipe = new DatePipe('en-US')
+    let formattedDate = datepipe.transform(date, 'dd-MMM-yyyy HH:mm:ss')
+    return formattedDate;
   }
 
   printMissionPercentagesWithColors(difficulty: number, strength: number, dexterity: number, intelligence: number)

@@ -74,6 +74,28 @@ namespace MafiaOnline.BusinessLogic.Validators
                     throw new Exception("Path is not continuous");
                 }
             }
+
+            var missionMapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
+            var hq = await _unitOfWork.Headquarters.GetByBossId(agent.BossId.Value);
+            var hqMapElement = await _unitOfWork.MapElements.GetByIdAsync(hq.MapElementId);
+
+            if (!_mapUtils.IsAdjacent(request.Path[0], missionMapElement.Position))
+            {
+                if(_mapUtils.IsAdjacent(request.Path[^1], missionMapElement.Position))
+                {
+                    request.Path = request.Path.Reverse().ToArray();
+                }
+                else
+                {
+                    throw new Exception("First (or last) element of a path is not adjacent to the mission");
+                }
+            }
+
+            if (!_mapUtils.IsAdjacent(request.Path[^1], hqMapElement.Position))
+            {
+                throw new Exception("First (or last) element of a path is not adjacent to the headquarters");
+            }
+
         }
 
         public async Task ValidateDoMission(long agentId, long missionId)

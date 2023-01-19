@@ -24,7 +24,7 @@
         </div>
       </td>
       <td [style.font-weight]="report.Seen ? 'normal' : '700'">{{report.Subject}}</td>
-      <td [style.font-weight]="report.Seen ? 'normal' : '700'">{{stringDateConvert(report.ReceivedDate)}}</td>
+      <td [style.font-weight]="report.Seen ? 'normal' : '700'">{{basicUtils.dateFormat(report.ReceivedDate)}}</td>
       <td>
         <button class="btn btn-success m-1" (click)="showContent(report.Content, report.Id)">
           See content

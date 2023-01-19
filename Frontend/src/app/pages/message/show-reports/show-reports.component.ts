@@ -1,3 +1,4 @@
+import { BasicUtils } from './../../../utils/basic-utils';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Message } from 'src/app/models/message/message.models';
@@ -10,7 +11,7 @@ import { MessageService } from 'src/app/services/message/message.service';
   styleUrls: ['./show-reports.component.css']
 })
 export class ShowReportsComponent implements OnInit {
-  constructor(private shared: MessageService, private router: Router, private tokenService: TokenService) { }
+  constructor(private shared: MessageService, private router: Router, private tokenService: TokenService, private basicUtils: BasicUtils) { }
   ReportList: Message[];
   ReportFilteredList: Message[];
   PageNumbers: number[];
@@ -19,14 +20,6 @@ export class ShowReportsComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshReportList()
-  }
-
-  stringDateConvert(stringDate: string) {
-    var d = new Date(stringDate);
-    let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-    let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
-    let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-    return `${da}-${mo}-${ye}`
   }
 
   clearFilters(){

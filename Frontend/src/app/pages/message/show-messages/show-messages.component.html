@@ -38,7 +38,7 @@
       </td>
       <td [style.font-weight]="message.Seen ? 'normal' : '700'">{{message.FromBossName}}</td>
       <td [style.font-weight]="message.Seen ? 'normal' : '700'">{{message.Subject}}</td>
-      <td [style.font-weight]="message.Seen ? 'normal' : '700'">{{basicUtils.stringDateConvert(message.ReceivedDate)}}</td>
+      <td [style.font-weight]="message.Seen ? 'normal' : '700'">{{basicUtils.dateFormat(message.ReceivedDate)}}</td>
       <td>
         <button class="btn btn-success m-1" (click)="showContent(message.Content, message.Id)">
           See content
