@@ -75,6 +75,9 @@ namespace MafiaOnline.BusinessLogic.Validators
                 errors.Add("There is a player with a such nick");
             }
             if (request.Password == "") errors.Add("Password is empty");
+
+            ValidatePassword(request.Password);
+
             if (request.BossFirstName == "") errors.Add("Boss first name is empty");
             else if (!_basicUtils.IsAlphabets(request.BossFirstName)) errors.Add("Boss first name should include only alphabets");
             if (request.BossLastName == "") errors.Add("Boss last name is empty");
@@ -102,6 +105,37 @@ namespace MafiaOnline.BusinessLogic.Validators
             if (errors.Count > 0) throw new Exception(string.Join('\n', errors));
         }
 
+        private void ValidatePassword(string password)
+        {
+
+            if (password.Length < 8 || password.Length > 20)
+                throw new Exception("The password must be at least 8 characters long and no longer than 20");
+
+            if (!password.Any(char.IsUpper))
+                throw new Exception("The password must to have at least one upper letter");
+
+            if (!password.Any(char.IsLower))
+                throw new Exception("The password must to have at leat one lower letter");
+
+            if (!password.Contains(' '))
+                throw new Exception("The password cannot contain white space");
+
+            string specialCh = @"%!@#$%^&*()?/>.<,:;'\|}]{[_~`+=-" + "\"";
+            char[] specialChArray = specialCh.ToCharArray();
+            bool containsSpecialChar = false;
+            foreach (char ch in specialChArray)
+            {
+                if (password.Contains(ch))
+                {
+                    containsSpecialChar = true;
+                    break;
+                }
+            }
+
+            if (containsSpecialChar == false)
+                throw new Exception("The password must contain at least one special character");
+        }
+
 
         public async Task ValidateChangePassword(ChangePasswordRequest request)
         {
@@ -110,6 +144,15 @@ namespace MafiaOnline.BusinessLogic.Validators
             {
                 throw new Exception("User not found");
             }
+
+            if (string.IsNullOrEmpty(request.OldPassword))
+                throw new Exception("Old password not provided");
+
+            if (string.IsNullOrEmpty(request.NewPassword))
+                throw new Exception("New password not provided");
+
+            if (string.IsNullOrEmpty(request.RepeatedNewPassword))
+                throw new Exception("Repeated new password not provided");
 
             if (_securityUtils.VerifyPassword(player, request.OldPassword) == false)
             {
@@ -120,6 +163,8 @@ namespace MafiaOnline.BusinessLogic.Validators
             {
                 throw new Exception("Repeated new password isn't correct");
             }
+
+            ValidatePassword(request.NewPassword);
         }
 
         public async Task ValidateDeleteAccount(DeleteAccountRequest request)
