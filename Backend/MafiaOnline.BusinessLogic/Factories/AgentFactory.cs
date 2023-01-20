@@ -111,7 +111,7 @@ namespace MafiaOnline.BusinessLogic.Factories
             movingAgent.DatasJson = JsonSerializer.Serialize(loot);
 
             movingAgent.Agent = agent;
-            agent.State = AgentState.MovingWithLoot;
+            agent.State = AgentState.Moving;
             return movingAgent;
         }
     }

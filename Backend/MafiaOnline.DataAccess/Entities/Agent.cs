@@ -47,7 +47,6 @@ namespace MafiaOnline.DataAccess.Entities
         Active,
         OnMission,
         Moving,
-        MovingWithLoot,
         Ambushing
     }
 

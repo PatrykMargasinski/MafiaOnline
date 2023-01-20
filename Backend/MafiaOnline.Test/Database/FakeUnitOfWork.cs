@@ -36,6 +36,8 @@ namespace MafiaOnline.Test.Database
             MapElements = new MapElementRepository(context);
             ExposedMapElements = new ExposedMapElementRepository(context);
             Ambushes = new AmbushRepository(context);
+            Roles = new RoleRepository(context);
+            News = new NewsRepository(context);
         }
 
         public IAgentRepository Agents { get; }
@@ -65,6 +67,9 @@ namespace MafiaOnline.Test.Database
         public IExposedMapElementRepository ExposedMapElements { get; }
 
         public IAmbushRepository Ambushes { get; }
+        public IRoleRepository Roles { get; }
+
+        public INewsRepository News { get; }
 
         public void Commit()
         {
