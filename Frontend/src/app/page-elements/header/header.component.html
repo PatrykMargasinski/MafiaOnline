@@ -16,36 +16,41 @@
         <button routerLink="register"
         class="m-1 btn btn-light btn-outline-primary" Button>Register</button>
       </li>
-      <li class="nav-item" *ngIf="isUserAuthenticated()">
+      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
         <button routerLink="boss/aboutBoss"
         class="m-1 btn btn-light btn-outline-primary" Button>Bosses</button>
       </li>
-      <li class="nav-item" *ngIf="isUserAuthenticated()">
+      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
           <button routerLink="agent/available"
           class="m-1 btn btn-light btn-outline-primary" Button>Agents</button>
       </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated()">
+      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
           <button routerLink="mission/available"
           class="m-1 btn btn-light btn-outline-primary" Button>Missions</button>
       </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated()">
+      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
         <button routerLink="map/showMap"
         class="m-1 btn btn-light btn-outline-primary" Button>Map</button>
       </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated()">
+      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
         <button routerLink="message/messages"
         class="m-1 btn btn-light btn-outline-primary" Button>Messages</button>
       </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated()">
+      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
         <button routerLink="accountSettings/changePassword"
         class="m-1 btn btn-light btn-outline-primary" Button>Account settings</button>
       </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated()">
+      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Administrator')">
+        <button routerLink="news/create"
+        class="m-1 btn btn-light btn-outline-warning" Button>News</button>
+      </li>
+
+      <li class="nav-item" *ngIf="isUserAuthenticated() ">
         <button routerLink="" (click)="logOut()"
         class="m-1 btn btn-dark btn-outline-primary" Button>Logout</button>
       </li>

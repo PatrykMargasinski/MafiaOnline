@@ -1,3 +1,4 @@
+import { CreateNewsComponent } from './pages/news/create-news/create-news.component';
 import { MovingAgentsComponent } from './pages/agent/moving-agents/moving-agents.component';
 import { SendMessageComponent } from './pages/message/send-message/send-message.component';
 import { ShowReportsComponent } from './pages/message/show-reports/show-reports.component';
@@ -26,6 +27,7 @@ import { DeleteAccountComponent } from './pages/account-settings/delete-account/
 import { MapComponent } from './pages/map/map.component';
 import { ShowMapComponent } from './pages/map/show-map/show-map.component';
 import { AmbushingAgentsComponent } from './pages/agent/ambushing-agents/ambushing-agents.component';
+import { NewsComponent } from './pages/news/news.component';
 
 
 
@@ -65,7 +67,12 @@ const routes: Routes = [
   [
     {path: 'changePassword', component: ChangePasswordComponent},
     {path: 'deleteAccount', component: DeleteAccountComponent},
+  ]},
+  {path:'news',component: NewsComponent, canActivate: [GuardService], children:
+  [
+    {path: 'create', component: CreateNewsComponent}
   ]}
+
 ];
 
 @NgModule({

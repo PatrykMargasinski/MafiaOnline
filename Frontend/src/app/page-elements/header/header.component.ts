@@ -21,6 +21,12 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  hasRole(rolesStr: string){
+    let role = this.tokenService.getRole();
+    let roles = rolesStr.split(',');
+    return roles.includes(role);
+  }
+
   logOut(){
     this.tokenService.removeTokens();
   }

@@ -25,7 +25,8 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             return await _context
                 .News
-                .OrderBy(x => x.Id)
+                .OrderByDescending(x => x.Priority)
+                .ThenByDescending(x => x.Id)
                 .Take(numberOfNews)
                 .ToListAsync();
         }

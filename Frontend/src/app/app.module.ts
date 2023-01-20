@@ -45,6 +45,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './utils/token-interceptor';
 import { AmbushingAgentsComponent } from './pages/agent/ambushing-agents/ambushing-agents.component';
 import { NewsCardComponent } from './page-elements/news/news-card/news-card.component';
+import { NewsComponent } from './pages/news/news.component';
+import { CreateNewsComponent } from './pages/news/create-news/create-news.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -86,7 +88,9 @@ export function tokenGetter(){
     AmbushDetailsComponent,
     ChooseAgentToPatrolComponent,
     AmbushingAgentsComponent,
-    NewsCardComponent
+    NewsCardComponent,
+    NewsComponent,
+    CreateNewsComponent
   ],
   imports: [
     BrowserModule,

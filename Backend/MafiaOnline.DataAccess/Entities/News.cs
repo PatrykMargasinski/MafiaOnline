@@ -11,6 +11,7 @@ namespace MafiaOnline.DataAccess.Entities
     {
         public string Subject { get; set; }
         public string HTMLContent { get; set; }
+        public short Priority { get; set; }
     }
 
     public class NewsModelConfiguration : IEntityTypeConfiguration<News>

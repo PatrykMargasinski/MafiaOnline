@@ -19,17 +19,27 @@ namespace MafiaOnline.BusinessLogic.Services
     public interface INewsService
     {
         Task<IList<NewsDTO>> GetLastNews();
+        void CreateNews(News news);
     }
 
     public class NewsService : INewsService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly INewsValidator _newsValidator;
 
-        public NewsService(IUnitOfWork unitOfWork, IMapper mapper)
+        public NewsService(IUnitOfWork unitOfWork, IMapper mapper, INewsValidator newsValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _newsValidator = newsValidator;
+        }
+
+        public void CreateNews(News news)
+        {
+            _newsValidator.ValidateNews(news);
+            _unitOfWork.News.Create(news);
+            _unitOfWork.Commit();
         }
 
         /// <summary>

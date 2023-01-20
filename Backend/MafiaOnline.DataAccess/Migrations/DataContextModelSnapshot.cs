@@ -1795,6 +1795,9 @@ namespace MafiaOnline.DataAccess.Migrations
                     b.Property<string>("HTMLContent")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<short>("Priority")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("Subject")
                         .HasColumnType("nvarchar(max)");
 
@@ -1807,7 +1810,15 @@ namespace MafiaOnline.DataAccess.Migrations
                         {
                             Id = 1L,
                             HTMLContent = "We are glad that version 2.0 has just seen the light of day. There are many features the new version has provided. <br>The most important of them are:<ul><li>Map - all game events are already taking place on the map</li><li>3 important map elements have been introduced: heaquarters, missions, ambushes</li><li>Every boss has own headquarters. All the agents leave right here. They also come back here.<li>Missions are map elements - the agent must reach the mission to perform it. </li><li>Ambushes are another map elements. When agent moves on a map he may fall into a ambush along the way.</li></ul>Every new feature is described in the \"About\" section",
+                            Priority = (short)5,
                             Subject = "Version 2.0 out!"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            HTMLContent = "Now we can inform you about some interesting news related to the game",
+                            Priority = (short)1,
+                            Subject = "News added"
                         });
                 });
 

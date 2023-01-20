@@ -98,6 +98,7 @@ namespace MafiaOnline
             services.AddScoped<IMessageValidator, MessageValidator>();
             services.AddScoped<IPlayerValidator, PlayerValidator>();
             services.AddScoped<IAmbushValidator, AmbushValidator>();
+            services.AddScoped<INewsValidator, NewsValidator>();
 
             //Job runners
             services.AddScoped<IPerformMissionJobRunner, PerformMissionJobRunner>();

@@ -23,6 +23,11 @@ export class TokenService {
     return decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
   }
 
+  getRole(){
+    const decoded = this.jwtHelper.decodeToken(sessionStorage.getItem("jwtToken"));
+    return decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  }
+
   removeTokens(){
     sessionStorage.removeItem("jwtToken");
     sessionStorage.removeItem("refreshToken");

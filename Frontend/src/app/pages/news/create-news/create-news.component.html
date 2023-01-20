@@ -1,0 +1,36 @@
+
+<br>
+<div class="mt-12">
+  <label for="subject">Priority</label>
+  <input style="margin-left: 10%" type="number" [(ngModel)]="this.news.Priority" rows="1" cols="50" maxlength="50"/>
+</div>
+<br><br>
+<div class="form-group mt-12">
+  <label for="subject">Subject</label>
+  <textarea class="form-control" id="subject" placeholder="Subject required" name="subject" [(ngModel)]="this.news.Subject" rows="1" cols="50" maxlength="50"></textarea>
+</div>
+
+<div class="form-group mt-12">
+  <label for="content">Content</label>
+  <textarea class="form-control" id="content" placeholder="Content required" name="content" [(ngModel)]="this.news.HTMLContent" rows="8" cols="50" maxlength="1000"></textarea>
+</div>
+
+<div class="container col-10 row">
+  <button type="button" class="btn btn-outline-dark" (click)="showNews()">Show</button>
+  <button type="button" class="btn btn-outline-dark" (click)="createNews()">Create</button>
+</div>
+
+<ng-template #newsModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">News result</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-news-card [news]="news"></app-news-card>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="closeAndRefresh()">Close</button>
+  </div>
+</ng-template>

@@ -28,5 +28,12 @@ namespace MafiaOnline.Controllers
             return new JsonResult(news);
         }
 
+        [HttpPost]
+        public IActionResult CreateNews([FromBody]News news)
+        {
+            _newsService.CreateNews(news);
+            return Ok();
+        }
+
     }
 }

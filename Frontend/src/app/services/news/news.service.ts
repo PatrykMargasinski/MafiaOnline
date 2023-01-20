@@ -16,4 +16,8 @@ export class NewsService {
   getLastNews(): Observable<News[]> {
     return this.http.get<News[]>(this.APIUrl);
   }
+
+  createNews(news: News) {
+    return this.http.post<News[]>(this.APIUrl, news);
+  }
 }
