@@ -8,6 +8,7 @@ export interface RegisterRequest
 {
   Nick: string,
   Password: string,
+  Email: string,
   BossFirstName: string,
   BossLastName: string,
   AgentNames: string[]

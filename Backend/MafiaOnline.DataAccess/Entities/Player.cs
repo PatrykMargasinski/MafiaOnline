@@ -10,6 +10,7 @@ namespace MafiaOnline.DataAccess.Entities
     {
         public string Nick { get; set; }
         public string HashedPassword { get; set; }
+        public string Email { get; set; }
         public long BossId { get; set; }
         public virtual Boss Boss { get; set; }
         public string RefreshToken { get; set; }

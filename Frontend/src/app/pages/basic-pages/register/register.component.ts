@@ -18,6 +18,7 @@ export class RegisterComponent implements OnInit {
     const credentials : RegisterRequest = {
       'Nick': form.value.nick,
       'Password': form.value.password,
+      'Email': form.value.email,
       'BossFirstName': form.value.firstname,
       'BossLastName': form.value.lastname,
       'AgentNames': [form.value.agent1, form.value.agent2, form.value.agent3],
@@ -25,7 +26,7 @@ export class RegisterComponent implements OnInit {
     }
     this.playerService.register(credentials)
     .subscribe(data=>{
-      alert("Registration finished. You get 5000$ and 3 agents. That's how your journey begins.");
+      alert("Registration finished. You'll get 5000$ and 3 agents, but first you have to verify your email. We have sent an activation link to your e-mail account.");
       this.router.navigate(["/login"]);
     });
   }

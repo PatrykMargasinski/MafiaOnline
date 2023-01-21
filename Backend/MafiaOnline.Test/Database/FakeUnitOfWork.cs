@@ -1,4 +1,5 @@
 ﻿using MafiaOnline.DataAccess.Database;
+using MafiaOnline.DataAccess.Entities;
 using MafiaOnline.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;

@@ -57,10 +57,11 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IReporter _reporter;
         private readonly IMovingAgentUtils _movingAgentUtils;
         private readonly IAgentUtils _agentUtils;
+        private readonly IMailSender _mailSender;
 
         public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ISchedulerFactory scheduler, 
             IAgentRefreshJobRunner agentRefreshJobRunner, ILogger<AgentService> logger, IRandomizer randomizer, IPatrolJobRunner patrolJobRunner, IReporter reporter,
-            IMovingAgentUtils movingAgentUtils, IAgentUtils agentUtils, IReturnWithLootJobRunner returnWithLootJobRunner)
+            IMovingAgentUtils movingAgentUtils, IAgentUtils agentUtils, IReturnWithLootJobRunner returnWithLootJobRunner, IMailSender mailSender)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -75,6 +76,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _movingAgentUtils = movingAgentUtils;
             _agentUtils = agentUtils;
             _returnWithLootJobRunner = returnWithLootJobRunner;
+            _mailSender = mailSender;
         }
 
         /// <summary>

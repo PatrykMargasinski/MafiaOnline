@@ -86,6 +86,7 @@ namespace MafiaOnline
             services.AddScoped<IMapUtils, MapUtils>();
             services.AddScoped<IMovingAgentUtils, MovingAgentUtils>();
             services.AddScoped<IAgentUtils, AgentUtils>();
+            services.AddScoped<IMailSender, MailSender>();
 
             //Factories
             services.AddScoped<IAgentFactory, AgentFactory>();

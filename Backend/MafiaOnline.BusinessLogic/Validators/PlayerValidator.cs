@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Castle.Core.Internal;
 using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
@@ -69,14 +70,24 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("There is no data");
             }
             IList<string> errors = new List<string>();
-            if (request.Nick == "") errors.Add("Nick is empty");
+            if (string.IsNullOrEmpty(request.Nick)) errors.Add("Nick is empty");
             else if (await _unitOfWork.Players.GetByNick(request.Nick) != null)
             {
                 errors.Add("There is a player with a such nick");
             }
-            if (request.Password == "") errors.Add("Password is empty");
+            if (string.IsNullOrEmpty(request.Password)) errors.Add("Password is empty");
 
             ValidatePassword(request.Password);
+
+            if (string.IsNullOrEmpty(request.Email)) errors.Add("Email is empty");
+            else if (CorrectEmail(request.Email) == false)
+            {
+                errors.Add("Incorrect email");
+            }
+            else if (await _unitOfWork.Players.GetByEmail(request.Email) != null)
+            {
+                errors.Add("There is a player with a such email");
+            }
 
             if (request.BossFirstName == "") errors.Add("Boss first name is empty");
             else if (!_basicUtils.IsAlphabets(request.BossFirstName)) errors.Add("Boss first name should include only alphabets");
@@ -120,6 +131,8 @@ namespace MafiaOnline.BusinessLogic.Validators
             if (!password.Contains(' '))
                 throw new Exception("The password cannot contain white space");
 
+
+
             string specialCh = @"%!@#$%^&*()?/>.<,:;'\|}]{[_~`+=-" + "\"";
             char[] specialChArray = specialCh.ToCharArray();
             bool containsSpecialChar = false;
@@ -134,6 +147,19 @@ namespace MafiaOnline.BusinessLogic.Validators
 
             if (containsSpecialChar == false)
                 throw new Exception("The password must contain at least one special character");
+        }
+
+        private bool CorrectEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
 

@@ -12,6 +12,7 @@ namespace MafiaOnline.DataAccess.Repositories
     public interface IPlayerRepository : ICrudRepository<Player>
     {
         Task<Player> GetByNick(string nick);
+        Task<Player> GetByEmail(string email);
     }
 
     public class PlayerRepository : CrudRepository<Player>, IPlayerRepository
@@ -26,6 +27,14 @@ namespace MafiaOnline.DataAccess.Repositories
             var player = await _context
                 .Players
                 .FirstOrDefaultAsync(x => x.Nick == nick);
+            return player;
+        }
+
+        public async Task<Player> GetByEmail(string email)
+        {
+            var player = await _context
+                .Players
+                .FirstOrDefaultAsync(x => x.Email == email);
             return player;
         }
     }
