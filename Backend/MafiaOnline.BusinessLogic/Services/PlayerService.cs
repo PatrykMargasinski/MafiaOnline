@@ -98,7 +98,7 @@ namespace MafiaOnline.BusinessLogic.Services
             Player player = new Player()
             {
                 Nick = request.Nick,
-                HashedPassword = _securityUtils.Hash(request.Password),
+                HashedPassword = request.Password,
                 Role = playerRole,
                 Email = request.Email
             };
