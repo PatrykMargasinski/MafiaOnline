@@ -91,53 +91,51 @@ namespace MafiaOnline.BusinessLogic.Services
 
             request.Password = _securityUtils.Hash(request.Password);
 
-            ////player creation
-            //var playerRole = await _unitOfWork.Roles.GetByNameAsync(RoleConsts.Player);
-            //var verificationCode = Guid.NewGuid().ToString();
+            //player creation
+            var playerRole = await _unitOfWork.Roles.GetByNameAsync(RoleConsts.Player);
+            var verificationCode = Guid.NewGuid().ToString();
 
-            //Player player = new Player()
-            //{
-            //    Nick = request.Nick,
-            //    HashedPassword = _securityUtils.Hash(request.Password),
-            //    Role = playerRole,
-            //    Email = request.Email,
-            //    Verified = false,
-            //    VerificationCode = verificationCode
-            //};
-            //player.Boss = boss;
+            Player player = new Player()
+            {
+                Nick = request.Nick,
+                HashedPassword = _securityUtils.Hash(request.Password),
+                Role = playerRole,
+                Email = request.Email
+            };
+            player.Boss = boss;
 
-            //_unitOfWork.Players.Create(player);
+            _unitOfWork.Players.Create(player);
 
-            //Random random = new Random();
+            Random random = new Random();
 
-            ////agents creation
-            //foreach (var agentName in request.AgentNames)
-            //{
-            //    var newAgent = new Agent()
-            //    {
-            //        FirstName = _basicUtils.UppercaseFirst(agentName),
-            //        LastName = _basicUtils.UppercaseFirst(request.BossLastName),
-            //        Strength = random.Next(2, 5),
-            //        Intelligence = random.Next(2, 5),
-            //        Dexterity = random.Next(2, 5),
-            //        Upkeep = random.Next(2, 5) * 10,
-            //        Boss = boss,
-            //        State = AgentState.Active,
-            //        IsFromBossFamily = true
-            //    };
-            //    _unitOfWork.Agents.Create(newAgent);
-            //}
+            //agents creation
+            foreach (var agentName in request.AgentNames)
+            {
+                var newAgent = new Agent()
+                {
+                    FirstName = _basicUtils.UppercaseFirst(agentName),
+                    LastName = _basicUtils.UppercaseFirst(request.BossLastName),
+                    Strength = random.Next(2, 5),
+                    Intelligence = random.Next(2, 5),
+                    Dexterity = random.Next(2, 5),
+                    Upkeep = random.Next(2, 5) * 10,
+                    Boss = boss,
+                    State = AgentState.Active,
+                    IsFromBossFamily = true
+                };
+                _unitOfWork.Agents.Create(newAgent);
+            }
 
 
 
-            ////headquarters creation
-            //var newPosition = await _mapUtils.GetNewHeadquartersPosition();
+            //headquarters creation
+            var newPosition = await _mapUtils.GetNewHeadquartersPosition();
 
-            //var headquarter = new Headquarters() { Name = request.HeadquartersName, Boss = boss };
-            //var mapElement = new MapElement() { X = newPosition.X, Y = newPosition.Y, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
-            //_unitOfWork.MapElements.Create(mapElement);
+            var headquarter = new Headquarters() { Name = request.HeadquartersName, Boss = boss };
+            var mapElement = new MapElement() { X = newPosition.X, Y = newPosition.Y, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
+            _unitOfWork.MapElements.Create(mapElement);
 
-            //_unitOfWork.Commit();
+            _unitOfWork.Commit();
         }
 
         /// <summary>
