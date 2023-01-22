@@ -56,8 +56,8 @@ namespace MafiaOnline.DataAccess.Database
         private static IList<Player> PreparePlayers()
         {
             return new List<Player> {
-                new Player{Id=1, Nick="mafia", HashedPassword="tlnK6HiwFF4+b4DRVaVdRlIPtzduirsf8W3+nbXlLWlf9c/J", Email="mafiaonlineteam@gmail.com", BossId=1, RoleId=1}, //password: a
-                new Player{Id=2, Nick="tomek", HashedPassword="d2JZt0Jz9UzgW1l544W2WnOaX14u/pfGUDYTQzv5AEWk3W7D", Email="mafiaonlineteam2@gmail.com", BossId=2, RoleId=1} //password: b
+                new Player{Id=1, Nick="mafia", HashedPassword="tlnK6HiwFF4+b4DRVaVdRlIPtzduirsf8W3+nbXlLWlf9c/J", Email="mafiaonlineteam@gmail.com", BossId=1, RoleId=1, State = PlayerState.Activated}, //password: a
+                new Player{Id=2, Nick="tomek", HashedPassword="d2JZt0Jz9UzgW1l544W2WnOaX14u/pfGUDYTQzv5AEWk3W7D", Email="mafiaonlineteam2@gmail.com", BossId=2, RoleId=1, State = PlayerState.Activated} //password: b
             };
         }
 

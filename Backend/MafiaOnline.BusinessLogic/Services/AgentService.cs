@@ -8,14 +8,17 @@ using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -78,6 +81,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _returnWithLootJobRunner = returnWithLootJobRunner;
             _mailSender = mailSender;
         }
+
 
         /// <summary>
         /// Returns all agents in the database

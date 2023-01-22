@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using Castle.Core.Logging;
+using MafiaAPI.Jobs;
+using MafiaOnline.BusinessLogic.Const;
 using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Quartz;
 using System;
@@ -20,13 +24,15 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<Tokens> Login(LoginRequest user);
         Task Register(RegisterRequest user);
         Task ChangePassword(ChangePasswordRequest user);
-        Task DeleteAccount(DeleteAccountRequest user);
+        Task DeleteAccount(DeleteAccountRequest user, bool withoutValidation = false);
+        Task<string> Activate(string code);
     }
 
     public class PlayerService : IPlayerService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<PlayerService> _logger;
         private readonly ISecurityUtils _securityUtils;
         private readonly ITokenUtils _tokenUtils;
         private readonly IBasicUtils _basicUtils;
@@ -34,11 +40,15 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly ISchedulerFactory _factory;
         private readonly IMapUtils _mapUtils;
         private readonly IMailSender _mailSender;
+        private readonly ISchedulerFactory _scheduler;
+        private readonly IRemoveNotActivatedPlayerJobRunner _removeNotActivatedPlayerJobRunner;
 
         public PlayerService(IUnitOfWork unitOfWork, IMapper mapper, 
-            ISecurityUtils securityUtils, ITokenUtils tokenUtils, 
+            ISecurityUtils securityUtils, ITokenUtils tokenUtils,
             IBasicUtils basicUtils, IPlayerValidator playerValidator,
-            ISchedulerFactory factory, IMapUtils mapUtils, IMailSender mailSender)
+            ISchedulerFactory factory, IMapUtils mapUtils, IMailSender mailSender, 
+            IRemoveNotActivatedPlayerJobRunner removeNotActivatedPlayerJobRunner, ISchedulerFactory scheduler,
+            ILogger<PlayerService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -49,6 +59,9 @@ namespace MafiaOnline.BusinessLogic.Services
             _factory = factory;
             _mapUtils = mapUtils;
             _mailSender = mailSender;
+            _scheduler = scheduler;
+            _removeNotActivatedPlayerJobRunner = removeNotActivatedPlayerJobRunner;
+            _logger = logger;
         }
 
         /// <summary>
@@ -93,18 +106,21 @@ namespace MafiaOnline.BusinessLogic.Services
 
             //player creation
             var playerRole = await _unitOfWork.Roles.GetByNameAsync(RoleConsts.Player);
-            var verificationCode = Guid.NewGuid().ToString();
+            var activationCode = Guid.NewGuid().ToString();
 
             Player player = new Player()
             {
                 Nick = request.Nick,
                 HashedPassword = request.Password,
                 Role = playerRole,
-                Email = request.Email
+                Email = request.Email,
+                State = PlayerState.NotActivated
             };
             player.Boss = boss;
 
             _unitOfWork.Players.Create(player);
+
+            //not activated player instance creation
 
             Random random = new Random();
 
@@ -127,7 +143,6 @@ namespace MafiaOnline.BusinessLogic.Services
             }
 
 
-
             //headquarters creation
             var newPosition = await _mapUtils.GetNewHeadquartersPosition();
 
@@ -135,7 +150,33 @@ namespace MafiaOnline.BusinessLogic.Services
             var mapElement = new MapElement() { X = newPosition.X, Y = newPosition.Y, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
             _unitOfWork.MapElements.Create(mapElement);
 
+            //not activated player instance
+
+            var deletionTime = DateTime.Now.AddMinutes(PlayerConsts.MINUTES_TO_REMOVE_NOT_ACTIVATED_PLAYER);
+            NotActivatedPlayer notActivatedPlayer = new NotActivatedPlayer()
+            {
+                Player = player,
+                DateOfDeletion = deletionTime,
+                ActivationCode = activationCode
+            };
+
+            _unitOfWork.NotActivatedPlayers.Create(notActivatedPlayer);
+
             _unitOfWork.Commit();
+
+            await _removeNotActivatedPlayerJobRunner.Start(_scheduler, deletionTime, player.Id);
+
+
+            //mail with activation link
+            var link = request.ApiUrl + "/activate?code=" + activationCode;
+
+            var subject = "Mafia Online - activation link";
+
+
+            var htmlLink = $"<a href = \"{link}\">{link}</a>";
+
+            var content = "Click this link to activate your Mafia Online account.<br>" + htmlLink;
+            _mailSender.SendEmail(subject, content, request.Email);
         }
 
         /// <summary>
@@ -153,9 +194,10 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Deletes an account (player, boss, agents instances)
         /// </summary>
-        public async Task DeleteAccount(DeleteAccountRequest request)
+        public async Task DeleteAccount(DeleteAccountRequest request, bool withoutValidation = false)
         {
-            await _playerValidator.ValidateDeleteAccount(request);
+            if(withoutValidation == false)
+                await _playerValidator.ValidateDeleteAccount(request);
             var player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
             var boss = await _unitOfWork.Bosses.GetByIdAsync(player.BossId);
             var agents = await _unitOfWork.Agents.GetBossAgents(boss.Id);
@@ -198,6 +240,27 @@ namespace MafiaOnline.BusinessLogic.Services
 
             _unitOfWork.Agents.UpdateRange(othersAgents.ToArray());
             _unitOfWork.Commit();
+        }
+
+        public async Task<string> Activate(string code)
+        {
+            var notActivatedPlayer = await _unitOfWork.NotActivatedPlayers.GetByCode(code);
+            if(notActivatedPlayer == null)
+                return "User not found. It's possible the account is already active.";
+            var player = await _unitOfWork.Players.GetByIdAsync(notActivatedPlayer.PlayerId);
+            _unitOfWork.NotActivatedPlayers.DeleteById(notActivatedPlayer.Id);
+            player.State = PlayerState.Activated;
+
+            IScheduler scheduler = await _scheduler.GetScheduler();
+            //removing job
+            JobKey jobKey = new(notActivatedPlayer.JobKey, "group1");
+            if (await scheduler.CheckExists(jobKey))
+            {
+                await scheduler.DeleteJob(jobKey);
+            }
+            _unitOfWork.Commit();
+            _logger.LogDebug($"Account with id {player.Id} activated");
+            return "Account activated";
         }
     }
 }

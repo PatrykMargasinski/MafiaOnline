@@ -27,6 +27,7 @@ namespace MafiaOnline.Test.Database
             AgentsForSale = new AgentForSaleRepository(context);
             Bosses = new BossRepository(context);
             Players = new PlayerRepository(context);
+            NotActivatedPlayers = new NotActivatedPlayerRepository(context);
             Messages = new MessageRepository(context);
             Missions = new MissionRepository(context);
             MissionTemplates = new MissionTemplateRepository(context);
@@ -48,6 +49,7 @@ namespace MafiaOnline.Test.Database
         public IBossRepository Bosses { get; }
 
         public IPlayerRepository Players { get; }
+        public INotActivatedPlayerRepository NotActivatedPlayers { get; }
 
         public IMessageRepository Messages { get; }
 

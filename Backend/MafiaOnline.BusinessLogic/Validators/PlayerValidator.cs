@@ -57,6 +57,9 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("There is no player with such nick");
             }
 
+            if(player.State == PlayerState.NotActivated)
+                throw new Exception("Player is not activated");
+
             if (_securityUtils.VerifyPassword(player, request.Password) == false)
             {
                 throw new Exception("Wrong password");
@@ -128,7 +131,7 @@ namespace MafiaOnline.BusinessLogic.Validators
             if (!password.Any(char.IsLower))
                 throw new Exception("The password must to have at leat one lower letter");
 
-            if (!password.Contains(' '))
+            if (password.Contains(" "))
                 throw new Exception("The password cannot contain white space");
 
 

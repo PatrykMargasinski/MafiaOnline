@@ -11,6 +11,7 @@ namespace MafiaOnline.DataAccess.Database
         IMovingAgentRepository MovingAgents { get; }
         IBossRepository Bosses { get; }
         IPlayerRepository Players { get; }
+        INotActivatedPlayerRepository NotActivatedPlayers { get; }
         IMessageRepository Messages { get; }
         IMissionRepository Missions { get; }
         IMissionTemplateRepository MissionTemplates { get; }
@@ -35,6 +36,7 @@ namespace MafiaOnline.DataAccess.Database
             MovingAgents = new MovingAgentRepository(context);
             Bosses = new BossRepository(context);
             Players = new PlayerRepository(context);
+            NotActivatedPlayers = new NotActivatedPlayerRepository(context);
             Missions = new MissionRepository(context);
             MissionTemplates = new MissionTemplateRepository(context);
             PerformingMissions = new PerformingMissionRepository(context);
@@ -53,6 +55,7 @@ namespace MafiaOnline.DataAccess.Database
         public IMovingAgentRepository MovingAgents { get; }
         public IBossRepository Bosses { get; }
         public IPlayerRepository Players { get; }
+        public INotActivatedPlayerRepository NotActivatedPlayers { get; }
         public IMissionRepository Missions { get; }
         public IMissionTemplateRepository MissionTemplates { get; }
         public IMessageRepository Messages { get; }

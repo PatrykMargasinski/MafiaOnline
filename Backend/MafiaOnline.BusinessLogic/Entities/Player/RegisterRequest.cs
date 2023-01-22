@@ -8,6 +8,7 @@ namespace MafiaOnline.BusinessLogic.Entities
 {
     public class RegisterRequest
     {
+        public string ApiUrl { get; set; }
         public string Nick { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }

@@ -5,6 +5,7 @@ using MafiaOnline.DataAccess.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,7 @@ namespace MafiaOnline.Controllers
         [HttpPost("/register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest user)
         {
+            user.ApiUrl = Request.Host.Value;
             await _playerService.Register(user);
             return Ok();
         }
@@ -57,6 +59,14 @@ namespace MafiaOnline.Controllers
             user.PlayerId = jwtDatas.PlayerId;
             await _playerService.DeleteAccount(user);
             return Ok();
+        }
+
+
+        [HttpGet("/activate")]
+        public async Task<IActionResult> Activate([FromQuery] string code)
+        {
+            var message = await _playerService.Activate(code);
+            return Ok(message);
         }
     }
 }
