@@ -5,6 +5,8 @@ using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.Security.Application;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Quartz;
 using System;
@@ -35,15 +37,20 @@ namespace MafiaOnline.BusinessLogic.Services
             _newsValidator = newsValidator;
         }
 
+        /// <summary>
+        /// Creates news
+        /// </summary>
         public void CreateNews(News news)
         {
+            //HTML sanitation
+            news.HTMLContent = Sanitizer.GetSafeHtmlFragment(news.HTMLContent);
             _newsValidator.ValidateNews(news);
             _unitOfWork.News.Create(news);
             _unitOfWork.Commit();
         }
 
         /// <summary>
-        /// Returns tokens if login datas are correct
+        /// Returns last news
         /// </summary>
         public async Task<IList<NewsDTO>> GetLastNews()
         {
