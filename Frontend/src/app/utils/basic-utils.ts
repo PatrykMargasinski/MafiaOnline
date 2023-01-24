@@ -20,4 +20,9 @@ export class BasicUtils {
     return this.sanitized.bypassSecurityTrustHtml('Difficulty: '+difficulty+'<br> (<span style="color:orange;">'+strength+'%</span>/<span style="color:darkgreen;">'+dexterity+'%</span>/<span style="color:blue;">'+intelligence+'%</span>)');
   }
 
+  isPlayerNotActivated()
+  {
+    return sessionStorage.getItem("notActivated")=='1';
+  }
+
 }

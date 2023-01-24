@@ -57,9 +57,6 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("There is no player with such nick");
             }
 
-            if(player.State == PlayerState.NotActivated)
-                throw new Exception("Player is not activated");
-
             if (_securityUtils.VerifyPassword(player, request.Password) == false)
             {
                 throw new Exception("Wrong password");

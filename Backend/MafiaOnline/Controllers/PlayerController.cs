@@ -61,6 +61,26 @@ namespace MafiaOnline.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Player,Administrator")]
+        [HttpGet("/notactivated")]
+        public async Task<IActionResult> CheckIfNotActivated()
+        {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var playerId = jwtDatas.PlayerId;
+            var notActivated = await _playerService.CheckIfNotActivated(playerId);
+            return Ok(notActivated);
+        }
+
+        [Authorize(Roles = "Player,Administrator")]
+        [HttpGet("/resendActivationLink")]
+        public async Task<IActionResult> ResendActivationLink()
+        {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var playerId = jwtDatas.PlayerId;
+            var activationLink = await _playerService.CreateAndSendActivationLink(playerId, Request.Host.Value);
+            return Ok(activationLink);
+        }
+
 
         [HttpGet("/activate")]
         public async Task<IActionResult> Activate([FromQuery] string code)

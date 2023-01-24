@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Castle.Core.Logging;
+using FluentAssertions.Equivalency;
 using MafiaAPI.Jobs;
 using MafiaOnline.BusinessLogic.Const;
 using MafiaOnline.BusinessLogic.Entities;
@@ -13,6 +14,7 @@ using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +28,8 @@ namespace MafiaOnline.BusinessLogic.Services
         Task ChangePassword(ChangePasswordRequest user);
         Task DeleteAccount(DeleteAccountRequest user, bool withoutValidation = false);
         Task<string> Activate(string code);
+        Task<bool> CheckIfNotActivated(long playerId);
+        Task<ActivationLink> CreateAndSendActivationLink(long playerId, string apiUrl);
     }
 
     public class PlayerService : IPlayerService
@@ -150,25 +154,45 @@ namespace MafiaOnline.BusinessLogic.Services
             var mapElement = new MapElement() { X = newPosition.X, Y = newPosition.Y, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
             _unitOfWork.MapElements.Create(mapElement);
 
+            _unitOfWork.Commit();
+
             //not activated player instance
+            await CreateAndSendActivationLink(player.Id, request.ApiUrl);
+        }
 
+        public async Task<ActivationLink> CreateAndSendActivationLink(long playerId, string apiUrl)
+        {
+            //not activated player instance
+            var activationCode = Guid.NewGuid().ToString();
             var deletionTime = DateTime.Now.AddMinutes(PlayerConsts.MINUTES_TO_REMOVE_NOT_ACTIVATED_PLAYER);
-            NotActivatedPlayer notActivatedPlayer = new NotActivatedPlayer()
-            {
-                Player = player,
-                DateOfDeletion = deletionTime,
-                ActivationCode = activationCode
-            };
+            var notActivatedPlayer = await _unitOfWork.NotActivatedPlayers.GetByPlayerId(playerId);
 
-            _unitOfWork.NotActivatedPlayers.Create(notActivatedPlayer);
+            var player = await _unitOfWork.Players.GetByIdAsync(playerId);
+
+            if (notActivatedPlayer==null)
+            {
+                notActivatedPlayer = new NotActivatedPlayer()
+                {
+                    Player = player,
+                    DateOfDeletion = deletionTime,
+                    ActivationCode = activationCode
+                };
+
+                _unitOfWork.NotActivatedPlayers.Create(notActivatedPlayer);
+                _unitOfWork.Commit();
+                await _removeNotActivatedPlayerJobRunner.Start(_scheduler, deletionTime, playerId);
+            }
+            else
+            {
+                notActivatedPlayer.ActivationCode = activationCode;
+                notActivatedPlayer.DateOfDeletion = deletionTime;
+            }
+
 
             _unitOfWork.Commit();
 
-            await _removeNotActivatedPlayerJobRunner.Start(_scheduler, deletionTime, player.Id);
-
-
             //mail with activation link
-            var link = request.ApiUrl + "/activate?code=" + activationCode;
+            var link = apiUrl + "/activate?code=" + activationCode;
 
             var subject = "Mafia Online - activation link";
 
@@ -176,7 +200,11 @@ namespace MafiaOnline.BusinessLogic.Services
             var htmlLink = $"<a href = \"{link}\">{link}</a>";
 
             var content = "Click this link to activate your Mafia Online account.<br>" + htmlLink;
-            _mailSender.SendEmail(subject, content, request.Email);
+            _mailSender.SendEmail(subject, content, player.Email);
+            return new ActivationLink()
+            {
+                Link = link
+            };
         }
 
         /// <summary>
@@ -242,6 +270,9 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.Commit();
         }
 
+        /// <summary>
+        /// Activates not activated player account
+        /// </summary>
         public async Task<string> Activate(string code)
         {
             var notActivatedPlayer = await _unitOfWork.NotActivatedPlayers.GetByCode(code);
@@ -261,6 +292,15 @@ namespace MafiaOnline.BusinessLogic.Services
             _unitOfWork.Commit();
             _logger.LogDebug($"Account with id {player.Id} activated");
             return "Account activated";
+        }
+
+        /// <summary>
+        /// Checks if player is not activated
+        /// </summary>
+        public async Task<bool> CheckIfNotActivated(long playerId)
+        {
+            var player = await _unitOfWork.Players.GetByIdAsync(playerId);
+            return player.State == PlayerState.NotActivated;
         }
     }
 }

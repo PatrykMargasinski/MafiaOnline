@@ -47,6 +47,7 @@ import { AmbushingAgentsComponent } from './pages/agent/ambushing-agents/ambushi
 import { NewsCardComponent } from './page-elements/news/news-card/news-card.component';
 import { NewsComponent } from './pages/news/news.component';
 import { CreateNewsComponent } from './pages/news/create-news/create-news.component';
+import { NotActivatedPlayerComponent } from './page-elements/player/not-activated-player/not-activated-player.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -90,7 +91,8 @@ export function tokenGetter(){
     AmbushingAgentsComponent,
     NewsCardComponent,
     NewsComponent,
-    CreateNewsComponent
+    CreateNewsComponent,
+    NotActivatedPlayerComponent
   ],
   imports: [
     BrowserModule,

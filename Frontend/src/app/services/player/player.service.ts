@@ -29,4 +29,9 @@ export class PlayerService {
   {
     return this.http.post(environment.APIEndpoint + "/deleteAccount", request)
   }
+
+  resendActivationLink()
+  {
+    return this.http.get(environment.APIEndpoint + "/resendActivationLink")
+  }
 }

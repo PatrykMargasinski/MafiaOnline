@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { templateJitUrl } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,8 @@ export class GuardService implements CanActivate{
   constructor(private router: Router, private jwtHelper: JwtHelperService, private http: HttpClient) { }
 
   async canActivate(){
+    await this.checkIfPlayerNotActivated();
+
     const token = sessionStorage.getItem("jwtToken");
     if(token && !this.jwtHelper.isTokenExpired(token)){
       return true
@@ -48,5 +51,14 @@ export class GuardService implements CanActivate{
       isRefreshSuccess = false;
     }
     return isRefreshSuccess;
+  }
+
+
+  async checkIfPlayerNotActivated(): Promise<void> {
+    const notActivated = await this.http.get<boolean>(environment.APIEndpoint+"/notactivated").toPromise();
+      if(notActivated)
+        sessionStorage.setItem("notActivated", "1");
+      else
+        sessionStorage.setItem("notActivated", null);
   }
 }
