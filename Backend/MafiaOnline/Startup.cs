@@ -112,6 +112,7 @@ namespace MafiaOnline
             services.AddScoped<IReturnWithLootJobRunner, ReturnWithLootJobRunner>();
             services.AddScoped<IAttackAmbushJobRunner, AttackAmbushJobRunner>();
             services.AddScoped<IRemoveNotActivatedPlayerJobRunner, RemoveNotActivatedPlayerJobRunner>();
+            services.AddScoped<IRemoveResetPasswordCodeJobRunner, RemoveResetPasswordCodeJobRunner>();
 
 
             //Hosted service

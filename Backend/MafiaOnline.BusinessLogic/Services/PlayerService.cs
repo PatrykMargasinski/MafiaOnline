@@ -30,6 +30,9 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<string> Activate(string code);
         Task<bool> CheckIfNotActivated(long playerId);
         Task<ActivationLink> CreateAndSendActivationLink(long playerId, string apiUrl);
+        Task ResetPassword(ResetPasswordRequest request);
+        Task CreateResetPasswordCode(CreateResetPasswordCodeRequest request);
+        Task RemoveResetPasswordCode(long playerId);
     }
 
     public class PlayerService : IPlayerService
@@ -43,16 +46,18 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IPlayerValidator _playerValidator;
         private readonly ISchedulerFactory _factory;
         private readonly IMapUtils _mapUtils;
+        private readonly IRandomizer _randomizer;
         private readonly IMailSender _mailSender;
         private readonly ISchedulerFactory _scheduler;
         private readonly IRemoveNotActivatedPlayerJobRunner _removeNotActivatedPlayerJobRunner;
+        private readonly IRemoveResetPasswordCodeJobRunner _removeResetPasswordCodeJobRunner;
 
         public PlayerService(IUnitOfWork unitOfWork, IMapper mapper, 
             ISecurityUtils securityUtils, ITokenUtils tokenUtils,
             IBasicUtils basicUtils, IPlayerValidator playerValidator,
             ISchedulerFactory factory, IMapUtils mapUtils, IMailSender mailSender, 
             IRemoveNotActivatedPlayerJobRunner removeNotActivatedPlayerJobRunner, ISchedulerFactory scheduler,
-            ILogger<PlayerService> logger)
+            ILogger<PlayerService> logger, IRandomizer randomizer)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -66,6 +71,7 @@ namespace MafiaOnline.BusinessLogic.Services
             _scheduler = scheduler;
             _removeNotActivatedPlayerJobRunner = removeNotActivatedPlayerJobRunner;
             _logger = logger;
+            _randomizer = randomizer;
         }
 
         /// <summary>
@@ -295,12 +301,60 @@ namespace MafiaOnline.BusinessLogic.Services
         }
 
         /// <summary>
+        /// Creates and sends code to reset password
+        /// </summary>
+        public async Task CreateResetPasswordCode(CreateResetPasswordCodeRequest request)
+        {
+
+            if (string.IsNullOrEmpty(request.Email))
+                throw new Exception("Email not provided");
+
+            var player = await _unitOfWork.Players.GetByEmail(request.Email);
+            if (player == null)
+                throw new Exception("Player with a such email not found");
+
+            player.ResetPasswordCode = _randomizer.RandomAlphabeticString(PlayerConsts.NUMBER_OF_CHARACTERS_FOR_RESET_PASSWORD_CODE);
+            await _removeResetPasswordCodeJobRunner.Start(_scheduler, DateTime.Now.AddMinutes(SecurityConsts.MINUTES_TO_REMOVE_RESET_PASSWORD_CODE), player.Id);
+
+            _unitOfWork.Commit();
+            _mailSender.SendEmail("Mafia Online - password reset", "This is the code to reset password: " + player.ResetPasswordCode, request.Email);
+        }
+
+        /// <summary>
+        /// Creates and sends code to reset password
+        /// </summary>
+        public async Task ResetPassword(ResetPasswordRequest request)
+        {
+            await _playerValidator.ValidateResetPassword(request);
+            var player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
+            player.HashedPassword = _securityUtils.Hash(request.Password);
+
+            var scheduler = await _scheduler.GetScheduler();
+            var jobKeyName = $"resetPasswordCode{request.PlayerId}";
+            var jobKey = new JobKey(jobKeyName);
+            if (await scheduler.CheckExists(jobKey))
+            {
+                await scheduler.DeleteJob(jobKey);
+            }
+        }
+
+        /// <summary>
         /// Checks if player is not activated
         /// </summary>
         public async Task<bool> CheckIfNotActivated(long playerId)
         {
             var player = await _unitOfWork.Players.GetByIdAsync(playerId);
             return player.State == PlayerState.NotActivated;
+        }
+
+        /// <summary>
+        /// Remove reset password code
+        /// </summary>
+        public async Task RemoveResetPasswordCode(long playerId)
+        {
+            Player player = await _unitOfWork.Players.GetByIdAsync(playerId);
+            player.HashedPassword = null;
+            _unitOfWork.Commit();
         }
     }
 }

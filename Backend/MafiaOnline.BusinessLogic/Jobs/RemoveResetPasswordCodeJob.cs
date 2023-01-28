@@ -13,12 +13,12 @@ namespace MafiaAPI.Jobs
 {
 
     [DisallowConcurrentExecution]
-    public class RemoveNotActivatedPlayerJob : IJob
+    public class RemoveResetPasswordCodeJob : IJob
     {
-        private readonly ILogger<RemoveNotActivatedPlayerJob> _logger;
+        private readonly ILogger<RemoveResetPasswordCodeJob> _logger;
         private readonly IPlayerService _playerService;
-        public RemoveNotActivatedPlayerJob(
-            ILogger<RemoveNotActivatedPlayerJob> logger,
+        public RemoveResetPasswordCodeJob(
+            ILogger<RemoveResetPasswordCodeJob> logger,
             IPlayerService playerService
             )
         {
@@ -29,29 +29,24 @@ namespace MafiaAPI.Jobs
         {
             JobDataMap dataMap = context.JobDetail.JobDataMap;
             long playerId = long.Parse(dataMap.GetString("playerId"));
-            var request = new DeleteAccountRequest()
-            {
-                PlayerId = playerId
-            };
             _logger.LogDebug($"Removed player with id {playerId}");
-            await _playerService.DeleteAccount(request, true);
+            await _playerService.RemoveResetPasswordCode(playerId);
         }
     }
 
-    public class RemoveNotActivatedPlayerJobRunner : IRemoveNotActivatedPlayerJobRunner
+    public class RemoveResetPasswordCodeJobRunner : IRemoveResetPasswordCodeJobRunner
     {
         private readonly IPlayerUtils _playerUtils;
-        public RemoveNotActivatedPlayerJobRunner(IPlayerUtils playerUtils)
+        public RemoveResetPasswordCodeJobRunner(IPlayerUtils playerUtils)
         {
-            _playerUtils = playerUtils;   
+            _playerUtils = playerUtils;
         }
 
         public async Task Start(ISchedulerFactory factory, DateTime deletionTime, long playerId)
         {
             IScheduler scheduler = await factory.GetScheduler();
 
-            var key = $"removeNotActivatedPlayer{playerId}";
-            await _playerUtils.SetNotActivatedPlayerJobKey(playerId, key);
+            var key = $"resetPasswordCode{playerId}";
 
             JobKey jobKey = new(key, "group1");
             if (await scheduler.CheckExists(jobKey))
@@ -68,8 +63,8 @@ namespace MafiaAPI.Jobs
 
         private IJobDetail PrepareJobDetail(long playerId)
         {
-            return JobBuilder.Create<RemoveNotActivatedPlayerJob>()
-                .WithIdentity($"removeNotActivatedPlayer{playerId}", "group1")
+            return JobBuilder.Create<RemoveResetPasswordCodeJob>()
+                .WithIdentity($"resetPasswordCode{playerId}", "group1")
                 .UsingJobData("playerId", playerId.ToString())
                 .Build();
         }
@@ -77,13 +72,13 @@ namespace MafiaAPI.Jobs
         private ITrigger PrepareTrigger(long playerId, DateTime finishTime)
         {
             return TriggerBuilder.Create()
-                .WithIdentity($"removeNotActivatedPlayerTrigger{playerId}", "group1")
+                .WithIdentity($"resetPasswordCodeTrigger{playerId}", "group1")
                 .StartAt(finishTime)
                 .Build();
         }
     }
 
-    public interface IRemoveNotActivatedPlayerJobRunner
+    public interface IRemoveResetPasswordCodeJobRunner
     {
         Task Start(ISchedulerFactory factory, DateTime finishTime, long playerId);
     }

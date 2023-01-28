@@ -28,3 +28,16 @@ export interface DeleteAccountRequest
   PlayerId: number,
   Password: string
 }
+
+export interface CreateResetPasswordCodeRequest
+{
+  Email: string
+}
+
+export interface ResetPasswordRequest
+{
+  Code: string,
+  Password: string,
+  RepeatedPassword: string
+}
+

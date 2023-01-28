@@ -1,4 +1,5 @@
-﻿using MafiaOnline.DataAccess.Entities;
+﻿using MafiaOnline.BusinessLogic.Const;
+using MafiaOnline.DataAccess.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -18,6 +19,7 @@ namespace MafiaOnline.BusinessLogic.Utils
         public int Next();
         int Next(int x);
         int Next(int x, int y);
+        string RandomAlphabeticString(short length);
     }
 
     public class Randomizer : IRandomizer
@@ -51,6 +53,28 @@ namespace MafiaOnline.BusinessLogic.Utils
         public int Next(int x, int y)
         {
             return _random.Next(x, y);
+        }
+
+        /// <summary>
+        /// Returns random string
+        /// </summary>
+        public string RandomAlphabeticString(short length)
+        {
+            const string valid = SecurityConsts.ALPHANUMERIC_CHARACTERS;
+            StringBuilder res = new StringBuilder();
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                byte[] uintBuffer = new byte[sizeof(uint)];
+
+                while (length-- > 0)
+                {
+                    rng.GetBytes(uintBuffer);
+                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                    res.Append(valid[(int)(num % (uint)valid.Length)]);
+                }
+            }
+
+            return res.ToString();
         }
     }
 }

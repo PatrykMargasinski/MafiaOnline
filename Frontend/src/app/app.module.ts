@@ -48,6 +48,7 @@ import { NewsCardComponent } from './page-elements/news/news-card/news-card.comp
 import { NewsComponent } from './pages/news/news.component';
 import { CreateNewsComponent } from './pages/news/create-news/create-news.component';
 import { NotActivatedPlayerComponent } from './page-elements/player/not-activated-player/not-activated-player.component';
+import { ForgottenPasswordComponent } from './page-elements/player/forgotten-password/forgotten-password.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -92,7 +93,8 @@ export function tokenGetter(){
     NewsCardComponent,
     NewsComponent,
     CreateNewsComponent,
-    NotActivatedPlayerComponent
+    NotActivatedPlayerComponent,
+    ForgottenPasswordComponent
   ],
   imports: [
     BrowserModule,

@@ -88,5 +88,19 @@ namespace MafiaOnline.Controllers
             var message = await _playerService.Activate(code);
             return Ok(message);
         }
+
+        [HttpPost("/resetPasswordCode")]
+        public async Task<IActionResult> CreateResetPasswordCode([FromBody] CreateResetPasswordCodeRequest request)
+        {
+            await _playerService.CreateResetPasswordCode(request);
+            return Ok();
+        }
+
+        [HttpPost("/resetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            await _playerService.ResetPassword(request);
+            return Ok();
+        }
     }
 }

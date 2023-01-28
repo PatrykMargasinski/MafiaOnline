@@ -12,6 +12,23 @@
 
 		<div class="text-center mt-3">
 			<button class="btn btn btn-outline-dark rounded-5 col-10" type="submit">Login</button>
+      <br><br>
+      <button class="btn btn btn-outline-danger rounded-5 col-10" type='button' (click)="openForgottenPasswordModal()">Forgot password</button>
 		</div>
 	</div>
 </form>
+
+<ng-template #forgottenPasswordModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Forgotten password</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-forgotten-password></app-forgotten-password>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">Close</button>
+  </div>
+</ng-template>

@@ -14,6 +14,7 @@ namespace MafiaOnline.DataAccess.Entities
         public long BossId { get; set; }
         public virtual Boss Boss { get; set; }
         public string RefreshToken { get; set; }
+        public string ResetPasswordCode { get; set; }
         public long RoleId { get; set; }
         public PlayerState State { get; set; }
         public virtual Role Role { get; set; }

@@ -1,7 +1,8 @@
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoginRequest } from './../../../models/player/player.requests';
 import { PlayerService } from './../../../services/player/player.service';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
@@ -15,7 +16,9 @@ export class LoginComponent {
   invalidLogin: boolean;
   errorMessage: string;
 
-  constructor(private router: Router, private http: HttpClient, private playerService: PlayerService) { }
+  constructor(private router: Router, private http: HttpClient, private playerService: PlayerService, private modalService: NgbModal) { }
+
+  @ViewChild('forgottenPasswordModal') forgottenPasswordModal : TemplateRef<any>;
 
   login(form: NgForm) {
     const request: LoginRequest = {
@@ -32,5 +35,15 @@ export class LoginComponent {
         this.invalidLogin = false;
         this.router.navigate(["/boss"]);
       })
+  }
+
+  openForgottenPasswordModal()
+  {
+    this.modalService.open(this.forgottenPasswordModal, {ariaLabelledBy: 'modal-basic-title'});
+  }
+
+  close()
+  {
+      this.modalService.dismissAll();
   }
 }

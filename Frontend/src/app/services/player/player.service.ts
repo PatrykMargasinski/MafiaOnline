@@ -1,4 +1,4 @@
-import { ChangePasswordRequest, LoginRequest, RegisterRequest, DeleteAccountRequest } from './../../models/player/player.requests';
+import { ChangePasswordRequest, LoginRequest, RegisterRequest, DeleteAccountRequest, CreateResetPasswordCodeRequest, ResetPasswordRequest } from './../../models/player/player.requests';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -33,5 +33,15 @@ export class PlayerService {
   resendActivationLink()
   {
     return this.http.get(environment.APIEndpoint + "/resendActivationLink")
+  }
+
+  createResetPasswordCode(request: CreateResetPasswordCodeRequest)
+  {
+    return this.http.post(environment.APIEndpoint + "/resetPasswordCode", request)
+  }
+
+  resetPassword(request: ResetPasswordRequest)
+  {
+    return this.http.post(environment.APIEndpoint + "/resetPassword", request)
   }
 }

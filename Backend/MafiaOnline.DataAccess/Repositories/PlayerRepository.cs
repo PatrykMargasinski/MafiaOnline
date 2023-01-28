@@ -13,6 +13,7 @@ namespace MafiaOnline.DataAccess.Repositories
     {
         Task<Player> GetByNick(string nick);
         Task<Player> GetByEmail(string email);
+        Task<Player> GetByResetPasswordCode(string code);
     }
 
     public class PlayerRepository : CrudRepository<Player>, IPlayerRepository
@@ -37,5 +38,13 @@ namespace MafiaOnline.DataAccess.Repositories
                 .FirstOrDefaultAsync(x => x.Email == email);
             return player;
         }
+        public async Task<Player> GetByResetPasswordCode(string code)
+        {
+            var player = await _context
+                .Players
+                .FirstOrDefaultAsync(x => x.ResetPasswordCode == code);
+            return player;
+        }
+
     }
 }
