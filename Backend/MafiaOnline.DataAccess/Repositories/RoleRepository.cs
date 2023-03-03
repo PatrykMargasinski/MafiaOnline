@@ -23,7 +23,7 @@ namespace MafiaOnline.DataAccess.Repositories
 
         public Task<Role> GetByNameAsync(string name)
         {
-            return _context.Roles.FirstOrDefaultAsync(x=>x.Name==name);
+            return _context.Roles.FirstOrDefaultAsync(x=>x.Name == name);
         }
     }
 }

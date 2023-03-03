@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MafiaOnline.BusinessLogic.Entities;
+using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using System;
@@ -16,17 +17,22 @@ namespace MafiaOnline.BusinessLogic.Services
         Task<BossDTO> GetBossDatas(long id);
         Task<IList<BossDTO>> GetBestBosses(int from, int to);
         Task<IList<string>> GetSimilarBossFullNames(string startingWithString);
+        Task AwardingVictory();
     }
 
     public class BossService : IBossService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IGameUtils _gameUtils;
+        private readonly IReporter _reporter;
 
-        public BossService(IUnitOfWork unitOfWork, IMapper mapper)
+        public BossService(IUnitOfWork unitOfWork, IMapper mapper, IGameUtils gameUtils, IReporter reporter)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _gameUtils = gameUtils;
+            _reporter = reporter;
         }
 
         /// <summary>
@@ -54,6 +60,21 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var bossNames = await _unitOfWork.Bosses.GetSimilarBossFullNames(startingWithString);
             return bossNames;
+        }
+
+        /// <summary>
+        /// Awards victory for every boss and resets the game
+        /// </summary>
+        public async Task AwardingVictory()
+        {
+            var bosses = await _unitOfWork.Bosses.GetAllWithPlayer();
+            bosses = bosses.OrderByDescending(x => x.Money).ToList();
+            long place = 1;
+            foreach(var boss in bosses)
+            {
+                await _reporter.CreateReport(boss.Id, "Game finished", $"You placed {place} place. Congratulations!");
+            }
+            await _gameUtils.ResetGame();
         }
     }
 }

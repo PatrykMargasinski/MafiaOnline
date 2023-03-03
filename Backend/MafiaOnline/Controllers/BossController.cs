@@ -46,5 +46,12 @@ namespace MafiaOnline.Controllers
             var boss = await _bossService.GetSimilarBossFullNames(startingWith);
             return new JsonResult(boss);
         }
+
+        [HttpGet("fasterAwarding")]
+        public async Task<IActionResult> FasterAwarding()
+        {
+            await _bossService.AwardingVictory();
+            return Ok();
+        }
     }
 }

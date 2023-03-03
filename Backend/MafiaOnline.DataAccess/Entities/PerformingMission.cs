@@ -25,6 +25,7 @@ namespace MafiaOnline.DataAccess.Entities
                 WayBackJson = value == null ? null : JsonSerializer.Serialize(value);
             }
         }
+        public string JobKey { get; set; }
         public string WayBackJson { get; set; }
         public virtual Agent Agent { get; set; }
         public virtual Mission Mission { get; set; }

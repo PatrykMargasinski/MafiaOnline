@@ -15,6 +15,7 @@ namespace MafiaOnline.DataAccess.Repositories
         Task<IList<Boss>> GetByLastName(string lastName);
         Task<Boss> GetByFullName(string fullName);
         Task<IList<string>> GetSimilarBossFullNames(string startingWithString);
+        Task<IList<Boss>> GetAllWithPlayer();
     }
 
     public class BossRepository : CrudRepository<Boss>, IBossRepository
@@ -59,6 +60,13 @@ namespace MafiaOnline.DataAccess.Repositories
                 .Select(x => x.FirstName + " " + x.LastName)
                 .ToListAsync();
             return bossNames;
+        }
+
+        public async Task<IList<Boss>> GetAllWithPlayer()
+        {
+            return await _context.Bosses
+                .Include(x=> x.Player)
+                .ToListAsync();
         }
     }
 }

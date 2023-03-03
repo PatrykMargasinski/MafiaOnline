@@ -88,6 +88,7 @@ namespace MafiaOnline
             services.AddScoped<IAgentUtils, AgentUtils>();
             services.AddScoped<IPlayerUtils, PlayerUtils>();
             services.AddScoped<IMailSender, MailSender>();
+            services.AddScoped<IGameUtils, GameUtils>();
 
             //Factories
             services.AddScoped<IAgentFactory, AgentFactory>();
@@ -151,6 +152,8 @@ namespace MafiaOnline
                     Description = "API for retrieving sneakers"
                 });
             });
+
+
 
             //Security
             services

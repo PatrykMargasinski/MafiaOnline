@@ -16,7 +16,7 @@ namespace MafiaOnline.BusinessLogic.Factories
     {
         Task<Agent> Create(string firstName = null, string lastName = null, int? strength = null, int? dexterity = null, int? intelligence = null, int? upkeep = null, bool isFromBossFamily = false, AgentState startingState = AgentState.Renegate);
         Task<AgentForSale> CreateForSaleInstance(Agent agent);
-        Task <MovingAgent> CreateMovingAgentForPatrolInstance(PatrolRequest request);
+        Task<MovingAgent> CreateMovingAgentForPatrolInstance(PatrolRequest request);
         Task<MovingAgent> CreateMovingAgentWithLoot(long agentId, long money, Point[] path);
     }
     public class AgentFactory : IAgentFactory

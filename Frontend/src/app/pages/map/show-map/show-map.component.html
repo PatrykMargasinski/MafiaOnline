@@ -3,16 +3,16 @@
 <br><h5>Edge: {{edgeY}} {{edgeX}}</h5><br>
 
 <div>
-  <div class="container col-1" style="margin-left: auto; margin-right: auto;">
-    <img src="../../../../assets/arrow.png" alt="Arrow up" style="width:90%;height:90%;" (click)="moveUp()">
+  <div class="container col-1 p-0" style="margin-left: auto; margin-right: auto;">
+    <img src="../../../../assets/arrow.png" alt="Arrow up" style="width:100%;height:100%;" (click)="moveUp()">
   </div>
 
-  <div style="overflow: auto;">
-    <div class="container col-1 float-left">
-      <img src="../../../../assets/arrow.png" class="left" alt="Arrow left" style="width:90%;height:90%;" (click)="moveLeft()">
+  <div style="overflow: auto; display: flex;">
+    <div class="container col-1 float-left p-0">
+      <img src="../../../../assets/arrowLeft.png" class="vertical-center" alt="Arrow left" style="width:100%;" (click)="moveLeft()">
     </div>
 
-    <div class="container col-10">
+    <div class="container col-10 p-0">
       <div *ngFor="let item of mapFields">
         <div class="terrainDiv" [style.background]="getTerrainColor(item.X, item.Y, item.TerrainType)" (click)="mapFieldClick(item.Id, item.X, item.Y, item.MapElementType, item.TerrainType)">
           <div *ngIf="item.MapElementType==1">
@@ -34,12 +34,12 @@
       </div>
     </div>
 
-    <div class="container col-1 row">
-      <img src="../../../../assets/arrow.png" class="right" alt="Arrow right" style="width:90%;height:90%; padding-top: auto; padding-bottom: auto; clear: both;" (click)="moveRight()">
+    <div class="container col-1 p-0">
+      <img src="../../../../assets/arrowRight.png" class="vertical-center" alt="Arrow right" style="width:100%; clear: both;" (click)="moveRight()">
     </div>
   </div>
 
-  <div class="container col-1">
+  <div class="container col-1 p-0">
     <img src="../../../../assets/arrow.png" class="down" alt="Arrow down" style="width:90%;height:90%;" (click)="moveDown()">
   </div>
 

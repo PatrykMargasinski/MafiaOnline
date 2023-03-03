@@ -1,4 +1,6 @@
 
+
+
 .terrainDiv {
   float: left;
   width: 4.5%;
@@ -8,6 +10,11 @@
   text-align:center;
   display: table-cell;
   vertical-align:middle;
+}
+
+.up {
+  margin-left:auto;
+  margin-right:auto;
 }
 
 .right {
@@ -28,4 +35,12 @@
 .down {
   transform: rotate(180deg);
   -webkit-transform: rotate(180deg);
+}
+
+.vertical-center{
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
