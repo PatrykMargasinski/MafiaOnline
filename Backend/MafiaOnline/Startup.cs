@@ -25,6 +25,9 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Identity;
+using MafiaOnline.DataAccess.Helpers;
 
 namespace MafiaOnline
 {
@@ -62,6 +65,16 @@ namespace MafiaOnline
             .UseLazyLoadingProxies()
             .EnableSensitiveDataLogging()
             );
+
+            services.AddDefaultIdentity<Player>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<DataContext>()
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<EmailConfirmationTokenProvider<Player>>("emailconfirmation");
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -112,8 +125,6 @@ namespace MafiaOnline
             services.AddScoped<IPatrolJobRunner, PatrolJobRunner>();
             services.AddScoped<IReturnWithLootJobRunner, ReturnWithLootJobRunner>();
             services.AddScoped<IAttackAmbushJobRunner, AttackAmbushJobRunner>();
-            services.AddScoped<IRemoveNotActivatedPlayerJobRunner, RemoveNotActivatedPlayerJobRunner>();
-            services.AddScoped<IRemoveResetPasswordCodeJobRunner, RemoveResetPasswordCodeJobRunner>();
 
 
             //Hosted service
@@ -151,6 +162,13 @@ namespace MafiaOnline
                     Title = "Sneaker API",
                     Description = "API for retrieving sneakers"
                 });
+            });
+
+            // Routing
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+                options.LowercaseQueryStrings = false;
             });
 
 

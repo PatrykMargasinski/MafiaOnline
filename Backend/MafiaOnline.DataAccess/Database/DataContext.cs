@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MafiaOnline.DataAccess.Database
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext
     {
         public DataContext() { }
         public DataContext(DbContextOptions options) : base(options)
@@ -24,14 +25,12 @@ namespace MafiaOnline.DataAccess.Database
         public virtual DbSet<MissionTemplate> MissionTemplates { get; set; }
         public virtual DbSet<PerformingMission> PerformingMissions { get; set; }
         public virtual DbSet<Player> Players { get; set; }
-        public virtual DbSet<NotActivatedPlayer> NotActivatedPlayers { get; set; }
         public virtual DbSet<AgentForSale> AgentsForSale { get; set; }
         public virtual DbSet<Name> Names { get; set; }
         public virtual DbSet<MapElement> MapElements { get; set; }
         public virtual DbSet<ExposedMapElement> ExposedMapElements { get; set; }
         public virtual DbSet<Headquarters> Headquarters { get; set; }
         public virtual DbSet<Ambush> Ambushes { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<News> News { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

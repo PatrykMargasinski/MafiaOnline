@@ -4,6 +4,7 @@ using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,13 +28,15 @@ namespace MafiaOnline.BusinessLogic.Validators
         private readonly IMapper _mapper;
         private readonly IBasicUtils _basicUtils;
         private readonly ISecurityUtils _securityUtils;
+        private readonly UserManager<Player> _userManager;
 
-        public PlayerValidator(IUnitOfWork unitOfWork, IMapper mapper, IBasicUtils basicUtils, ISecurityUtils securityUtils)
+        public PlayerValidator(IUnitOfWork unitOfWork, IMapper mapper, IBasicUtils basicUtils, ISecurityUtils securityUtils, UserManager<Player> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _basicUtils = basicUtils;
             _securityUtils = securityUtils;
+            _userManager = userManager;
         }
 
         public async Task ValidateLogin(LoginRequest request)
@@ -52,13 +55,18 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception(string.Join('\n', errors));
             }
 
-            Player player = await _unitOfWork.Players.GetByNick(request.Nick);
+            Player player = await _userManager.FindByNameAsync(request.Nick);
             if (player == null)
             {
                 throw new Exception("There is no player with such nick");
             }
 
-            if (_securityUtils.VerifyPassword(player, request.Password) == false)
+            if (!await _userManager.IsEmailConfirmedAsync(player))
+            {
+                throw new Exception("An account is not confirmed");
+            }
+
+            if (!(await _userManager.CheckPasswordAsync(player, request.Password)))
             {
                 throw new Exception("Wrong password");
             }
@@ -72,7 +80,7 @@ namespace MafiaOnline.BusinessLogic.Validators
             }
             IList<string> errors = new List<string>();
             if (string.IsNullOrEmpty(request.Nick)) errors.Add("Nick is empty");
-            else if (await _unitOfWork.Players.GetByNick(request.Nick) != null)
+            else if (await _userManager.FindByNameAsync(request.Nick) != null)
             {
                 errors.Add("There is a player with a such nick");
             }
@@ -85,7 +93,7 @@ namespace MafiaOnline.BusinessLogic.Validators
             {
                 errors.Add("Incorrect email");
             }
-            else if (await _unitOfWork.Players.GetByEmail(request.Email) != null)
+            else if (await _userManager.FindByEmailAsync(request.Email) != null)
             {
                 errors.Add("There is a player with a such email");
             }
@@ -166,7 +174,7 @@ namespace MafiaOnline.BusinessLogic.Validators
 
         public async Task ValidateChangePassword(ChangePasswordRequest request)
         {
-            Player player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
+            Player player = await _userManager.FindByNameAsync(request.UserName);
             if (player == null)
             {
                 throw new Exception("User not found");
@@ -196,7 +204,7 @@ namespace MafiaOnline.BusinessLogic.Validators
 
         public async Task ValidateDeleteAccount(DeleteAccountRequest request)
         {
-            Player player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
+            Player player = await _userManager.FindByNameAsync(request.UserName);
             if (player == null)
             {
                 throw new Exception("User not found");
@@ -210,14 +218,14 @@ namespace MafiaOnline.BusinessLogic.Validators
 
         public async Task ValidateResetPassword(ResetPasswordRequest request)
         {
-            Player player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
+            Player player = await _userManager.FindByEmailAsync(request.Email);
             if (player == null)
             {
                 throw new Exception("User not found");
             }
 
-            if (string.IsNullOrEmpty(request.Code))
-                throw new Exception("Code not provided");
+            if (string.IsNullOrEmpty(request.Token))
+                throw new Exception("Token not provided");
 
             if (string.IsNullOrEmpty(request.Password))
                 throw new Exception("Password not provided");
@@ -229,9 +237,6 @@ namespace MafiaOnline.BusinessLogic.Validators
 
             if(request.Password != request.RepeatedPassword)
                 throw new Exception("Password and repeated pasword are not the same");
-
-            if (player.ResetPasswordCode != request.Code)
-                throw new Exception("Code is not correct");
         }
     }
 }

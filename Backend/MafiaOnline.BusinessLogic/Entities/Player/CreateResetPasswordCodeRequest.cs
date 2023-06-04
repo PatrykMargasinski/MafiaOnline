@@ -9,5 +9,6 @@ namespace MafiaOnline.BusinessLogic.Entities
     public class CreateResetPasswordCodeRequest
     {
         public string Email { get; set; }
+        public string ApiUrl { get; set; }
     }
 }

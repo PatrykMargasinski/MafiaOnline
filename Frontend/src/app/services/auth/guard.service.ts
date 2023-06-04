@@ -13,7 +13,7 @@ export class GuardService implements CanActivate{
   constructor(private router: Router, private jwtHelper: JwtHelperService, private http: HttpClient) { }
 
   async canActivate(){
-    await this.checkIfPlayerNotActivated();
+    //await this.checkIfPlayerNotActivated(); TODO
 
     const token = sessionStorage.getItem("jwtToken");
     if(token && !this.jwtHelper.isTokenExpired(token)){

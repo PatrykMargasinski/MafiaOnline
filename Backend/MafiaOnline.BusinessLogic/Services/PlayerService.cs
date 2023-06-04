@@ -8,6 +8,7 @@ using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Quartz;
@@ -15,8 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MafiaOnline.BusinessLogic.Services
 {
@@ -27,12 +30,10 @@ namespace MafiaOnline.BusinessLogic.Services
         Task Register(RegisterRequest user);
         Task ChangePassword(ChangePasswordRequest user);
         Task DeleteAccount(DeleteAccountRequest user, bool withoutValidation = false);
-        Task<string> Activate(string code);
-        Task<bool> CheckIfNotActivated(long playerId);
-        Task<ActivationLink> CreateAndSendActivationLink(long playerId, string apiUrl);
+        Task<string> Activate(ActivationToken activationToken);
+        Task CreateAndSendActivationLink(Player player, string apiUrl);
         Task ResetPassword(ResetPasswordRequest request);
-        Task CreateResetPasswordCode(CreateResetPasswordCodeRequest request);
-        Task RemoveResetPasswordCode(long playerId);
+        Task CreateAndSendResetPasswordCode(CreateResetPasswordCodeRequest request);
     }
 
     public class PlayerService : IPlayerService
@@ -49,15 +50,16 @@ namespace MafiaOnline.BusinessLogic.Services
         private readonly IRandomizer _randomizer;
         private readonly IMailSender _mailSender;
         private readonly ISchedulerFactory _scheduler;
-        private readonly IRemoveNotActivatedPlayerJobRunner _removeNotActivatedPlayerJobRunner;
-        private readonly IRemoveResetPasswordCodeJobRunner _removeResetPasswordCodeJobRunner;
+        private readonly SignInManager<Player> _signInManager;
+        private readonly UserManager<Player> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PlayerService(IUnitOfWork unitOfWork, IMapper mapper, 
+        public PlayerService(IUnitOfWork unitOfWork, IMapper mapper,
             ISecurityUtils securityUtils, ITokenUtils tokenUtils,
             IBasicUtils basicUtils, IPlayerValidator playerValidator,
-            ISchedulerFactory factory, IMapUtils mapUtils, IMailSender mailSender, 
-            IRemoveNotActivatedPlayerJobRunner removeNotActivatedPlayerJobRunner, ISchedulerFactory scheduler,
-            ILogger<PlayerService> logger, IRandomizer randomizer)
+            ISchedulerFactory factory, IMapUtils mapUtils, IMailSender mailSender,
+            ISchedulerFactory scheduler, ILogger<PlayerService> logger, IRandomizer randomizer,
+            SignInManager<Player> signInManager, UserManager<Player> userManager, RoleManager<IdentityRole> roleManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -69,9 +71,11 @@ namespace MafiaOnline.BusinessLogic.Services
             _mapUtils = mapUtils;
             _mailSender = mailSender;
             _scheduler = scheduler;
-            _removeNotActivatedPlayerJobRunner = removeNotActivatedPlayerJobRunner;
             _logger = logger;
             _randomizer = randomizer;
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -80,7 +84,7 @@ namespace MafiaOnline.BusinessLogic.Services
         public async Task<Tokens> Login(LoginRequest request)
         {
             await _playerValidator.ValidateLogin(request);
-            Player player = await _unitOfWork.Players.GetByNick(request.Nick);
+            Player player = await _userManager.FindByNameAsync(request.Nick);
             var token = _tokenUtils.CreateToken(player);
             var refreshToken = _tokenUtils.GenerateRefreshToken();
             player.RefreshToken = refreshToken;
@@ -88,7 +92,6 @@ namespace MafiaOnline.BusinessLogic.Services
             var boss = await _unitOfWork.Bosses.GetByIdAsync(player.BossId);
             boss.LastSeen = DateTime.Now;
             _unitOfWork.Commit();
-
             return new Tokens()
             {
                 Token = token,
@@ -112,27 +115,15 @@ namespace MafiaOnline.BusinessLogic.Services
             };
             _unitOfWork.Bosses.Create(boss);
 
-            request.Password = _securityUtils.Hash(request.Password);
-
             //player creation
-            var playerRole = await _unitOfWork.Roles.GetByNameAsync(RoleConsts.Player);
-            var activationCode = Guid.NewGuid().ToString();
-
             Player player = new Player()
             {
-                Nick = request.Nick,
-                HashedPassword = request.Password,
-                Role = playerRole,
-                Email = request.Email,
-                State = PlayerState.NotActivated
+                UserName = request.Nick,
+                Email = request.Email
             };
+
             player.Boss = boss;
 
-            _unitOfWork.Players.Create(player);
-
-            //not activated player instance creation
-
-            Random random = new Random();
 
             //agents creation
             foreach (var agentName in request.AgentNames)
@@ -141,10 +132,10 @@ namespace MafiaOnline.BusinessLogic.Services
                 {
                     FirstName = _basicUtils.UppercaseFirst(agentName),
                     LastName = _basicUtils.UppercaseFirst(request.BossLastName),
-                    Strength = random.Next(2, 5),
-                    Intelligence = random.Next(2, 5),
-                    Dexterity = random.Next(2, 5),
-                    Upkeep = random.Next(2, 5) * 10,
+                    Strength = _randomizer.Next(2, 5),
+                    Intelligence = _randomizer.Next(2, 5),
+                    Dexterity = _randomizer.Next(2, 5),
+                    Upkeep = _randomizer.Next(2, 5) * 10,
                     Boss = boss,
                     State = AgentState.Active,
                     IsFromBossFamily = true
@@ -160,45 +151,19 @@ namespace MafiaOnline.BusinessLogic.Services
             var mapElement = new MapElement() { X = newPosition.X, Y = newPosition.Y, Type = MapElementType.Headquarters, Headquarters = headquarter, Boss = boss };
             _unitOfWork.MapElements.Create(mapElement);
 
-            _unitOfWork.Commit();
+            await _userManager.CreateAsync(player);
 
-            //not activated player instance
-            await CreateAndSendActivationLink(player.Id, request.ApiUrl);
+            _unitOfWork.Commit();
+            await _userManager.AddToRoleAsync(player, RoleConsts.Player);
+            await CreateAndSendActivationLink(player, request.ApiUrl);
         }
 
-        public async Task<ActivationLink> CreateAndSendActivationLink(long playerId, string apiUrl)
+        public async Task CreateAndSendActivationLink(Player player, string apiUrl)
         {
-            //not activated player instance
-            var activationCode = Guid.NewGuid().ToString();
-            var deletionTime = DateTime.Now.AddMinutes(PlayerConsts.MINUTES_TO_REMOVE_NOT_ACTIVATED_PLAYER);
-            var notActivatedPlayer = await _unitOfWork.NotActivatedPlayers.GetByPlayerId(playerId);
-
-            var player = await _unitOfWork.Players.GetByIdAsync(playerId);
-
-            if (notActivatedPlayer==null)
-            {
-                notActivatedPlayer = new NotActivatedPlayer()
-                {
-                    Player = player,
-                    DateOfDeletion = deletionTime,
-                    ActivationCode = activationCode
-                };
-
-                _unitOfWork.NotActivatedPlayers.Create(notActivatedPlayer);
-                _unitOfWork.Commit();
-                await _removeNotActivatedPlayerJobRunner.Start(_scheduler, deletionTime, playerId);
-            }
-            else
-            {
-                notActivatedPlayer.ActivationCode = activationCode;
-                notActivatedPlayer.DateOfDeletion = deletionTime;
-            }
-
-
-            _unitOfWork.Commit();
-
-            //mail with activation link
-            var link = apiUrl + "/activate?code=" + activationCode;
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(player);
+            token = Base64UrlEncoder.Encode(token);
+            ////mail with activation link
+            var link = apiUrl + $"/activate?token={token}&email={player.Email}";
 
             var subject = "Mafia Online - activation link";
 
@@ -207,10 +172,6 @@ namespace MafiaOnline.BusinessLogic.Services
 
             var content = "Click this link to activate your Mafia Online account.<br>" + htmlLink;
             _mailSender.SendEmail(subject, content, player.Email);
-            return new ActivationLink()
-            {
-                Link = link
-            };
         }
 
         /// <summary>
@@ -219,9 +180,10 @@ namespace MafiaOnline.BusinessLogic.Services
         public async Task ChangePassword(ChangePasswordRequest request)
         {
             await _playerValidator.ValidateChangePassword(request);
-            Player player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
+            Player player = await _userManager.FindByNameAsync(request.UserName);
 
-            player.HashedPassword = _securityUtils.Hash(request.NewPassword);
+            await _userManager.ChangePasswordAsync(player, request.OldPassword, request.NewPassword);
+
             _unitOfWork.Commit();
         }
 
@@ -232,7 +194,7 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             if(withoutValidation == false)
                 await _playerValidator.ValidateDeleteAccount(request);
-            var player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
+            var player = await _userManager.FindByNameAsync(request.UserName);
             var boss = await _unitOfWork.Bosses.GetByIdAsync(player.BossId);
             var agents = await _unitOfWork.Agents.GetBossAgents(boss.Id);
             var headquarters = await _unitOfWork.Headquarters.GetByBossId(boss.Id);
@@ -269,7 +231,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
             _unitOfWork.MapElements.DeleteById(headquarters.MapElementId);
             _unitOfWork.Bosses.DeleteById(boss.Id);
-            _unitOfWork.Players.DeleteById(player.Id);
+            await _userManager.DeleteAsync(player);
 
 
             _unitOfWork.Agents.UpdateRange(othersAgents.ToArray());
@@ -279,82 +241,67 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Activates not activated player account
         /// </summary>
-        public async Task<string> Activate(string code)
+        public async Task<string> Activate(ActivationToken activationToken)
         {
-            var notActivatedPlayer = await _unitOfWork.NotActivatedPlayers.GetByCode(code);
-            if(notActivatedPlayer == null)
-                return "User not found. It's possible the account is already active.";
-            var player = await _unitOfWork.Players.GetByIdAsync(notActivatedPlayer.PlayerId);
-            _unitOfWork.NotActivatedPlayers.DeleteById(notActivatedPlayer.Id);
-            player.State = PlayerState.Activated;
+            if(activationToken?.Email == null)
+                throw new Exception("Email not provided");
+            if (activationToken?.Token == null)
+                throw new Exception("Token not provided");
 
-            IScheduler scheduler = await _scheduler.GetScheduler();
-            //removing job
-            JobKey jobKey = new(notActivatedPlayer.JobKey, "group1");
-            if (await scheduler.CheckExists(jobKey))
-            {
-                await scheduler.DeleteJob(jobKey);
-            }
-            _unitOfWork.Commit();
-            _logger.LogDebug($"Account with id {player.Id} activated");
-            return "Account activated";
+            var token = Base64UrlEncoder.Decode(activationToken.Token.Trim());
+            var email = activationToken.Email;
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                throw new Exception("Player not found");
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if(result.Succeeded)
+                return "Your account has been successfully confirmed. Enjoy your game!";
+            else
+                return "There are some problems.\n" + string.Join(Environment.NewLine, result.Errors.ToList().Select(x => x.Description));
         }
 
         /// <summary>
         /// Creates and sends code to reset password
         /// </summary>
-        public async Task CreateResetPasswordCode(CreateResetPasswordCodeRequest request)
+        public async Task CreateAndSendResetPasswordCode(CreateResetPasswordCodeRequest request)
         {
-
             if (string.IsNullOrEmpty(request.Email))
                 throw new Exception("Email not provided");
 
-            var player = await _unitOfWork.Players.GetByEmail(request.Email);
+            var player = await _userManager.FindByEmailAsync(request.Email);
             if (player == null)
                 throw new Exception("Player with a such email not found");
 
-            player.ResetPasswordCode = _randomizer.RandomAlphabeticString(PlayerConsts.NUMBER_OF_CHARACTERS_FOR_RESET_PASSWORD_CODE);
-            await _removeResetPasswordCodeJobRunner.Start(_scheduler, DateTime.Now.AddMinutes(SecurityConsts.MINUTES_TO_REMOVE_RESET_PASSWORD_CODE), player.Id);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(player);
 
-            _unitOfWork.Commit();
-            _mailSender.SendEmail("Mafia Online - password reset", "This is the code to reset password: " + player.ResetPasswordCode, request.Email);
+            token = Base64UrlEncoder.Encode(token);
+
+            ////reset code
+            var link = $"That's the reset password token:\n{token}";
+
+            var subject = "Mafia Online - reset password";
+
+            var content = link;
+            _mailSender.SendEmail(subject, content, player.Email);
         }
 
         /// <summary>
-        /// Creates and sends code to reset password
+        /// Resets password (using token)
         /// </summary>
         public async Task ResetPassword(ResetPasswordRequest request)
         {
             await _playerValidator.ValidateResetPassword(request);
-            var player = await _unitOfWork.Players.GetByIdAsync(request.PlayerId);
-            player.HashedPassword = _securityUtils.Hash(request.Password);
+            var player = await _userManager.FindByEmailAsync(request.Email);
+            var token = Base64UrlEncoder.Decode(request.Token.Trim());
 
-            var scheduler = await _scheduler.GetScheduler();
-            var jobKeyName = $"resetPasswordCode{request.PlayerId}";
-            var jobKey = new JobKey(jobKeyName);
-            if (await scheduler.CheckExists(jobKey))
-            {
-                await scheduler.DeleteJob(jobKey);
-            }
-        }
+            var result = await _userManager.ResetPasswordAsync(player, token, request.Password);
 
-        /// <summary>
-        /// Checks if player is not activated
-        /// </summary>
-        public async Task<bool> CheckIfNotActivated(long playerId)
-        {
-            var player = await _unitOfWork.Players.GetByIdAsync(playerId);
-            return player.State == PlayerState.NotActivated;
-        }
-
-        /// <summary>
-        /// Remove reset password code
-        /// </summary>
-        public async Task RemoveResetPasswordCode(long playerId)
-        {
-            Player player = await _unitOfWork.Players.GetByIdAsync(playerId);
-            player.HashedPassword = null;
-            _unitOfWork.Commit();
+            if (result.Succeeded)
+                return;
+            else
+                throw new Exception(string.Join(Environment.NewLine, result.Errors.Select(x => x.Description)));
         }
     }
 }

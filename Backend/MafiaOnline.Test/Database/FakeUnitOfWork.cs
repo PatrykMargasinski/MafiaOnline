@@ -26,8 +26,6 @@ namespace MafiaOnline.Test.Database
             Agents = new AgentRepository(context);
             AgentsForSale = new AgentForSaleRepository(context);
             Bosses = new BossRepository(context);
-            Players = new PlayerRepository(context);
-            NotActivatedPlayers = new NotActivatedPlayerRepository(context);
             Messages = new MessageRepository(context);
             Missions = new MissionRepository(context);
             MissionTemplates = new MissionTemplateRepository(context);
@@ -38,7 +36,6 @@ namespace MafiaOnline.Test.Database
             MapElements = new MapElementRepository(context);
             ExposedMapElements = new ExposedMapElementRepository(context);
             Ambushes = new AmbushRepository(context);
-            Roles = new RoleRepository(context);
             News = new NewsRepository(context);
         }
 
@@ -47,9 +44,6 @@ namespace MafiaOnline.Test.Database
         public IAgentForSaleRepository AgentsForSale { get; }
 
         public IBossRepository Bosses { get; }
-
-        public IPlayerRepository Players { get; }
-        public INotActivatedPlayerRepository NotActivatedPlayers { get; }
 
         public IMessageRepository Messages { get; }
 
@@ -70,7 +64,6 @@ namespace MafiaOnline.Test.Database
         public IExposedMapElementRepository ExposedMapElements { get; }
 
         public IAmbushRepository Ambushes { get; }
-        public IRoleRepository Roles { get; }
 
         public INewsRepository News { get; }
 

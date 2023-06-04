@@ -13,7 +13,6 @@ namespace MafiaOnline.BusinessLogic.Utils
 {
     public interface IPlayerUtils
     {
-        Task SetNotActivatedPlayerJobKey(long playerId, string key);
     }
 
     public class PlayerUtils : IPlayerUtils
@@ -25,13 +24,6 @@ namespace MafiaOnline.BusinessLogic.Utils
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
-        }
-
-        public async Task SetNotActivatedPlayerJobKey(long playerId, string key)
-        {
-            var player = await _unitOfWork.NotActivatedPlayers.GetByPlayerId(playerId);
-            player.JobKey = key;
-            _unitOfWork.Commit();
         }
     }
 }

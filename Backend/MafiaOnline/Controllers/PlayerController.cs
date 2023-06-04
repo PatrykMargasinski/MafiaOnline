@@ -46,7 +46,8 @@ namespace MafiaOnline.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest user)
         {
             var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            user.PlayerId = jwtDatas.PlayerId;
+            user.UserName = jwtDatas.UserName;
+            user.ApiUrl = Request.Host.Value;
             await _playerService.ChangePassword(user);
             return Ok();
         }
@@ -56,46 +57,24 @@ namespace MafiaOnline.Controllers
         public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest user)
         {
             var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            user.PlayerId = jwtDatas.PlayerId;
+            user.UserName = jwtDatas.UserName;
             await _playerService.DeleteAccount(user);
             return Ok();
         }
 
-        [Authorize(Roles = "Player,Administrator")]
-        [HttpGet("/notactivated")]
-        public async Task<IActionResult> CheckIfNotActivated()
-        {
-            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            var playerId = jwtDatas.PlayerId;
-            var notActivated = await _playerService.CheckIfNotActivated(playerId);
-            return Ok(notActivated);
-        }
-
-        [Authorize(Roles = "Player,Administrator")]
-        [HttpGet("/resendActivationLink")]
-        public async Task<IActionResult> ResendActivationLink()
-        {
-            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            var playerId = jwtDatas.PlayerId;
-            var activationLink = await _playerService.CreateAndSendActivationLink(playerId, Request.Host.Value);
-            return Ok(activationLink);
-        }
-
-
         [HttpGet("/activate")]
-        public async Task<IActionResult> Activate([FromQuery] string code)
+        public async Task<IActionResult> Activate([FromQuery] ActivationToken activationToken)
         {
-            var message = await _playerService.Activate(code);
+            var message = await _playerService.Activate(activationToken);
             return Ok(message);
         }
 
         [HttpPost("/resetPasswordCode")]
         public async Task<IActionResult> CreateResetPasswordCode([FromBody] CreateResetPasswordCodeRequest request)
         {
-            await _playerService.CreateResetPasswordCode(request);
+            await _playerService.CreateAndSendResetPasswordCode(request);
             return Ok();
         }
-
         [HttpPost("/resetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {

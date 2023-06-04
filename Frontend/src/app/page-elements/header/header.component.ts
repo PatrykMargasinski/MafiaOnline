@@ -23,9 +23,9 @@ export class HeaderComponent implements OnInit {
   }
 
   hasRole(rolesStr: string){
-    let role = this.tokenService.getRole();
-    let roles = rolesStr.split(',');
-    return roles.includes(role);
+    let roles = this.tokenService.getRoles();
+    let requiredRoles : Array<string> = rolesStr.split(',');
+    return roles.some(item => requiredRoles.includes(item));
   }
 
   isPlayerNotActivated(){

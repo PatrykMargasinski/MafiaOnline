@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31729.503
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MafiaOnline", "MafiaOnline\MafiaOnline.csproj", "{DE5DA71D-7E6D-44E4-9A93-C15C007A6E4C}"
 EndProject
@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MafiaOnline.DataAccess", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MafiaOnline.BusinessLogic", "MafiaOnline.BusinessLogic\MafiaOnline.BusinessLogic.csproj", "{C3479283-B891-4C17-A3F1-3646864B1277}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiaOnline.Test", "MafiaOnline.Test\MafiaOnline.Test.csproj", "{FC07CE48-44D5-4C59-A0AF-452ADBDE89A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MafiaOnline.Test", "MafiaOnline.Test\MafiaOnline.Test.csproj", "{FC07CE48-44D5-4C59-A0AF-452ADBDE89A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,8 +8,8 @@ namespace MafiaOnline.BusinessLogic.Entities
 {
     public class ResetPasswordRequest
     {
-        public long PlayerId { get;set;}
-        public string Code { get;set;}
+        public string Email { get;set;}
+        public string Token { get;set;}
         public string Password { get; set; }
         public string RepeatedPassword { get; set; }
     }

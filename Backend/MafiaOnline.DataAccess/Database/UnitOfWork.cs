@@ -10,8 +10,6 @@ namespace MafiaOnline.DataAccess.Database
         IAgentForSaleRepository AgentsForSale { get; }
         IMovingAgentRepository MovingAgents { get; }
         IBossRepository Bosses { get; }
-        IPlayerRepository Players { get; }
-        INotActivatedPlayerRepository NotActivatedPlayers { get; }
         IMessageRepository Messages { get; }
         IMissionRepository Missions { get; }
         IMissionTemplateRepository MissionTemplates { get; }
@@ -21,7 +19,6 @@ namespace MafiaOnline.DataAccess.Database
         IMapElementRepository MapElements { get; }
         IExposedMapElementRepository ExposedMapElements { get; }
         IAmbushRepository Ambushes { get; }
-        IRoleRepository Roles { get; }
         INewsRepository News { get; }
     }
     public class UnitOfWork : IUnitOfWork
@@ -35,8 +32,6 @@ namespace MafiaOnline.DataAccess.Database
             AgentsForSale = new AgentForSaleRepository(context);
             MovingAgents = new MovingAgentRepository(context);
             Bosses = new BossRepository(context);
-            Players = new PlayerRepository(context);
-            NotActivatedPlayers = new NotActivatedPlayerRepository(context);
             Missions = new MissionRepository(context);
             MissionTemplates = new MissionTemplateRepository(context);
             PerformingMissions = new PerformingMissionRepository(context);
@@ -46,7 +41,6 @@ namespace MafiaOnline.DataAccess.Database
             MapElements = new MapElementRepository(context);
             ExposedMapElements = new ExposedMapElementRepository(context);
             Ambushes = new AmbushRepository(context);
-            Roles = new RoleRepository(context);
             News = new NewsRepository(context);
         }
 
@@ -54,8 +48,6 @@ namespace MafiaOnline.DataAccess.Database
         public IAgentForSaleRepository AgentsForSale { get; }
         public IMovingAgentRepository MovingAgents { get; }
         public IBossRepository Bosses { get; }
-        public IPlayerRepository Players { get; }
-        public INotActivatedPlayerRepository NotActivatedPlayers { get; }
         public IMissionRepository Missions { get; }
         public IMissionTemplateRepository MissionTemplates { get; }
         public IMessageRepository Messages { get; }
@@ -65,7 +57,6 @@ namespace MafiaOnline.DataAccess.Database
         public IMapElementRepository MapElements { get; }
         public IExposedMapElementRepository ExposedMapElements { get; }
         public IAmbushRepository Ambushes { get; }
-        public IRoleRepository Roles { get; }
         public INewsRepository News { get; }
 
         public void Commit()
