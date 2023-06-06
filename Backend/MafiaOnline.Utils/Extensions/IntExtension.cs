@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MafiaOnline.BusinessLogic.Extensions
+namespace MafiaOnline.Utils.Extensions
 {
     public static class IntegerExtensions
     {

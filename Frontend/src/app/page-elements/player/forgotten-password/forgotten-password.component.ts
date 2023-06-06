@@ -19,7 +19,7 @@ export class ForgottenPasswordComponent implements OnInit {
   ngOnInit(): void {
     this.emailProvided = false;
     this.createResetPasswordCodeRequest = {Email: ""}
-    this.resetPasswordRequest = {Code: "", Password: "", RepeatedPassword: ""}
+    this.resetPasswordRequest = {Token: "", Password: "", RepeatedPassword: "", Email: ""}
   }
 
   createResetPasswordCode()
@@ -29,7 +29,7 @@ export class ForgottenPasswordComponent implements OnInit {
     (
       x=>
       {
-        alert("Code sent");
+        alert("Token sent");
         this.emailProvided = true;
       }
     );
@@ -37,6 +37,7 @@ export class ForgottenPasswordComponent implements OnInit {
 
   resetPassword()
   {
+    this.resetPasswordRequest.Email = this.createResetPasswordCodeRequest.Email;
     this.playerService.resetPassword(this.resetPasswordRequest).subscribe
     (
       x=>alert("Password reseted")

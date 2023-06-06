@@ -23,9 +23,12 @@ export class TokenService {
     return decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
   }
 
-  getRole(){
+  getRoles(){
     const decoded = this.jwtHelper.decodeToken(sessionStorage.getItem("jwtToken"));
-    return decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    var roles = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    if (typeof roles === 'string')
+      roles = [roles];
+    return roles;
   }
 
   removeTokens(){

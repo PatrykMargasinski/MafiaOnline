@@ -36,8 +36,9 @@ export interface CreateResetPasswordCodeRequest
 
 export interface ResetPasswordRequest
 {
-  Code: string,
+  Token: string,
   Password: string,
-  RepeatedPassword: string
+  RepeatedPassword: string,
+  Email: string
 }
 

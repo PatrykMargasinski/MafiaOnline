@@ -1,6 +1,8 @@
 ﻿using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
@@ -28,10 +30,12 @@ namespace MafiaOnline.BusinessLogic.Utils
     {
         private readonly IConfiguration _config;
         private readonly IUnitOfWork _unitOfWork;
-        public TokenUtils(IConfiguration config, IUnitOfWork unitOfWork)
+        private readonly UserManager<Player> _userManager;
+        public TokenUtils(IConfiguration config, IUnitOfWork unitOfWork, UserManager<Player> userManager)
         {
             _config = config;
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
 
@@ -43,14 +47,19 @@ namespace MafiaOnline.BusinessLogic.Utils
             var key = _config.GetValue<string>("Security:AuthKey");
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-            var playerRole = _unitOfWork.Roles.GetByIdAsync(player.RoleId).Result;
+            var playerRoles = _userManager.GetRolesAsync(player).Result;
+            if (playerRoles.Count == 0)
+                throw new Exception("Player role not found");
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, player.Nick),
-                new Claim(ClaimTypes.Role, playerRole.Name),
+                new Claim(ClaimTypes.Name, player.UserName),
                 new Claim(type: "bossId",value: player.BossId.ToString()),
                 new Claim(type: "playerId",value: player.Id.ToString())
             };
+
+            //adding roles to token
+            foreach(string role in playerRoles)
+                claims.Add(new Claim(ClaimTypes.Role, role));   
 
             var tokenOptions = new JwtSecurityToken(
                 expires: DateTime.Now.AddHours(1),
@@ -104,9 +113,8 @@ namespace MafiaOnline.BusinessLogic.Utils
             var datas = new TokenDatas()
             {
                 BossId = long.Parse(claims.FirstOrDefault(x => x.Type == "bossId").Value),
-                PlayerId = long.Parse(claims.FirstOrDefault(x => x.Type == "playerId").Value),
-                PlayerNick = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value,
-                PlayerRole = claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value
+                UserName = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value,
+                PlayerRoles = claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList(),
             };
             return datas;
         }

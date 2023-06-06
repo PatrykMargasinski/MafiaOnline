@@ -1,4 +1,5 @@
 using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace MafiaOnline.DataAccess.Database
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Role>().HasData(PrepareRoles());
+            modelBuilder.Entity<IdentityRole>().HasData(PrepareRoles());
             modelBuilder.Entity<Boss>().HasData(PrepareBosses());
             modelBuilder.Entity<Player>().HasData(PreparePlayers());
             modelBuilder.Entity<Agent>().HasData(PrepareAgents());
@@ -20,6 +21,7 @@ namespace MafiaOnline.DataAccess.Database
             modelBuilder.Entity<MapElement>().HasData(PrepareMapElements());
             modelBuilder.Entity<Headquarters>().HasData(PrepareHeadquarters());
             modelBuilder.Entity<News>().HasData(PrepareNews());
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(PreparePlayerRoles());
         }
 
         private static IList<News> PrepareNews()
@@ -44,20 +46,32 @@ namespace MafiaOnline.DataAccess.Database
             };
         }
 
-        private static IList<Role> PrepareRoles()
+        private static IList<IdentityRole> PrepareRoles()
         {
-            return new List<Role>
+            return new List<IdentityRole>
             {
-                new Role {Id=1, Name="Administrator" },
-                new Role {Id=2, Name="Player"  }
+                new IdentityRole {Id="2c5e174e-3b0e-446f-86af-483d56fd7210", Name="Administrator", NormalizedName="ADMINISTRATOR" },
+                new IdentityRole {Id="2c5e174e-3b0e-1234-86af-483d56fd7210", Name="Player" , NormalizedName="PLAYER" }
             };
         }
 
         private static IList<Player> PreparePlayers()
         {
-            return new List<Player> {
-                new Player{Id=1, Nick="mafia", HashedPassword="tlnK6HiwFF4+b4DRVaVdRlIPtzduirsf8W3+nbXlLWlf9c/J", Email="mafiaonlineteam@gmail.com", BossId=1, RoleId=1, State = PlayerState.Activated}, //password: a
-                new Player{Id=2, Nick="tomek", HashedPassword="d2JZt0Jz9UzgW1l544W2WnOaX14u/pfGUDYTQzv5AEWk3W7D", Email="mafiaonlineteam2@gmail.com", BossId=2, RoleId=1, State = PlayerState.Activated} //password: b
+            var hasher = new PasswordHasher<Player>();
+            var players = new List<Player>{
+                new Player{Id="8e445865-a24d-4543-a6c6-9443d048cdb9", UserName="mafia", NormalizedUserName="MAFIA", Email="mafiaonlineteam@gmail.com", NormalizedEmail="MAFIAONLINETEAM@GMAIL.COM", BossId=1},
+                new Player{Id="8e445865-a24d-4543-1234-9443d048cdb9", UserName="tomek", NormalizedUserName="TOMEK", Email="mafiaonlineteam2@gmail.com", NormalizedEmail="MAFIAONLINETEAM2@GMAIL.COM", BossId=2}
+            };
+            players.ForEach(x => x.PasswordHash = hasher.HashPassword(x, "a"));
+            return players;
+        }
+
+        private static IList<IdentityUserRole<string>> PreparePlayerRoles()
+        {
+            return new List<IdentityUserRole<string>>
+            {
+                new IdentityUserRole<string> {RoleId="2c5e174e-3b0e-446f-86af-483d56fd7210", UserId="8e445865-a24d-4543-a6c6-9443d048cdb9" },
+                new IdentityUserRole<string> {RoleId="2c5e174e-3b0e-446f-86af-483d56fd7210", UserId="8e445865-a24d-4543-1234-9443d048cdb9" }
             };
         }
 

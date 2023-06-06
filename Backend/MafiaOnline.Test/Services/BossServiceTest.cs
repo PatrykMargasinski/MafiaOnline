@@ -57,7 +57,7 @@ namespace MafiaOnline.Test.Repositories
         [AutoMoqData]
         public async Task Check_If_GetBossDatas_Works_Correctly()
         {
-            BossService sut = new BossService(_unitOfWork, _mapper);
+            BossService sut = new BossService(_unitOfWork, _mapper, null, null);
             var bossDatas = await sut.GetBossDatas(1);
             Assert.IsNotNull(bossDatas);
         }
@@ -72,7 +72,7 @@ namespace MafiaOnline.Test.Repositories
                 .ForEach(b => fixture.Behaviors.Remove(b));
             fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            BossService sut = new BossService(_unitOfWork, _mapper);
+            BossService sut = new BossService(_unitOfWork, _mapper, null, null);
             for(int i=0;i<10;i++)
             {
 
@@ -102,7 +102,7 @@ namespace MafiaOnline.Test.Repositories
                 .ForEach(b => fixture.Behaviors.Remove(b));
             fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            BossService sut = new BossService(_unitOfWork, _mapper);
+            BossService sut = new BossService(_unitOfWork, _mapper, null, null);
 
             var someLastNames = new string[] { "Melody", "Melster", "Medusa", "Meluse" };
 

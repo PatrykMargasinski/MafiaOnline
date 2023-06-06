@@ -13,12 +13,11 @@ export class GuardService implements CanActivate{
   constructor(private router: Router, private jwtHelper: JwtHelperService, private http: HttpClient) { }
 
   async canActivate(){
-    await this.checkIfPlayerNotActivated();
-
     const token = sessionStorage.getItem("jwtToken");
-    if(token && !this.jwtHelper.isTokenExpired(token)){
+    if(token && !this.jwtHelper.isTokenExpired(token, 60)){
       return true
     }
+
     const isRefreshSuccess = await this.tryRefreshingTokens(token);
     if (!isRefreshSuccess) {
       this.router.navigateByUrl("");
@@ -32,17 +31,17 @@ export class GuardService implements CanActivate{
     if (!token || !refreshToken) {
       return false;
     }
-    const credentials = JSON.stringify({ accessToken: token, refreshToken: refreshToken });
+    const credentials = JSON.stringify({ Token: token, RefreshToken: refreshToken });
     let isRefreshSuccess: boolean;
     try {
-      const response = await this.http.post(environment.APIEndpoint+"/token/refresh", credentials, {
+      const response = await this.http.post(environment.APIEndpoint+"/refreshToken", credentials, {
         headers: new HttpHeaders({
           "Content-Type": "application/json"
         }),
         observe: 'response'
         }).toPromise();
-      const newToken = (<any>response).body.accessToken;
-      const newRefreshToken = (<any>response).body.refreshToken;
+      const newToken = (<any>response).body.Token;
+      const newRefreshToken = (<any>response).body.RefreshToken;
       sessionStorage.setItem("jwtToken", newToken);
       sessionStorage.setItem("refreshToken", newRefreshToken);
       isRefreshSuccess = true;
@@ -51,14 +50,5 @@ export class GuardService implements CanActivate{
       isRefreshSuccess = false;
     }
     return isRefreshSuccess;
-  }
-
-
-  async checkIfPlayerNotActivated(): Promise<void> {
-    const notActivated = await this.http.get<boolean>(environment.APIEndpoint+"/notactivated").toPromise();
-      if(notActivated)
-        sessionStorage.setItem("notActivated", "1");
-      else
-        sessionStorage.setItem("notActivated", null);
   }
 }
