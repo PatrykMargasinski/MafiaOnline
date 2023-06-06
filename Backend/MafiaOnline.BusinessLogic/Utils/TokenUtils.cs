@@ -2,6 +2,7 @@
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
@@ -113,7 +114,7 @@ namespace MafiaOnline.BusinessLogic.Utils
             {
                 BossId = long.Parse(claims.FirstOrDefault(x => x.Type == "bossId").Value),
                 UserName = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value,
-                PlayerRole = claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value
+                PlayerRoles = claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList(),
             };
             return datas;
         }

@@ -81,5 +81,12 @@ namespace MafiaOnline.Controllers
             await _playerService.ResetPassword(request);
             return Ok();
         }
+
+        [HttpPost("/refreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody] Tokens tokens)
+        {
+            var newTokens = await _playerService.RefreshToken(tokens);
+            return Ok(newTokens);
+        }
     }
 }

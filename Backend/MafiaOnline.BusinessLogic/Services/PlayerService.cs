@@ -34,6 +34,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task CreateAndSendActivationLink(Player player, string apiUrl);
         Task ResetPassword(ResetPasswordRequest request);
         Task CreateAndSendResetPasswordCode(CreateResetPasswordCodeRequest request);
+        Task<Tokens> RefreshToken(Tokens tokenApiModel);
     }
 
     public class PlayerService : IPlayerService
@@ -88,7 +89,7 @@ namespace MafiaOnline.BusinessLogic.Services
             var token = _tokenUtils.CreateToken(player);
             var refreshToken = _tokenUtils.GenerateRefreshToken();
             player.RefreshToken = refreshToken;
-            player.RefreshTokenExpiryTime = DateTime.Now.AddHours(1);
+            player.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(1);
             var boss = await _unitOfWork.Bosses.GetByIdAsync(player.BossId);
             boss.LastSeen = DateTime.Now;
             _unitOfWork.Commit();
@@ -303,5 +304,44 @@ namespace MafiaOnline.BusinessLogic.Services
             else
                 throw new Exception(string.Join(Environment.NewLine, result.Errors.Select(x => x.Description)));
         }
+
+        /// <summary>
+        /// Refreshes token
+        /// </summary>
+        public async Task<Tokens> RefreshToken(Tokens tokenApiModel)
+        {
+            if (tokenApiModel == null)
+                throw new Exception("Invalid client request");
+
+            string accessToken = tokenApiModel.Token;
+            string refreshToken = tokenApiModel.RefreshToken;
+
+            var principal = _tokenUtils.GetPrincipalFromExpiredToken(accessToken);
+            var username = principal.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+                throw new Exception("Invalid client request");
+
+            if (user.RefreshToken != refreshToken)
+                throw new Exception("Invalid refresh token");
+
+            if (user.RefreshTokenExpiryTime <= DateTime.Now)
+                throw new Exception("Token expiry time timed out");
+
+            var newAccessToken = _tokenUtils.CreateToken(user);
+            var newRefreshToken = _tokenUtils.GenerateRefreshToken();
+
+            user.RefreshToken = newRefreshToken;
+            _unitOfWork.Commit();
+
+            return new Tokens()
+            {
+                Token = newAccessToken,
+                RefreshToken = newRefreshToken
+            };
+        }
+
     }
 }

@@ -10,6 +10,6 @@ namespace MafiaOnline.BusinessLogic.Entities
     {
         public long BossId { get; set; }
         public string UserName { get; set; }
-        public string PlayerRole { get; set; }
+        public List<string> PlayerRoles { get; set; }
     }
 }

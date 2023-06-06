@@ -7,6 +7,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MafiaOnline.ErrorHandling.Exceptions;
+using Castle.Core.Logging;
+using MafiaOnline.BusinessLogic.Services;
+using Microsoft.Extensions.Logging;
 
 namespace MafiaOnline.ErrorHandling
 {
@@ -25,10 +28,12 @@ namespace MafiaOnline.ErrorHandling
     public class ErrorHandlingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
-        public ErrorHandlingMiddleware(RequestDelegate next)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -39,22 +44,29 @@ namespace MafiaOnline.ErrorHandling
             }
             catch (HttpStatusCodeException ex)
             {
-                await WriteExceptionAsync(context, ex.ToErrorDetails());
+                await WriteExceptionAsync(context, ex);
             }
             catch (Exception ex)
             {
-                await WriteExceptionAsync(context, ex.ToErrorDetails());
+                await WriteExceptionAsync(context, ex);
             }
         }
 
-        private Task WriteExceptionAsync(HttpContext context, ErrorDetails errorDetails)
+        private Task WriteExceptionAsync(HttpContext context, Exception ex)
         {
-            string errorDetailsJson = JsonConvert.SerializeObject(errorDetails, new JsonSerializerSettings
+            string errorDetailsJson = JsonConvert.SerializeObject(ex.ToErrorDetails(), new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             });
 
-            context.Response.StatusCode = (int)errorDetails.StatusCode;
+            _logger.LogDebug("TestDebug");
+            _logger.LogInformation("TestInfor");
+
+            var test = ex.ToString();
+
+            _logger.LogError(ex.ToString());
+
+            context.Response.StatusCode = (int)ex.ToErrorDetails().StatusCode;
             context.Response.ContentType = "application/json";
 
             return context.Response.WriteAsync(errorDetailsJson);
