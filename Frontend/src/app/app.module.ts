@@ -49,6 +49,8 @@ import { NewsComponent } from './pages/news/news.component';
 import { CreateNewsComponent } from './pages/news/create-news/create-news.component';
 import { NotActivatedPlayerComponent } from './page-elements/player/not-activated-player/not-activated-player.component';
 import { ForgottenPasswordComponent } from './page-elements/player/forgotten-password/forgotten-password.component';
+import { JobComponent } from './pages/job/job.component';
+import { ActiveJobsComponent } from './pages/job/active-jobs/active-jobs.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -94,7 +96,9 @@ export function tokenGetter(){
     NewsComponent,
     CreateNewsComponent,
     NotActivatedPlayerComponent,
-    ForgottenPasswordComponent
+    ForgottenPasswordComponent,
+    JobComponent,
+    ActiveJobsComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,20 @@
+<br><h3>Active jobs</h3>
+Jobs, which will be executed
+<br>
+<br>
+<table class="table table-striped text-center">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Execution Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let job of Jobs">
+      <td>{{job.Name}}</td>
+      <td>{{job.Description}}</td>
+      <td>{{job.ExecutionTime}}</td>
+    </tr>
+  </tbody>
+</table>

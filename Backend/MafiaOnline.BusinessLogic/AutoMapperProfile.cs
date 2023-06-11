@@ -2,6 +2,7 @@
 using MafiaOnline.BusinessLogic.Entities;
 using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.DataAccess.Entities;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +81,6 @@ namespace MafiaOnline.BusinessLogic
             CreateMap<Headquarters, HeadquartersDTO>()
                 .ForMember(x => x.BossFirstName, y => y.MapFrom(z=>z.Boss.FirstName))
                 .ForMember(x => x.BossLastName, y => y.MapFrom(z => z.Boss.LastName));
-
         }
 
         public AutoMapperProfile()

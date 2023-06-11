@@ -28,6 +28,8 @@ import { MapComponent } from './pages/map/map.component';
 import { ShowMapComponent } from './pages/map/show-map/show-map.component';
 import { AmbushingAgentsComponent } from './pages/agent/ambushing-agents/ambushing-agents.component';
 import { NewsComponent } from './pages/news/news.component';
+import { JobComponent } from './pages/job/job.component';
+import { ActiveJobsComponent } from './pages/job/active-jobs/active-jobs.component';
 
 
 
@@ -71,6 +73,10 @@ const routes: Routes = [
   {path:'news',component: NewsComponent, canActivate: [GuardService], children:
   [
     {path: 'create', component: CreateNewsComponent}
+  ]},
+  {path:'job',component: JobComponent, canActivate: [GuardService], children:
+  [
+    {path: 'active', component: ActiveJobsComponent}
   ]}
 
 ];

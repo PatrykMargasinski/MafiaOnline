@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Backend/MafiaOnline/.config/dotnet-tools.json
+/Backend/MafiaOnline/appsettings.Development.json
+/Backend/MafiaOnline/appsettings.Production.json
+/Backend/MafiaOnline/Properties/PublishProfiles

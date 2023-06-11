@@ -50,6 +50,11 @@
         class="m-1 btn btn-light btn-outline-warning" Button>News</button>
       </li>
 
+      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Administrator')">
+        <button routerLink="job/active"
+        class="m-1 btn btn-light btn-outline-warning" Button>Jobs</button>
+      </li>
+
       <li class="nav-item" *ngIf="isUserAuthenticated() ">
         <button routerLink="" (click)="logOut()"
         class="m-1 btn btn-dark btn-outline-primary" Button>Logout</button>
