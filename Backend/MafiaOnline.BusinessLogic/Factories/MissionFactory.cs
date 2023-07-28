@@ -73,7 +73,7 @@ namespace MafiaOnline.BusinessLogic.Factories
             };
 
             var missionPosition = _mapUtils.GetNewMissionPosition().Result;
-            var mapElement = new MapElement() { X = missionPosition.X, Y = missionPosition.Y, Type = MapElementType.Mission };
+            var mapElement = new MapElement() { X = missionPosition.X, Y = missionPosition.Y, Type = MapElementType.Mission, Description = $"Mission: {mission.Name}" };
             mission.MapElement = mapElement;
 
             return mission;

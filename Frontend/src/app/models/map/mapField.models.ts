@@ -5,5 +5,6 @@ export interface MapField
   Y: number,
   TerrainType: number,
   MapElementType : number,
-  Owner: number
+  Owner: number,
+  Description: string
 }

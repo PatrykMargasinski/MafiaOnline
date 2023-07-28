@@ -21,7 +21,7 @@ namespace MafiaOnline.BusinessLogic.Services
     public interface IMissionService
     {
         Task StartMission(StartMissionRequest request);
-        Task<PerformingMission> DoMission(long agentId, long missionId, Point[] path);
+        Task<PerformingMission> CreatePerformingMissionInstance(long agentId, long missionId, Point[] path);
         Task EndMission(long pmId);
         Task<MissionDTO> GetMissionByMapElement(long mapElementId);
         Task<IList<MissionDTO>> GetAvailableMissions();
@@ -85,11 +85,10 @@ namespace MafiaOnline.BusinessLogic.Services
         public async Task StartMission(StartMissionRequest request)
         {
             var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
-            var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
             var mission = await _unitOfWork.Missions.GetByIdAsync(request.MissionId);
             try
             {
-                var pm = await DoMission(request.AgentId, request.MissionId, request.Path);
+                var pm = await CreatePerformingMissionInstance(request.AgentId, request.MissionId, request.Path);
                 await _jobRunner.Start(_scheduler, pm.Id, pm.CompletionTime);
             }
             catch(Exception ex)
@@ -101,7 +100,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 messageContent += ", but there are reasons why he couldn't:\n";
                 messageContent += $"{ex.Message}\n\n";
                 messageContent += "The agent returns to the headquarters";
-                await _reporter.CreateReport(boss.Id, "The agent returns to the headquarters", messageContent);
+                await _reporter.CreateReport(agent.BossId.Value, "The agent returns to the headquarters", messageContent);
                 agent.State = AgentState.Active;
                 _unitOfWork.Commit();
                 return;
@@ -111,16 +110,15 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Creates PerformingMission instance
         /// </summary>
-        public async Task<PerformingMission> DoMission(long agentId, long missionId, Point[] path)
+        public async Task<PerformingMission> CreatePerformingMissionInstance(long agentId, long missionId, Point[] path)
         {
 
             await _missionValidator.ValidateDoMission(agentId, missionId);
 
             var mission = await _unitOfWork.Missions.GetByIdAsync(missionId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
-            var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
 
-            await _reporter.CreateReport(boss.Id, 
+            await _reporter.CreateReport(agent.BossId.Value, 
                 $"Agent {agent.FullName} starts mission {mission.Name}", 
                 $"Agent {agent.FullName} starts mission {mission.Name}. He/she will finish it in {mission.Duration} seconds and after it he/she will go back to the headquarters");
 
@@ -136,7 +134,7 @@ namespace MafiaOnline.BusinessLogic.Services
             agent.State = AgentState.OnMission;
             mission.State = MissionState.Performing;
             var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
-            mapElement.Boss = boss;
+            mapElement.Boss = agent.Boss;
             _unitOfWork.PerformingMissions.Create(performingMission);
             _unitOfWork.Commit();
             return performingMission;
@@ -150,11 +148,9 @@ namespace MafiaOnline.BusinessLogic.Services
             await _missionValidator.ValidateEndMission(pmId);
 
             PerformingMission pm = await _unitOfWork.PerformingMissions.GetByIdAsync(pmId);
-            Agent agent = await _unitOfWork.Agents.GetByIdAsync(pm.AgentId);
-            Mission mission = await _unitOfWork.Missions.GetByIdAsync(pm.MissionId);
-
-            long bossId = agent.BossId.Value;
-            Boss boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
+            Agent agent = pm.Agent;
+            Mission mission = pm.Mission;
+            Boss boss = agent.Boss;
             string info = "Agent " + agent.FirstName + " " + agent.LastName +
                 " has finished mission: " + mission.Name;
 
@@ -189,7 +185,7 @@ namespace MafiaOnline.BusinessLogic.Services
             }
 
             _unitOfWork.PerformingMissions.DeleteById(pm.Id);
-            await _reporter.CreateReport(bossId, "Mission completed: " + mission.Name, info);
+            await _reporter.CreateReport(boss.Id, "Mission completed: " + mission.Name, info);
 
             _unitOfWork.Commit();
         }

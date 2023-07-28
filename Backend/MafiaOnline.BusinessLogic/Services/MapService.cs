@@ -65,6 +65,7 @@ namespace MafiaOnline.BusinessLogic.Services
                         map[i * size + j].MapElementType = mapElement.Type;
                         map[i * size + j].Id = mapElement.Id;
                         map[i * size + j].Owner = mapElement.BossId;
+                        map[i * size + j].Description = mapElement.Description;
                     }
                     else
                     {

@@ -1,52 +1,52 @@
-<form class=" form-signin container-fluid col-6 border border-dark align-middle justify-content-center mt-2" #registerForm="ngForm" (ngSubmit)="register(registerForm)">
+<form #registerForm="ngForm" (ngSubmit)="register(registerForm)">
 	<div class="p-4">
-		<div class="form-group">
+		<div class="form-outline mb-4">
 			<label for="nick">Nick</label>
 			<input class="form-control" id="nick" name="nick" placeholder="Nick required" ngModel class="form-control">
 		</div>
 
-    <div class="form-group mt-4">
+    <div class="form-outline mb-4">
 			<label for="password">Email</label>
 			<input class="form-control" type="email" id="email" placeholder="Email required" name="email" ngModel class="form-control">
 		</div>
 
-		<div class="form-group mt-4">
+		<div class="form-outline mb-4">
 			<label for="password">Password</label>
 			<input class="form-control" type="password" id="password" placeholder="Password required" name="password" ngModel class="form-control">
 		</div>
 
-		<div class="form-group mt-4">
+		<div class="form-outline mb-4">
 			<label for="fisrtname">Boss's first name</label>
 			<input class="form-control" id="firstname" placeholder="First name required" name="firstname" ngModel class="form-control">
 		</div>
 
-		<div class="form-group mt-4">
+		<div class="form-outline mb-4">
 			<label for="lastname">Boss's last name</label>
 			<input class="form-control" id="lastname" placeholder="Last name required" name="lastname" ngModel class="form-control">
 		</div>
 
-    <div class="form-group mt-4">
+    <div class="form-outline mb-4">
 			<label for="agent2">Headquarters name</label>
 			<input class="form-control" id="headquartersName" placeholder="Agent firstname required" name="headquartersName" ngModel class="form-control">
 		</div>
 
-		<div class="form-group mt-4">
+		<div class="form-outline mb-4">
 			<label for="agent1">First agent firstname</label>
 			<input class="form-control" id="agent1" placeholder="Agent firstname required" name="agent1" ngModel class="form-control">
 		</div>
 
-		<div class="form-group mt-4">
+		<div class="form-outline mb-4">
 			<label for="agent2">Second agent firstname</label>
 			<input class="form-control" id="agent2" placeholder="Agent firstname required" name="agent2" ngModel class="form-control">
 		</div>
 
-		<div class="form-group mt-4">
+		<div class="form-outline mb-4">
 			<label for="agent2">Third agent firstname</label>
 			<input class="form-control" id="agent3" placeholder="Agent firstname required" name="agent3" ngModel class="form-control">
 		</div>
 
-		<div class="text-center mt-3">
-			<button class="btn btn btn-outline-dark rounded-5 col-10" type="submit">Register</button>
+		<div class="form-outline mb-4">
+			<button class="btn btn btn-outline-dark rounded-5 col-12" type="submit">Register</button>
 		</div>
 	</div>
 </form>

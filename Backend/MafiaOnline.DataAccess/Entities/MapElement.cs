@@ -21,6 +21,7 @@ namespace MafiaOnline.DataAccess.Entities
         public MapElementType Type { get; set; }
         public long? BossId { get; set; }
         public bool Hidden { get; set; }
+        public string Description { get; set; }
         public virtual Boss Boss { get; set; }
         public virtual Headquarters Headquarters { get; set; }
         public virtual Mission Mission { get; set; }

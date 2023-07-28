@@ -26,6 +26,8 @@ export class ShowMapComponent implements OnInit {
   mapMode: number = 0 //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
+  mapElementDescription: string = "Select map element to get it's description"
+
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
         if(params['x']!=null && params['y']!=null)
@@ -48,6 +50,19 @@ export class ShowMapComponent implements OnInit {
             })
         }
       });
+  }
+
+  onMouseEnter(mapField: MapField)
+  {
+    this.setDescriptionOfMapElement(mapField);
+  }
+
+  setDescriptionOfMapElement(mapField: MapField)
+  {
+    let description: string = `Position: [${mapField.Y},${mapField.X}]`
+    if(mapField.Description != null)
+      description += `  ${mapField.Description}`;
+    this.mapElementDescription = description;
   }
 
   closeAndRefresh(operation: number) {

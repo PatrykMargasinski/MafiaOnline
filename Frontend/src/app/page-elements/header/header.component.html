@@ -2,64 +2,64 @@
   <div class="row">
     <img src="../../../assets/mafiaOnlineLogo.png" alt="Mafia Online" style="width:20%;height:20%;text-align: center; margin-left: auto; margin-right: auto;">
   </div>
-  <nav class="navbar navbar-expand-sm bg-light navbar-dark">
-  <ul class="navbar-nav">
-      <li class="nav-item" *ngIf="!isUserAuthenticated()">
-        <button routerLink=""
-        class="m-1 btn btn-light btn-outline-primary" Button>Home</button>
-      </li>
-      <li class="nav-item" *ngIf="!isUserAuthenticated()">
-        <button routerLink="login"
-        class="m-1 btn btn-light btn-outline-primary" Button>Login</button>
-      </li>
-      <li class="nav-item" *ngIf="!isUserAuthenticated()">
-        <button routerLink="register"
-        class="m-1 btn btn-light btn-outline-primary" Button>Register</button>
-      </li>
-      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
-        <button routerLink="boss/aboutBoss"
-        class="m-1 btn btn-light btn-outline-primary" Button>Bosses</button>
-      </li>
-      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
-          <button routerLink="agent/available"
-          class="m-1 btn btn-light btn-outline-primary" Button>Agents</button>
-      </li>
+  <nav class="navbar navbar-expand-sm bg-light navbar-dark" >
+    <ul class="navbar-nav flex-wrap">
+        <li class="nav-item" *ngIf="!isUserAuthenticated()">
+          <button routerLink=""
+          class="m-1 btn btn-light btn-outline-primary" Button>Home</button>
+        </li>
+        <li class="nav-item" *ngIf="!isUserAuthenticated()">
+          <button routerLink="login"
+          class="m-1 btn btn-light btn-outline-primary" Button>Login</button>
+        </li>
+        <li class="nav-item" *ngIf="!isUserAuthenticated()">
+          <button routerLink="register"
+          class="m-1 btn btn-light btn-outline-primary" Button>Register</button>
+        </li>
+        <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
+          <button routerLink="boss/aboutBoss"
+          class="m-1 btn btn-light btn-outline-primary" Button>Bosses</button>
+        </li>
+        <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
+            <button routerLink="agent/available"
+            class="m-1 btn btn-light btn-outline-primary" Button>Agents</button>
+        </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
-          <button routerLink="mission/available"
-          class="m-1 btn btn-light btn-outline-primary" Button>Missions</button>
-      </li>
+        <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
+            <button routerLink="mission/available"
+            class="m-1 btn btn-light btn-outline-primary" Button>Missions</button>
+        </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
-        <button routerLink="map/showMap"
-        class="m-1 btn btn-light btn-outline-primary" Button>Map</button>
-      </li>
+        <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
+          <button routerLink="map/showMap"
+          class="m-1 btn btn-light btn-outline-primary" Button>Map</button>
+        </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
-        <button routerLink="message/messages"
-        class="m-1 btn btn-light btn-outline-primary" Button>Messages</button>
-      </li>
+        <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
+          <button routerLink="message/messages"
+          class="m-1 btn btn-light btn-outline-primary" Button>Messages</button>
+        </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
-        <button routerLink="accountSettings/changePassword"
-        class="m-1 btn btn-light btn-outline-primary" Button>Account settings</button>
-      </li>
+        <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
+          <button routerLink="accountSettings/changePassword"
+          class="m-1 btn btn-light btn-outline-primary" Button>Account settings</button>
+        </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Administrator')">
-        <button routerLink="news/create"
-        class="m-1 btn btn-light btn-outline-warning" Button>News</button>
-      </li>
+        <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Administrator')">
+          <button routerLink="news/create"
+          class="m-1 btn btn-light btn-outline-warning" Button>News</button>
+        </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Administrator')">
-        <button routerLink="job/active"
-        class="m-1 btn btn-light btn-outline-warning" Button>Jobs</button>
-      </li>
+        <li class="nav-item" *ngIf="isUserAuthenticated() && hasRole('Administrator')">
+          <button routerLink="job/active"
+          class="m-1 btn btn-light btn-outline-warning" Button>Jobs</button>
+        </li>
 
-      <li class="nav-item" *ngIf="isUserAuthenticated() ">
-        <button routerLink="" (click)="logOut()"
-        class="m-1 btn btn-dark btn-outline-primary" Button>Logout</button>
-      </li>
-  </ul>
+        <li class="nav-item" *ngIf="isUserAuthenticated() ">
+          <button routerLink="" (click)="logOut()"
+          class="m-1 btn btn-dark btn-outline-primary" Button>Logout</button>
+        </li>
+    </ul>
   </nav>
   <app-not-activated-player *ngIf="isUserAuthenticated() && isPlayerNotActivated()"></app-not-activated-player>
 </header>

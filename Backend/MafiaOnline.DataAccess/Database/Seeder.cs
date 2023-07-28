@@ -298,15 +298,15 @@ namespace MafiaOnline.DataAccess.Database
         {
             return new List<MapElement>
             {
-                new MapElement (){Id=1, Type = MapElementType.Headquarters, X = 2, Y = 1, BossId=1 },
-                new MapElement (){Id=2, Type = MapElementType.Headquarters, X = 14, Y = 1, BossId=2 },
-                new MapElement (){Id=3, Type = MapElementType.Mission, X = 1, Y = 3 },
-                new MapElement (){Id=4, Type = MapElementType.Mission, X = 3, Y = 5 },
-                new MapElement (){Id=5, Type = MapElementType.Mission, X = 3, Y = 7 },
-                new MapElement (){Id=6, Type = MapElementType.Mission, X = 5, Y = 3 },
-                new MapElement (){Id=7, Type = MapElementType.Mission, X = 14, Y = 1 },
-                new MapElement (){Id=8, Type = MapElementType.Mission, X = 13, Y = 3 },
-                new MapElement (){Id=9, Type = MapElementType.Mission, X = 14, Y = 5 },
+                new MapElement (){Id=1, Type = MapElementType.Headquarters, X = 2, Y = 1, BossId=1, Description="Headquarters of Patricio Rico" },
+                new MapElement (){Id=2, Type = MapElementType.Headquarters, X = 14, Y = 1, BossId=2, Description="Headquarters of Rodrigo Margherita"},
+                new MapElement (){Id=3, Type = MapElementType.Mission, X = 1, Y = 3, Description="Mission: Bank robbery" },
+                new MapElement (){Id=4, Type = MapElementType.Mission, X = 3, Y = 5, Description="Mission: Senator assassination" },
+                new MapElement (){Id=5, Type = MapElementType.Mission, X = 3, Y = 7, Description="Mission: Party"  },
+                new MapElement (){Id=6, Type = MapElementType.Mission, X = 5, Y = 3, Description="Mission: Buy a coffee"  },
+                new MapElement (){Id=7, Type = MapElementType.Mission, X = 14, Y = 1, Description="Mission: Money laundering"  },
+                new MapElement (){Id=8, Type = MapElementType.Mission, X = 13, Y = 3, Description="Mission: Car theft"  },
+                new MapElement (){Id=9, Type = MapElementType.Mission, X = 14, Y = 5, Description="Mission: Arms trade"  },
             };
         }
     }

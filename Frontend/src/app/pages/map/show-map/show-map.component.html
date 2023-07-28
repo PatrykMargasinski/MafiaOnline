@@ -1,7 +1,7 @@
 <br><h3>Show map</h3><br>
 
-<br><h5>Edge: {{edgeY}} {{edgeX}}</h5><br>
-
+<br><h5>Edge: {{edgeY}} {{edgeX}}</h5>
+{{mapElementDescription}}<br>
 <div>
   <div class="container col-1 p-0" style="margin-left: auto; margin-right: auto;">
     <img src="../../../../assets/arrow.png" alt="Arrow up" style="width:100%;height:100%;" (click)="moveUp()">
@@ -14,7 +14,8 @@
 
     <div class="container col-10 p-0">
       <div *ngFor="let item of mapFields">
-        <div class="terrainDiv" [style.background]="getTerrainColor(item.X, item.Y, item.TerrainType)" (click)="mapFieldClick(item.Id, item.X, item.Y, item.MapElementType, item.TerrainType)">
+        <div class="terrainDiv" [style.background]="getTerrainColor(item.X, item.Y, item.TerrainType)" (click)="mapFieldClick(item.Id, item.X, item.Y, item.MapElementType, item.TerrainType)"
+        (mouseenter)="onMouseEnter(item)">
           <div *ngIf="item.MapElementType==1">
             <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myheadquarters.png" alt="MH" style="max-width: 90%; max-height: 90%" (click)="mapElementClick(item.Id, item.MapElementType)">
             <img *ngIf="item.Owner != getBossId()" src="../../../../assets/headquarters.png" alt="H" style="max-width: 90%; max-height: 90%;" (click)="mapElementClick(item.Id, item.MapElementType)">
