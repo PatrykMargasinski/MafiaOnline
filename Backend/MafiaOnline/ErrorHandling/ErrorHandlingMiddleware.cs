@@ -59,11 +59,6 @@ namespace MafiaOnline.ErrorHandling
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             });
 
-            _logger.LogDebug("TestDebug");
-            _logger.LogInformation("TestInfor");
-
-            var test = ex.ToString();
-
             _logger.LogError(ex.ToString());
 
             context.Response.StatusCode = (int)ex.ToErrorDetails().StatusCode;

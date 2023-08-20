@@ -30,6 +30,11 @@ import { AmbushingAgentsComponent } from './pages/agent/ambushing-agents/ambushi
 import { NewsComponent } from './pages/news/news.component';
 import { JobComponent } from './pages/job/job.component';
 import { ActiveJobsComponent } from './pages/job/active-jobs/active-jobs.component';
+import { HowToPlayComponent } from './pages/how-to-play/how-to-play.component';
+import { HowToPlayAgentsComponent } from './pages/how-to-play/how-to-play-agents/how-to-play-agents.component';
+import { HowToPlayIntroductionComponent } from './pages/how-to-play/how-to-play-introduction/how-to-play-introduction.component';
+import { HowToPlayMapComponent } from './pages/how-to-play/how-to-play-map/how-to-play-map.component';
+import { HowToPlayMissionComponent } from './pages/how-to-play/how-to-play-mission/how-to-play-mission.component';
 
 
 
@@ -77,6 +82,14 @@ const routes: Routes = [
   {path:'job',component: JobComponent, canActivate: [GuardService], children:
   [
     {path: 'active', component: ActiveJobsComponent}
+  ]}
+  ,
+  {path:'howToPlay',component: HowToPlayComponent, children:
+  [
+    {path: 'agents', component: HowToPlayAgentsComponent},
+    {path: 'introduction', component: HowToPlayIntroductionComponent},
+    {path: 'map', component: HowToPlayMapComponent},
+    {path: 'missions', component: HowToPlayMissionComponent},
   ]}
 
 ];

@@ -11,7 +11,7 @@ namespace MafiaOnline.DataAccess.Repositories
 {
     public interface IBossRepository : ICrudRepository<Boss>
     {
-        Task<IList<Boss>> GetBestBosses(int from, int to);
+        Task<IList<VBossWithPosition>> GetBestBosses(int from, int to);
         Task<IList<Boss>> GetByLastName(string lastName);
         Task<Boss> GetByFullName(string fullName);
         Task<IList<string>> GetSimilarBossFullNames(string startingWithString);
@@ -25,9 +25,9 @@ namespace MafiaOnline.DataAccess.Repositories
 
         }
 
-        public async Task<IList<Boss>> GetBestBosses(int from, int to)
+        public async Task<IList<VBossWithPosition>> GetBestBosses(int from, int to)
         {
-            var bosses = await _context.Bosses
+            var bosses = await _context.VBossRanking
                 .OrderByDescending(x => x.Money)
                 .Skip(from)
                 .Take(to - from)

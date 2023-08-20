@@ -26,6 +26,7 @@ namespace MafiaOnline.Test.Database
             Agents = new AgentRepository(context);
             AgentsForSale = new AgentForSaleRepository(context);
             Bosses = new BossRepository(context);
+            VBosses = new VBossRepository(context);
             Messages = new MessageRepository(context);
             Missions = new MissionRepository(context);
             MissionTemplates = new MissionTemplateRepository(context);
@@ -66,6 +67,7 @@ namespace MafiaOnline.Test.Database
         public IAmbushRepository Ambushes { get; }
 
         public INewsRepository News { get; }
+        public IVBossRepository VBosses { get; }
 
         public void Commit()
         {

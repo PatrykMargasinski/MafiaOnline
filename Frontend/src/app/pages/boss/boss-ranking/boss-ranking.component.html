@@ -5,6 +5,7 @@ Bosses with the most cash
 <table class="table table-striped text-center">
   <thead>
     <tr>
+      <th scope="col">Posision</th>
       <th scope="col">Name</th>
       <th scope="col">Money</th>
       <th scope="col">Actions</th>
@@ -12,6 +13,7 @@ Bosses with the most cash
   </thead>
   <tbody>
     <tr *ngFor="let boss of BossList">
+      <td>{{boss.Position}}</td>
       <td>{{boss.Name}}</td>
       <td>{{boss.Money}}</td>
       <td>

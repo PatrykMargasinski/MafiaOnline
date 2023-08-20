@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Boss } from 'src/app/models/boss/boss.models';
+import { Boss, BossWithPosition } from 'src/app/models/boss/boss.models';
 import { BossService } from 'src/app/services/boss/boss.service';
 import { TokenService } from 'src/app/services/auth/token.service';
 
@@ -10,7 +10,7 @@ import { TokenService } from 'src/app/services/auth/token.service';
 })
 export class AboutBossComponent implements OnInit {
 
-  boss: Boss ={} as Boss
+  boss: BossWithPosition ={} as BossWithPosition
 
   constructor(private bossService: BossService, private tokenService: TokenService) { }
 

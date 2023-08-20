@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Boss } from 'src/app/models/boss/boss.models';
+import { Boss, BossWithPosition } from 'src/app/models/boss/boss.models';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +13,9 @@ export class BossService {
 
   constructor(private http:HttpClient) { }
 
-  getBoss():Observable<Boss>
+  getBoss():Observable<BossWithPosition>
   {
-    return this.http.get<Boss>(this.APIUrl+'/datas');
+    return this.http.get<BossWithPosition>(this.APIUrl+'/datas');
   }
 
   findBossNamesStartingWith(startingWith:string):Observable<string[]>
@@ -23,8 +23,8 @@ export class BossService {
     return this.http.get<string[]>(this.APIUrl+'/similarNames?startingWith='+ startingWith);
   }
 
-  getBestBosses(from: number, to: number):Observable<Boss[]>
+  getBestBosses(from: number, to: number):Observable<BossWithPosition[]>
   {
-    return this.http.get<Boss[]>(this.APIUrl+'/best?from='+from+'&to='+to);
+    return this.http.get<BossWithPosition[]>(this.APIUrl+'/best?from='+from+'&to='+to);
   }
 }

@@ -53,6 +53,9 @@ namespace MafiaOnline.BusinessLogic
             CreateMap<Boss, BossDTO>()
                 .ForMember(x => x.Name, y => y.MapFrom(z => z.FullName));
 
+            CreateMap<VBossWithPosition, BossWithPositionDTO>()
+                .ForMember(x => x.Name, y => y.MapFrom(z => z.FullName));
+
             //News
             CreateMap<News, NewsDTO>();
 

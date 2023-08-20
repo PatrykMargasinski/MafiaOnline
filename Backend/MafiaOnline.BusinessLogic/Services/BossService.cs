@@ -14,8 +14,8 @@ namespace MafiaOnline.BusinessLogic.Services
 
     public interface IBossService
     {
-        Task<BossDTO> GetBossDatas(long id);
-        Task<IList<BossDTO>> GetBestBosses(int from, int to);
+        Task<BossWithPositionDTO> GetBossDatas(long id);
+        Task<IList<BossWithPositionDTO>> GetBestBosses(int from, int to);
         Task<IList<string>> GetSimilarBossFullNames(string startingWithString);
         Task AwardingVictory();
     }
@@ -38,19 +38,19 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Returns basic informations about the boss
         /// </summary>
-        public async Task<BossDTO> GetBossDatas(long id)
+        public async Task<BossWithPositionDTO> GetBossDatas(long id)
         {
-            var boss = await _unitOfWork.Bosses.GetByIdAsync(id);
-            return _mapper.Map<BossDTO>(boss);
+            var boss = await _unitOfWork.VBosses.GetByIdAsync(id);
+            return _mapper.Map<BossWithPositionDTO>(boss);
         }
 
         /// <summary>
         /// Returns ranked bosses in position between "from" and "to"
         /// </summary>
-        public async Task<IList<BossDTO>> GetBestBosses(int from, int to)
+        public async Task<IList<BossWithPositionDTO>> GetBestBosses(int from, int to)
         {
             var bosses = await _unitOfWork.Bosses.GetBestBosses(from, to);
-            return _mapper.Map<IList<BossDTO>>(bosses);
+            return _mapper.Map<IList<BossWithPositionDTO>>(bosses);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace MafiaOnline.BusinessLogic.Services
             long place = 1;
             foreach(var boss in bosses)
             {
-                await _reporter.CreateReport(boss.Id, "Game finished", $"You placed {place} place. Congratulations!");
+                await _reporter.CreateReport(boss.Id, "Game finished", $"You placed {place++} place. Congratulations!");
             }
             await _gameUtils.ResetGame();
         }

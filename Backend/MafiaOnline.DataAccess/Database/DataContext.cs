@@ -19,6 +19,7 @@ namespace MafiaOnline.DataAccess.Database
 
         public virtual DbSet<Agent> Agents { get; set; }
         public virtual DbSet<Boss> Bosses { get; set; }
+        public virtual DbSet<VBossWithPosition> VBossRanking { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<Mission> Missions { get; set; }
         public virtual DbSet<MovingAgent> MovingAgents { get; set; }
@@ -37,6 +38,11 @@ namespace MafiaOnline.DataAccess.Database
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<VBossWithPosition>()
+                .ToView(nameof(VBossRanking))
+                .HasKey(t => t.Id);
+
             modelBuilder.Seed();
         }
     }
