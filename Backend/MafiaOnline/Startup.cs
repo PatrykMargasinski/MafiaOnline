@@ -195,10 +195,9 @@ namespace MafiaOnline
                 });
 
             //Logging
-            services.AddLogging(loggingBuilder => {
-                var loggingSection = Configuration.GetSection("Logging");
-                loggingBuilder.AddFile(loggingSection);
-            });
+            services.AddLogging(
+                x => x.AddLog4Net()
+            );
 
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
