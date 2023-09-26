@@ -1,6 +1,6 @@
-import { BasicUtils } from './../../../utils/basic-utils';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Message} from 'src/app/models/message/message.models';
 import { TokenService } from 'src/app/services/auth/token.service';
 import { MessageService } from 'src/app/services/message/message.service';
@@ -12,11 +12,17 @@ import { MessageService } from 'src/app/services/message/message.service';
   styleUrls: ['./show-messages.component.css']
 })
 export class ShowMessagesComponent implements OnInit {
-  constructor(private shared: MessageService, private router: Router, private tokenService: TokenService, private basicUtils: BasicUtils) { }
+  constructor(private shared: MessageService, private router: Router, private tokenService: TokenService, private modalService: NgbModal) { }
   MessageFilteredList: Message[];
   ReceiverFilterText: string = "";
   PageNumbers: number[];
   MessageIdsForActions: number[];
+
+  ShownMessageContent: string = "";
+  ShownMessageSubject: string = "";
+  ShownMessageFromBoss: string = "";
+
+  @ViewChild('messageModal') messageModal : TemplateRef<any>;
 
   ngOnInit(): void {
     this.refreshMessageList()
@@ -76,12 +82,11 @@ export class ShowMessagesComponent implements OnInit {
     }
   }
 
-  showContent(content: string, messageId: number){
+  showMessage(messageId: number){
     this.shared.setSeen(messageId).subscribe(
       x=>
       {
-        alert(content);
-        this.refreshMessageList();
+        this.router.navigate(["/message/messagePage"], { queryParams: { id: messageId }});
       })
   }
 
@@ -106,5 +111,9 @@ export class ShowMessagesComponent implements OnInit {
         });
       }
     }
+  }
+
+  closeMessage() {
+    this.modalService.dismissAll();
   }
 }

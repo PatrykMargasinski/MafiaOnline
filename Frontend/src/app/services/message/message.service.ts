@@ -45,7 +45,7 @@ export class MessageService {
   }
 
   getMessageContent(val: number){
-    return this.http.get<string>(this.APIUrl+'/content?messageId='+val);
+    return this.http.get<Message>(this.APIUrl+'/content?messageId='+val);
   }
 
   setSeen(val: number){

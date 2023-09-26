@@ -99,6 +99,15 @@ namespace MafiaOnline.Controllers
             return Ok(count);
         }
 
+        [HttpGet("content")]
+        public async Task<IActionResult> GetMessage(long messageId)
+        {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var count = await _messageService.GetMessageContent(messageId, jwtDatas.BossId);
+            return Ok(count);
+        }
+
+
         [HttpPost("seen")]
         public IActionResult SetSeen([FromBody] SetSeenRequest request)
         {

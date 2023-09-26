@@ -17,5 +17,6 @@ namespace MafiaOnline.BusinessLogic.Entities
         public string Content { get; set; }
         public DateTime ReceivedDate { get; set; }
         public bool Seen { get; set; }
+        public bool IsReport { get; set; }
     }
 }

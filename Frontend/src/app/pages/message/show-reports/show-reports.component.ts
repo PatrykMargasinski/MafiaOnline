@@ -18,6 +18,10 @@ export class ShowReportsComponent implements OnInit {
   ReportIdsForActions: number[];
   OnlyUnseen:boolean = false;
 
+  ShownMessageContent: string = "";
+  ShownMessageSubject: string = "";
+  ShownMessageFromBoss: string = "";
+
   ngOnInit(): void {
     this.refreshReportList()
   }
@@ -67,12 +71,12 @@ export class ShowReportsComponent implements OnInit {
     }
   }
 
-  showContent(content: string, reportId: number){
-    this.shared.setSeen(reportId).subscribe(
+  showMessage(messageId: number){
+    console.log(messageId);
+    this.shared.setSeen(messageId).subscribe(
       x=>
       {
-        alert(content);
-        this.refreshReportList();
+        this.router.navigate(["/message/messagePage"], { queryParams: { id: messageId }});
       })
   }
 

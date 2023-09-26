@@ -77,6 +77,7 @@ namespace MafiaOnline.BusinessLogic
             CreateMap<Message, MessageDTO>()
                 .ForMember(x => x.FromBossName, y => y.MapFrom(z => (z.FromBoss == null) ? string.Empty : (z.FromBoss.FirstName + " " + z.FromBoss.LastName)))
                 .ForMember(x => x.ToBossName, y => y.MapFrom(z => z.ToBoss.FirstName + " " + z.ToBoss.LastName))
+                .ForMember(x => x.IsReport, y => y.MapFrom(z => z.Type == MessageType.Report))
                 .ForMember(x => x.Subject, y => y.MapFrom(z => _securityUtils.Decrypt(z.Subject)))
                 .ForMember(x => x.Content, y => y.MapFrom(z => _securityUtils.Decrypt(z.Content)));
 

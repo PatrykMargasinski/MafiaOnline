@@ -10,6 +10,7 @@ using MafiaOnline.ErrorHandling.Exceptions;
 using Castle.Core.Logging;
 using MafiaOnline.BusinessLogic.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace MafiaOnline.ErrorHandling
 {
@@ -29,11 +30,13 @@ namespace MafiaOnline.ErrorHandling
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
+        public IHostingEnvironment _environment { get; }
 
-        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger, IHostingEnvironment environment)
         {
             _next = next;
             _logger = logger;
+            _environment = environment;
         }
 
         public async Task Invoke(HttpContext context)

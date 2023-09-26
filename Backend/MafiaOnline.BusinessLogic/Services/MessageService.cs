@@ -21,7 +21,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task SendMessage(SendMessageRequest request);
         Task<IList<MessageDTO>> GetMessagesToBoss(long bossId);
         Task<IList<MessageDTO>> GetMessagesFromBoss(long bossId);
-        Task<string> GetMessageContent(long messageId);
+        Task<MessageDTO> GetMessageContent(long messageId, long toBossId);
         Task<IList<MessageDTO>> GetReports(long bossId);
         Task<IList<MessageDTO>> GetAllMessagesToInRange(long bossId, int? fromRange, int? toRange, string bossNameFilter, bool onlyUnseen);
         Task<IList<MessageDTO>> GetAllReportsToInRange(long bossId, int? fromRange, int? toRange, bool onlyUnseen);
@@ -88,14 +88,18 @@ namespace MafiaOnline.BusinessLogic.Services
             return _mapper.Map<IList<MessageDTO>>(messages);
         }
 
-        public async Task<string> GetMessageContent(long messageId)
+        public async Task<MessageDTO> GetMessageContent(long messageId, long toBossId)
         {
             var message = await _unitOfWork.Messages.GetByIdAsync(messageId);
             if (message == null)
                 throw new Exception("Message not found");
+
+            if(message.ToBossId != toBossId)
+                throw new Exception("You are not allowed to see this message");
+
             message.Seen = true;
             _unitOfWork.Commit();
-            return _mapper.Map<MessageDTO>(message).Content;
+            return _mapper.Map<MessageDTO>(message);
         }
 
         public async Task<IList<MessageDTO>> GetReports(long bossId)
