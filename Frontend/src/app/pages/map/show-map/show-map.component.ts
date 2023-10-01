@@ -5,6 +5,7 @@ import { MapField } from 'src/app/models/map/mapField.models';
 import { MapService } from 'src/app/services/map/map.service';
 import { TokenService } from 'src/app/services/auth/token.service';
 import { ActivatedRoute } from '@angular/router';
+import { Point } from 'src/app/models/map/point.models';
 
 @Component({
   selector: 'app-show-map',
@@ -16,9 +17,6 @@ export class ShowMapComponent implements OnInit {
   edgeX : number
   edgeY : number
 
-  requestedX: number
-  requestedY: number
-
   constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils, private activatedRoute: ActivatedRoute) { }
   mapFields: MapField[]
   chosenMapFieldId: number
@@ -26,16 +24,18 @@ export class ShowMapComponent implements OnInit {
   mapMode: number = 0 //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
+  uniquelyColouredFields: Map<string, string> = new Map<string, string>()
+
   mapElementDescription: string = "Select map element to get it's description"
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
         if(params['x']!=null && params['y']!=null)
         {
-          this.requestedX = Number(params['x']);
-          this.requestedY = Number(params['y']);
-          this.edgeX=this.requestedX-10;
-          this.edgeY=this.requestedY-10;
+          let requestedX = Number(params['x']), requestedY = Number(params['y']);
+          this.uniquelyColouredFields.set(`${requestedX}|${requestedY}`,'green');
+          this.edgeX=requestedX-10;
+          this.edgeY=requestedY-10;
           this.refreshMap();
           this.mapUtils.clearPath();
         }
@@ -102,9 +102,10 @@ export class ShowMapComponent implements OnInit {
   }
 
   getTerrainColor(x: number, y: number, terrainTypeId: number): string{
-    if(x==this.requestedX && y==this.requestedY)
+    let color = this.uniquelyColouredFields.get(`${x}|${y}`)
+    if(color)
     {
-      return "green";
+      return color;
     }
     switch(terrainTypeId)
     {

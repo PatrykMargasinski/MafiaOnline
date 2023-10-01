@@ -1,0 +1,11 @@
+<div *ngIf="!message.IsReport">
+  <br><h3>Showing message content</h3><br>
+  From: {{message.FromBossName}}
+</div>
+<div *ngIf="message.IsReport">
+  <br><h3>Showing report content</h3><br>
+</div>
+
+<br><br>
+<h5><strong>{{message.Subject}}</strong></h5>
+{{message.Content}}
