@@ -5,15 +5,18 @@
 <table class="table text-center">
   <thead>
     <tr>
+      <th scope="col"></th>
       <th scope="col">Agent</th>
       <th scope="col">Strength</th>
       <th scope="col">Intelligence</th>
       <th scope="col">Dexterity</th>
-      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let agent of agents">
+  <tr *ngFor="let agent of agents" [ngStyle]="{ 'background-color': this.chosenAgent != null && agent.Id == this.chosenAgent.Id ? 'lightblue' : 'white' }" (click)="handleCheckboxChange(agent)">
+    <td>
+      <input type="checkbox" [checked]="chosenAgent != null && agent.Id == chosenAgent.Id" style="pointer-events: none;">
+    </td>
     <td>
       <img src="assets/mafioso.jpg" class="rounded-circle img-fluid">
       <p>{{agent.FirstName}} {{agent.LastName}}</p>
@@ -27,16 +30,21 @@
     <td>
       <p class="pt-5">{{agent.Dexterity}}</p>
     </td>
-    <td class="h-100">
+    <!-- <td class="h-100">
       <button class="mt-2 mb-5 pt-2 pb-2 btn w-100 h-100 btn-success" (click)="moveOnMission(agent.Id)">Send</button>
-    </td>
+    </td> -->
   </tr>
   </tbody>
 </table>
-<div>
-  Agent road set: {{agentPathSet ? "true" : "false"}}
-  <div>
-    <button class="btn btn btn-outline-dark rounded-5 col-2" (click)="setAgentPath()">Set agent road</button>
-  </div>
+<div *ngIf="agentPathSet">
+  Agent path is set
+  <button class="btn btn btn-outline-dark rounded-5 col-2" (click)="setAgentPath()">Change agent path</button>
+</div>
+<div *ngIf="!agentPathSet">
+  Agent path is not set
+  <button class="btn btn btn-outline-dark rounded-5 col-2" (click)="setAgentPath()">Set agent road</button>
 </div>
 
+<div *ngIf="agentPathSet && this.chosenAgent != null">
+  <button class="mt-2 mb-5 pt-2 pb-2 btn w-100 h-100 btn-success" (click)="moveOnMission(this.chosenAgent.Id)">Start mission</button>
+</div>

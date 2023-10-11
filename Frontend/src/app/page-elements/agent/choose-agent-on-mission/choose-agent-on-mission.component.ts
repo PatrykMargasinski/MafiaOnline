@@ -16,6 +16,7 @@ export class ChooseAgentOnMissionComponent implements OnInit {
   @Input() missionId: number
   @Input() mapElementId: number
   mission: Mission
+  chosenAgent: Agent = null
   @Output() someEvent = new EventEmitter<number>();
   agents: Agent[]
   agentPathSet: boolean = false
@@ -28,6 +29,12 @@ export class ChooseAgentOnMissionComponent implements OnInit {
     ) {
 
     }
+
+
+  handleCheckboxChange(agent: Agent)
+  {
+    this.chosenAgent = agent
+  }
 
   ngOnInit(): void {
     this.getAgents();

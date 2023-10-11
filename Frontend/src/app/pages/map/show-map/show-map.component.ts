@@ -1,7 +1,7 @@
 import { MapUtils } from './../../../utils/map-utils';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MapField } from 'src/app/models/map/mapField.models';
+import { Directions, MapField, MapModes, Operations, TerrainTypes } from 'src/app/models/map/mapField.models';
 import { MapService } from 'src/app/services/map/map.service';
 import { TokenService } from 'src/app/services/auth/token.service';
 import { ActivatedRoute } from '@angular/router';
@@ -16,12 +16,11 @@ export class ShowMapComponent implements OnInit {
 
   edgeX : number
   edgeY : number
-
   constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils, private activatedRoute: ActivatedRoute) { }
   mapFields: MapField[]
   chosenMapFieldId: number
   chosenElementType: number
-  mapMode: number = 0 //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
+  mapMode: MapModes = MapModes.Nothing //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
   uniquelyColouredFields: Map<string, string> = new Map<string, string>()
@@ -69,11 +68,11 @@ export class ShowMapComponent implements OnInit {
     this.modalService.dismissAll();
     if(operation==1)
     {
-      this.mapMode=1
+      this.mapMode=MapModes.CreatingMissionPath
     }
     else
     {
-      this.mapMode=0
+      this.mapMode=MapModes.Nothing
       this.mapUtils.clearPath();
     }
     this.refreshMap();
@@ -81,14 +80,14 @@ export class ShowMapComponent implements OnInit {
 
   setAmbushMode()
   {
-    this.mapMode=2
+    this.mapMode=MapModes.SettingAmbush
     this.mapUtils.clearPath();
     this.refreshMap();
   }
 
   setPatrolMode()
   {
-    this.mapMode=3
+    this.mapMode=MapModes.CreatingPatrolPath
     this.mapUtils.clearPath();
     this.refreshMap();
   }
@@ -109,9 +108,9 @@ export class ShowMapComponent implements OnInit {
     }
     switch(terrainTypeId)
     {
-      case 0: //road
+      case TerrainTypes.Road:
         return "gray";
-      case 1: //build-up area
+      case TerrainTypes.BuildUpArea:
         return "darkred";
     }
   }
@@ -121,41 +120,34 @@ export class ShowMapComponent implements OnInit {
     return this.tokenService.getBossId();
   }
 
-  moveLeft()
+  moveMap(direction: Directions)
   {
-    this.edgeY--;
-    this.refreshMap();
-  }
-
-  moveRight()
-  {
-    this.edgeY++;
-    this.refreshMap();
-  }
-
-  moveUp()
-  {
-    this.edgeX--;
-    this.refreshMap();
-  }
-
-  moveDown()
-  {
-    this.edgeX++;
+    switch(direction)
+    {
+      case Directions.Up:
+        this.edgeX--;
+      break;
+      case Directions.Right:
+        this.edgeY++;
+      break;
+      case Directions.Down:
+        this.edgeX++;
+      break;
+      case Directions.Left:
+        this.edgeY--;
+      break;
+    }
     this.refreshMap();
   }
 
   mapElementClick(mapFieldId: number, elementType: number){
     this.chosenMapFieldId=mapFieldId
     this.chosenElementType=elementType
-    console.log("Map element opened: " + mapFieldId);
-    console.log("Element type: " + elementType);
     this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
   }
 
   mapFieldClick(mapFieldId: number, X:number, Y:number, mapElementType: number, terrainType: number){
-    console.log("Click")
-    if(this.mapMode==1)
+    if(this.mapMode==MapModes.CreatingMissionPath)
     {
       if(!this.mapUtils.isRoad(X,Y))
       {
@@ -188,7 +180,7 @@ export class ShowMapComponent implements OnInit {
         this.mapUtils.addPointToPath(X,Y);
       }
     }
-    else if(this.mapMode == 2)
+    else if(this.mapMode == MapModes.SettingAmbush)
     {
       if(!this.mapUtils.isRoad(X,Y))
       {
@@ -204,7 +196,7 @@ export class ShowMapComponent implements OnInit {
       }
     }
 
-    else if(this.mapMode == 3)
+    else if(this.mapMode == MapModes.CreatingPatrolPath)
     {
       if(!this.mapUtils.isRoad(X,Y))
       {
@@ -246,16 +238,16 @@ export class ShowMapComponent implements OnInit {
 
   pathReadyOperations(operation: number)
   {
-    if(operation==1)
+    if(operation==Operations.RoadReady)
     {
       this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
     }
-    if(operation==2)
+    if(operation==Operations.Cancel)
     {
-      this.mapMode=0
+      this.mapMode=MapModes.Nothing
       this.mapUtils.clearPath();
     }
-    if(operation==3)
+    if(operation==Operations.AmbushPointReady)
     {
       if(this.mapUtils.getPath().length!=1)
       {
@@ -266,7 +258,7 @@ export class ShowMapComponent implements OnInit {
       this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
     }
 
-    if(operation==4)
+    if(operation==Operations.PatrolPathReady)
     {
       this.chosenElementType=0;
       this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
