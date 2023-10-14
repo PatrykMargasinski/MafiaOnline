@@ -1,3 +1,4 @@
+import { BaseQuery } from "../base/BaseQuery"
 import { Point } from "../map/point.models"
 
 export interface Agent
@@ -6,10 +7,13 @@ export interface Agent
   BossId: number,
   LastName: string,
   FirstName: string,
+  FullName: string,
   Strength: number,
   Dexterity: number,
   Intelligence: number,
-  Upkeep: number
+  Upkeep: number,
+  State: AgentState
+  StateName: string
 }
 
 export interface AgentForSale
@@ -69,4 +73,21 @@ export interface AmbushingAgent
   Dexterity: number,
   Intelligence: number,
   Position: Point
+}
+
+
+export class AgentQuery extends BaseQuery
+{
+    Name: string = ""
+    State: AgentState = null
+}
+
+export enum AgentState
+{
+  Renegate,
+  ForSale,
+  Active,
+  OnMission,
+  Moving,
+  Ambushing
 }

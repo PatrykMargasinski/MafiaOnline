@@ -5,6 +5,7 @@ using MafiaOnline.DataAccess.Entities;
 using Quartz;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,13 +22,15 @@ namespace MafiaOnline.BusinessLogic
             _securityUtils = securityUtils;
 
             //Agent
-            CreateMap<Agent, AgentDTO>();
+            CreateMap<Agent, AgentDTO>()
+                .ForMember(x => x.StateName, y => y.MapFrom(z => Enum.GetName(typeof(AgentState), z.State)));
+
             CreateMap<Agent, AgentOnMissionDTO>()
                 .ForMember(x => x.AgentName, y => y.MapFrom(z => z.FirstName + " " + z.LastName))
                 .ForMember(x => x.MissionName, y => y.MapFrom(z => z.PerformingMission.Mission.Name))
                 .ForMember(x => x.SuccessChance, y => y.MapFrom(z => _missionUtils.CalculateAgentSuccessChance(z, z.PerformingMission.Mission)))
                 .ForMember(x => x.CompletionTime, y => y.MapFrom(z => z.PerformingMission.CompletionTime))
-                .ForMember(x => x.SecondsLeft, y => y.MapFrom(z => (long) DateTime.Now.Subtract(z.PerformingMission.CompletionTime).TotalSeconds))
+                .ForMember(x => x.SecondsLeft, y => y.MapFrom(z => (long)DateTime.Now.Subtract(z.PerformingMission.CompletionTime).TotalSeconds))
                 .ForMember(x => x.MissionPosition, y => y.MapFrom(z => z.PerformingMission.Mission.MapElement.Position));
 
             CreateMap<Agent, AgentForSaleDTO>()

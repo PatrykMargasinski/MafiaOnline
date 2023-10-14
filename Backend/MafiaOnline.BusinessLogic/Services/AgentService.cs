@@ -7,6 +7,7 @@ using MafiaOnline.BusinessLogic.Utils;
 using MafiaOnline.BusinessLogic.Validators;
 using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using MafiaOnline.DataAccess.Entities.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,7 @@ namespace MafiaOnline.BusinessLogic.Services
         Task MakeStepDuringPatrolling(long movingAgentId);
         Task MakeStepMovingWithLoot(long movingAgentId);
         Task SendToPatrol(PatrolRequest request);
+        Task<IList<AgentDTO>> GetAgentsByQuery(AgentQuery query);
     }
 
     public class AgentService : IAgentService
@@ -80,6 +82,15 @@ namespace MafiaOnline.BusinessLogic.Services
             _agentUtils = agentUtils;
             _returnWithLootJobRunner = returnWithLootJobRunner;
             _mailSender = mailSender;
+        }
+
+        /// <summary>
+        /// Returns agents belonging to the boss
+        /// </summary>
+        public async Task<IList<AgentDTO>> GetAgentsByQuery(AgentQuery query)
+        {
+            var agents = await _unitOfWork.Agents.GetAgentByQuery(query);
+            return _mapper.Map<IList<AgentDTO>>(agents);
         }
 
 

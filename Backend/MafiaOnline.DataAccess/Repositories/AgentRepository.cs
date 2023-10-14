@@ -1,5 +1,6 @@
 ﻿using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
+using MafiaOnline.DataAccess.Entities.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace MafiaOnline.DataAccess.Repositories
 {
     public interface IAgentRepository : ICrudRepository<Agent>
@@ -19,6 +19,7 @@ namespace MafiaOnline.DataAccess.Repositories
         Task<IList<Agent>> GetMovingAgents(long bossId);
         Task<IList<Agent>> GetRenegates();
         Task<IList<Agent>> GetAmbushingAgents(long bossId);
+        Task<IList<Agent>> GetAgentByQuery(AgentQuery query);
     }
 
     public class AgentRepository : CrudRepository<Agent>, IAgentRepository
@@ -123,6 +124,27 @@ namespace MafiaOnline.DataAccess.Repositories
             var agentsForSale = _context.AgentsForSale.Where(x => ids.Contains(x.AgentId)).ToList();
             if (agentsForSale.Count!=0)
                 _context.AgentsForSale.RemoveRange(agentsForSale);
+        }
+
+        public async Task<IList<Agent>> GetAgentByQuery(AgentQuery query)
+        {
+            IQueryable<Agent> queryable = _context.Agents;
+
+            queryable = queryable.Where(x => x.BossId == query.BossId);
+
+            if(!string.IsNullOrEmpty(query.Name))
+            {
+                queryable = queryable.Where(x => (x.FirstName + " " + x.LastName).Contains(query.Name));
+            }
+
+            if(query.State.HasValue)
+            {
+                queryable = queryable.Where(x => x.State == query.State);
+            }
+
+            queryable = query.ApplySorting(queryable);
+
+            return await queryable.ToListAsync();
         }
     }
 }

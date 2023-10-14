@@ -3,8 +3,8 @@ export interface MapField
   Id : number,
   X: number,
   Y: number,
-  TerrainType: number,
-  MapElementType : number,
+  TerrainType: TerrainTypes,
+  MapElementType : MapElementType,
   Owner: number,
   Description: string
 }
@@ -29,4 +29,12 @@ export enum Directions
 export enum Operations
 {
   Cancel, RoadReady, AmbushPointReady, PatrolPathReady
+}
+
+export enum MapElementType
+{
+  None,
+  Headquarters,
+  Mission,
+  Ambush
 }

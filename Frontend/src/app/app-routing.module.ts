@@ -36,6 +36,7 @@ import { HowToPlayIntroductionComponent } from './pages/how-to-play/how-to-play-
 import { HowToPlayMapComponent } from './pages/how-to-play/how-to-play-map/how-to-play-map.component';
 import { HowToPlayMissionComponent } from './pages/how-to-play/how-to-play-mission/how-to-play-mission.component';
 import { MessagePageComponent } from './page-elements/messages/message-page/message-page.component';
+import { AgentListComponent } from './pages/agent/agent-list/agent-list.component';
 
 
 
@@ -54,7 +55,8 @@ const routes: Routes = [
     {path: 'onMission', component: AgentsOnMissionComponent},
     {path: 'forSale', component: AgentsForSaleComponent},
     {path: 'moving', component: MovingAgentsComponent},
-    {path: 'ambushing', component: AmbushingAgentsComponent}
+    {path: 'ambushing', component: AmbushingAgentsComponent},
+    {path: 'list', component: AgentListComponent}
   ]},
   {path:'map',component:MapComponent , canActivate: [GuardService], children:
   [

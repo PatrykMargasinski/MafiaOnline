@@ -1,3 +1,4 @@
+import { AgentQuery } from './../../models/agent/agent.models';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -14,6 +15,10 @@ export class AgentService {
 
   constructor(private http:HttpClient) { }
 
+
+  getAgentsByQuery(filters: AgentQuery): Observable<Agent[]> {
+    return this.http.post<Agent[]>(this.APIUrl + '/query', filters);
+  }
 
   getAvailableAgents(): Observable<Agent[]> {
     return this.http.get<Agent[]>(this.APIUrl + '/active');

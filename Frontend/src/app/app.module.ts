@@ -56,6 +56,7 @@ import { HowToPlayAgentsComponent } from './pages/how-to-play/how-to-play-agents
 import { HowToPlayIntroductionComponent } from './pages/how-to-play/how-to-play-introduction/how-to-play-introduction.component';
 import { HowToPlayMapComponent } from './pages/how-to-play/how-to-play-map/how-to-play-map.component';
 import { MessagePageComponent } from './page-elements/messages/message-page/message-page.component';
+import { AgentListComponent } from './pages/agent/agent-list/agent-list.component';
 
 export function tokenGetter(){
   return sessionStorage.getItem("jwtToken");
@@ -108,7 +109,8 @@ export function tokenGetter(){
     HowToPlayAgentsComponent,
     HowToPlayIntroductionComponent,
     HowToPlayMapComponent,
-    MessagePageComponent
+    MessagePageComponent,
+    AgentListComponent
   ],
   imports: [
     BrowserModule,

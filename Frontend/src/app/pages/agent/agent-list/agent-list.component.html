@@ -1,0 +1,49 @@
+<div class="container">
+  <h3 class="my-4">Agent List</h3>
+  <div class="mb-4">
+    <div class="row">
+      <div class="col-md-6 mb-2">
+        <label for="nameFilter" class="form-label">Name:</label>
+        <input id="nameFilter" class="form-control" [(ngModel)]="this.filters.Name" (input)="applyFilters()" />
+      </div>
+      <div class="col-md-6 mb-2">
+        <label for="stateFilter" class="form-label">State:</label>
+        <select id="stateFilter" class="form-control" [(ngModel)]="this.filters.State" (change)="applyFilters()">
+          <option value="" disabled>Select State</option>
+          <option value="2">Active</option>
+          <option value="3">On Mission</option>
+          <option value="4">Moving</option>
+          <option value="5">Ambushing</option>
+        </select>
+      </div>
+      <div class="mt-2">
+        <button class="btn btn-secondary" (click)="clearFilters()">Clear filters</button>
+      </div>
+    </div>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th *ngFor="let header of tableHeaders">
+          <button class="btn dropdown-toggle" type="button" id="nameSort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <strong>{{header.DisplayValue}}</strong>
+            <span class="caret-up"></span>
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" (click)="this.filters.sortBy(!header.SortValue ? header.Value : header.SortValue);applyFilters()">Sort ascending</a>
+            <a class="dropdown-item" (click)="this.filters.sortBy(!header.SortValue ? header.Value : header.SortValue, true);applyFilters()">Sort descending</a>
+            <a class="dropdown-item" (click)="this.filters.cancelSorting();applyFilters()">Cancel sorting</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let agent of filteredAgents">
+        <td *ngFor="let header of tableHeaders">
+          {{agent[header.Value]}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

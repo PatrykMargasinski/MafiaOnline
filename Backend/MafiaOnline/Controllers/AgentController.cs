@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using MafiaOnline.BusinessLogic.Utils;
+using MafiaOnline.DataAccess.Entities.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace MafiaOnline.Controllers
 {
@@ -69,6 +71,15 @@ namespace MafiaOnline.Controllers
         {
             var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
             var agents = await _agentService.GetAmbushingAgents(jwtDatas.BossId);
+            return new JsonResult(agents);
+        }
+
+        [HttpPost("query")]
+        public async Task<IActionResult> GetAgentsByQuery([FromBody]AgentQuery query)
+        {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            query.BossId = jwtDatas.BossId;
+            var agents = await _agentService.GetAgentsByQuery(query);
             return new JsonResult(agents);
         }
 
