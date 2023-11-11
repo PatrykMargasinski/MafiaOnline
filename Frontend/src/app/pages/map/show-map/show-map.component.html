@@ -51,7 +51,7 @@
     <button *ngIf="mapMode == 1" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(1)">Road ready</button>
     <button *ngIf="mapMode == 2" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(3)">Ambush point ready</button>
     <button *ngIf="mapMode == 3" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(4)">Patrol path ready</button>
-    <button *ngIf="mapMode != 0" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(2)">Cancel</button>
+    <button *ngIf="mapMode != 0" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(0)">Cancel</button>
   </div>
 </div>
 <ng-template #mapElementModal let-modal>

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Agent, AgentQuery } from 'src/app/models/agent/agent.models';
 import { TableHeader } from 'src/app/models/helpers/TableHeader';
 import { AgentService } from 'src/app/services/agent/agent.service';
-import { TokenService } from 'src/app/services/auth/token.service';
 
 @Component({
   selector: 'app-agent-list',
@@ -14,6 +13,8 @@ export class AgentListComponent implements OnInit {
   agents: Agent[] = [];
   filteredAgents: Agent[] = [];
   filters: AgentQuery = new AgentQuery();
+  pageNumbers: number[] = []
+  pageSize: number = 5;
 
   tableHeaders: TableHeader[] = [
     { Value: "FullName", DisplayValue: "Name", SortValue: "LastName", Sortable: true },
@@ -25,15 +26,24 @@ export class AgentListComponent implements OnInit {
 
   constructor(private agentService: AgentService) {}
 
+
   ngOnInit() {
     this.getAgents();
   }
 
+  handleActionResponse(response: string)
+  {
+    if(response)
+      alert(response);
+    this.applyFilters();
+  }
+
   getAgents() {
-    console.log(this.filters);
     this.agentService.getAgentsByQuery(this.filters).subscribe((data: Agent[]) => {
       this.agents = data;
       this.filteredAgents = this.agents;
+      for(let i=0; i<Math.ceil(this.filteredAgents.length/this.pageSize); i++)
+        this.pageNumbers.push(i*this.pageSize);
     });
   }
 

@@ -12,6 +12,9 @@ namespace MafiaOnline.DataAccess.Entities.Queries
         public long BossId { get; set; }
         public string SortBy { get; set; }
         public bool SortDesc { get; set; }
+        public bool IsPaging { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
 
         public IQueryable<T> ApplySorting(IQueryable<T> queryable)
         {
@@ -21,6 +24,13 @@ namespace MafiaOnline.DataAccess.Entities.Queries
                     ? queryable.OrderByDescending(x => EF.Property<object>(x, SortBy))
                     : queryable.OrderBy(x => EF.Property<object>(x, SortBy));
             }
+            return queryable;
+        }
+
+        public IQueryable<T> ApplyPaging(IQueryable<T> queryable)
+        {
+            if (IsPaging)
+                queryable = queryable.Skip(PageIndex).Take(PageSize);
             return queryable;
         }
     }

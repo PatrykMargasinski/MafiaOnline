@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Agent, AgentOnMission, AgentForSale, MovingAgent, AmbushingAgent } from 'src/app/models/agent/agent.models';
 import { DismissAgentRequest, PatrolRequest, RecruitAgentRequest } from 'src/app/models/agent/agent.requests';
 import { Point } from 'src/app/models/map/point.models';
+import { Mission } from 'src/app/models/mission/mission.models';
 import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,7 @@ export class AgentService {
   }
 
   dismissAgent(agentId: number) {
+    console.log(agentId);
     const request: DismissAgentRequest = {AgentId: agentId}
     return this.http.post(this.APIUrl + "/dismiss", request);
   }
@@ -54,5 +56,17 @@ export class AgentService {
   {
     const request: PatrolRequest = {Path: path, AgentId: agentId}
     return this.http.post(this.APIUrl + '/patrol', request);
+  }
+
+  //NEW
+  cancelAgentAmbush(agentId: number)
+  {
+    return this.http.get(this.APIUrl + '/cancelAmbush?agentId=' + agentId);
+  }
+
+  getAgentPosition(agentId: number)
+  {
+    console.log(2);
+    return this.http.get<Point>(this.APIUrl + '/position?agentId=' + agentId);
   }
 }

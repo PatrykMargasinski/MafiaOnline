@@ -143,6 +143,7 @@ namespace MafiaOnline.DataAccess.Repositories
             }
 
             queryable = query.ApplySorting(queryable);
+            queryable = query.ApplyPaging(queryable);
 
             return await queryable.ToListAsync();
         }

@@ -43,6 +43,14 @@ namespace MafiaOnline.Controllers
             return new JsonResult(agents);
         }
 
+        [HttpGet("cancelAmbush")]
+        public async Task<IActionResult> CancelAgentAmbush(long agentId)
+        {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            await _agentService.CancelAgentAmbush(agentId, jwtDatas.BossId);
+            return new JsonResult("Ambush canceled");
+        }
+
         [HttpGet("moving")]
         public async Task<IActionResult> GetMovingAgents()
         {
@@ -115,6 +123,14 @@ namespace MafiaOnline.Controllers
             request.BossId = jwtDatas.BossId;
             await _agentService.SendToPatrol(request);
             return Ok();
+        }
+
+        [HttpGet("position")]
+        public async Task<IActionResult> GetAgentPosition([FromQuery] long agentId)
+        {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var point = await _agentService.GetAgentPosition(agentId, jwtDatas.BossId);
+            return Ok(point);
         }
     }
 }

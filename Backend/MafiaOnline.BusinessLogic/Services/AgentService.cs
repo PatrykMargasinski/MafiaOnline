@@ -45,6 +45,8 @@ namespace MafiaOnline.BusinessLogic.Services
         Task MakeStepMovingWithLoot(long movingAgentId);
         Task SendToPatrol(PatrolRequest request);
         Task<IList<AgentDTO>> GetAgentsByQuery(AgentQuery query);
+        Task CancelAgentAmbush(long agentId, long bossId);
+        Task<Point> GetAgentPosition(long agentId, long? bossId = null);
     }
 
     public class AgentService : IAgentService
@@ -346,6 +348,39 @@ namespace MafiaOnline.BusinessLogic.Services
         public async Task ScheduleRefreshAgentsJob()
         {
             await _agentRefreshJobRunner.Start(_scheduler, DateTime.Now.AddMinutes(AgentConsts.MINUTES_TO_REFRESH_AGENTS_FOR_SALE));
+        }
+
+        //NEW
+
+        public async Task CancelAgentAmbush(long agentId, long bossId)
+        {
+            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+            var ambush = agent.Ambush;
+            agent.State = AgentState.Active;
+            _unitOfWork.MapElements.DeleteById(ambush.MapElementId);
+            _unitOfWork.Commit();
+        }
+
+        public async Task<Point> GetAgentPosition(long agentId, long? bossId = null)
+        {
+            var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
+
+            if(bossId.HasValue && bossId.Value != agent.BossId)
+            {
+                throw new Exception("It is not your agent");
+            }
+
+            switch(agent.State)
+            {
+                case AgentState.OnMission:
+                    return agent.PerformingMission.Mission.MapElement.Position;
+                case AgentState.Moving:
+                    return agent.MovingAgent.CurrentPoint;
+                case AgentState.Ambushing:
+                    return agent.Ambush.MapElement.Position;
+                default:
+                    throw new Exception($"Agent with state {Enum.GetName(typeof(AgentState), agent.State)} does not have any position");
+            }
         }
     }
 }

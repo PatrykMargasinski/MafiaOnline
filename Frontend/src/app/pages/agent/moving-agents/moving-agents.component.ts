@@ -29,14 +29,13 @@ export class MovingAgentsComponent implements OnInit {
     });
   }
 
-  getPosition(point: Point)
+  getAmbushPosition(point: Point)
   {
     if(point == null) return "Unknown";
     else return "["+point.X+","+point.Y+"]"
   }
 
   showOnMap(point: Point) {
-    console.log(point)
     this.router.navigate(["/map/showMap"], { queryParams: { x: point.X, y: point.Y }});
   }
 

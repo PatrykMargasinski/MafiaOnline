@@ -26,24 +26,34 @@
     <thead>
       <tr>
         <th *ngFor="let header of tableHeaders">
-          <button class="btn dropdown-toggle" type="button" id="nameSort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <strong>{{header.DisplayValue}}</strong>
-            <span class="caret-up"></span>
-          </button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" (click)="this.filters.sortBy(!header.SortValue ? header.Value : header.SortValue);applyFilters()">Sort ascending</a>
-            <a class="dropdown-item" (click)="this.filters.sortBy(!header.SortValue ? header.Value : header.SortValue, true);applyFilters()">Sort descending</a>
-            <a class="dropdown-item" (click)="this.filters.cancelSorting();applyFilters()">Cancel sorting</a>
+          <div>
+            <button class="btn dropdown-toggle" type="button" id="nameSort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <strong>{{header.DisplayValue}}</strong>
+              <span class="caret-up"></span>
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" (click)="this.filters.sortBy(!header.SortValue ? header.Value : header.SortValue);applyFilters()">Sort ascending</a>
+              <a class="dropdown-item" (click)="this.filters.sortBy(!header.SortValue ? header.Value : header.SortValue, true);applyFilters()">Sort descending</a>
+              <a class="dropdown-item" (click)="this.filters.cancelSorting();applyFilters()">Cancel sorting</a>
+            </div>
           </div>
         </th>
+        <th><div>Actions</div></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let agent of filteredAgents">
         <td *ngFor="let header of tableHeaders">
-          {{agent[header.Value]}}
+            <div>{{agent[header.Value]}}</div>
         </td>
+        <td><app-agent-actions (actionResponse)="handleActionResponse($event)" [agent]="agent"></app-agent-actions></td>
       </tr>
     </tbody>
   </table>
+
+  <div class="text-center">
+    <select class="form-select float-right m-1" aria-label="Default select example">
+      <option *ngFor="let index of pageNumbers" (click)="getNextPage(index, index+this.pageSize)">{{index}}-{{index+this.pageSize}}</option>
+    </select>
+  </div>
 </div>

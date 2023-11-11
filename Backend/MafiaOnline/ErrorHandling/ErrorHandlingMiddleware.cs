@@ -11,6 +11,7 @@ using Castle.Core.Logging;
 using MafiaOnline.BusinessLogic.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace MafiaOnline.ErrorHandling
 {
@@ -30,9 +31,9 @@ namespace MafiaOnline.ErrorHandling
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
-        public IHostingEnvironment _environment { get; }
+        public IWebHostEnvironment _environment { get; }
 
-        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger, IHostingEnvironment environment)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger, IWebHostEnvironment environment)
         {
             _next = next;
             _logger = logger;
@@ -48,10 +49,15 @@ namespace MafiaOnline.ErrorHandling
             catch (HttpStatusCodeException ex)
             {
                 await WriteExceptionAsync(context, ex);
+                if (_environment.IsDevelopment())
+                    throw;
+
             }
             catch (Exception ex)
             {
                 await WriteExceptionAsync(context, ex);
+                if (_environment.IsDevelopment())
+                    throw;
             }
         }
 
