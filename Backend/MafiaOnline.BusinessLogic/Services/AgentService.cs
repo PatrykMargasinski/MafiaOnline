@@ -166,7 +166,7 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             await _agentValidator.ValidateDismissAgent(request);
             var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
-            agent.State = AgentState.Renegate;
+            agent.StateIdEnum = AgentState.Renegate;
             agent.Boss = null;
             agent.BossId = null;
             _unitOfWork.Commit();
@@ -184,7 +184,7 @@ namespace MafiaOnline.BusinessLogic.Services
             boss.Money -= agent.AgentForSale.Price;
             _unitOfWork.AgentsForSale.DeleteByAgentId(request.AgentId);
             agent.Boss = boss;
-            agent.State = AgentState.Active;
+            agent.StateIdEnum = AgentState.Active;
             _unitOfWork.Commit();
             return agent;
         }
@@ -271,7 +271,7 @@ namespace MafiaOnline.BusinessLogic.Services
             movingAgent.ArrivalTime = DateTime.Now.AddSeconds(movingAgent.StepsLeft.Value * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
             if (movingAgent.Step >= movingAgent.Path.Length)
             {
-                agent.State = AgentState.Active;
+                agent.StateIdEnum = AgentState.Active;
                 _unitOfWork.MovingAgents.DeleteById(movingAgentId);
             }
             _unitOfWork.Commit();
@@ -302,7 +302,7 @@ namespace MafiaOnline.BusinessLogic.Services
                     reportForAgentWithLoot += "\nYour agent lost the shootout. His loot was taken by the enemy.";
                     _unitOfWork.Ambushes.DeleteById(ambush.Id);
                     _unitOfWork.MapElements.DeleteById(ambush.MapElementId);
-                    ambushAgent.State = AgentState.Active;
+                    ambushAgent.StateIdEnum = AgentState.Active;
                     var ambushAgentBoss = await _unitOfWork.Bosses.GetByIdAsync(ambushAgent.BossId.Value);
                     var loot = JsonSerializer.Deserialize<Loot>(movingAgent.DatasJson);
                     ambushAgentBoss.Money += loot.Money;
@@ -313,7 +313,7 @@ namespace MafiaOnline.BusinessLogic.Services
                         await scheduler.DeleteJob(jobKey);
                     }
                     _unitOfWork.MovingAgents.DeleteById(movingAgentId);
-                    agent.State = AgentState.Active;
+                    agent.StateIdEnum = AgentState.Active;
                     return;
                 }
                 //agent with loot wins
@@ -322,7 +322,7 @@ namespace MafiaOnline.BusinessLogic.Services
                     reportForAmbusher += "\nYour agent lost the shootout. He returns to his headquarters.";
                     _unitOfWork.Ambushes.DeleteById(ambush.Id);
                     _unitOfWork.MapElements.DeleteById(ambush.MapElementId);
-                    ambushAgent.State = AgentState.Active;
+                    ambushAgent.StateIdEnum = AgentState.Active;
                     reportForAgentWithLoot += "\nYour agent won the shootout. His loot is still safe.";
                 }
 
@@ -337,7 +337,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 var loot = JsonSerializer.Deserialize<Loot>(movingAgent.DatasJson);
                 var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
                 boss.Money += loot.Money;
-                agent.State = AgentState.Active;
+                agent.StateIdEnum = AgentState.Active;
                 var report = "Your agent returned to the headquarter with loot. The money is yours and no one undesirable will lay hands on it";
                 await _reporter.CreateReport(boss.Id, "Agent returned to HQ with loot", report);
                 _unitOfWork.MovingAgents.DeleteById(movingAgentId);
@@ -356,7 +356,7 @@ namespace MafiaOnline.BusinessLogic.Services
         {
             var agent = await _unitOfWork.Agents.GetByIdAsync(agentId);
             var ambush = agent.Ambush;
-            agent.State = AgentState.Active;
+            agent.StateIdEnum = AgentState.Active;
             _unitOfWork.MapElements.DeleteById(ambush.MapElementId);
             _unitOfWork.Commit();
         }
@@ -370,7 +370,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 throw new Exception("It is not your agent");
             }
 
-            switch(agent.State)
+            switch(agent.StateIdEnum)
             {
                 case AgentState.OnMission:
                     return agent.PerformingMission.Mission.MapElement.Position;
@@ -379,7 +379,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 case AgentState.Ambushing:
                     return agent.Ambush.MapElement.Position;
                 default:
-                    throw new Exception($"Agent with state {Enum.GetName(typeof(AgentState), agent.State)} does not have any position");
+                    throw new Exception($"Agent with state {Enum.GetName(typeof(AgentState), agent.StateIdEnum)} does not have any position");
             }
         }
     }

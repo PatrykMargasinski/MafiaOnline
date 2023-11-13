@@ -94,7 +94,7 @@ namespace MafiaOnline.Test.Repositories
             agents = await sut.GetBossAgents(1L);
             Assert.AreEqual(agents.Count, 3);
             var agent = await _unitOfWork.Agents.GetByIdAsync(1);
-            Assert.AreEqual(agent.State, AgentState.Renegate);
+            Assert.AreEqual(agent.StateIdEnum, AgentState.Renegate);
             Assert.IsNull(agent.BossId);
         }
 
@@ -119,7 +119,7 @@ namespace MafiaOnline.Test.Repositories
             var agents = await sut.GetBossAgents(1L);
             Assert.AreEqual(agents.Count, 5);
             var recruitedAgent = await _unitOfWork.Agents.GetByIdAsync(agent.Id);
-            Assert.AreEqual(recruitedAgent.State, AgentState.Active);
+            Assert.AreEqual(recruitedAgent.StateIdEnum, AgentState.Active);
             Assert.AreEqual(recruitedAgent.BossId, 1L);
         }
 
@@ -135,7 +135,7 @@ namespace MafiaOnline.Test.Repositories
                 partrolJobRunner.Object, reporter.Object, movingAgentUtils.Object, agentUtils.Object, returnWithLootJobRunner.Object, mailSender.Object);
             await sut.RefreshAgents();
             var agents = await _unitOfWork.Agents.GetAllAsync();
-            Assert.AreEqual(agents.Where(x => x.State == AgentState.ForSale).Count(), AgentConsts.NUMBER_OF_AGENTS_FOR_SALE);
+            Assert.AreEqual(agents.Where(x => x.StateIdEnum == AgentState.ForSale).Count(), AgentConsts.NUMBER_OF_AGENTS_FOR_SALE);
         }
     }
 }

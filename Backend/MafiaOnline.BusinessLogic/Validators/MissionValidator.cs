@@ -39,7 +39,7 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Mission " + request.MissionId + " not found!");
             }
 
-            if (mission.State != MissionState.Available)
+            if (mission.StateIdEnum != MissionState.Available)
             {
                 throw new Exception("Mission " + request.MissionId + " is not available");
             }
@@ -56,7 +56,7 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("You're not a boss of this agent. You cannot give him orders.");
             }
 
-            if (agent.State != AgentState.Active)
+            if (agent.StateIdEnum != AgentState.Active)
             {
                 throw new Exception("Agent " + request.AgentId + " is not in the active state");
             }
@@ -106,7 +106,7 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Mission " + missionId + " not found!");
             }
 
-            if (mission.State != MissionState.Available)
+            if (mission.StateIdEnum != MissionState.Available)
             {
                 throw new Exception("Mission " + missionId + " is not available");
             }
@@ -123,7 +123,7 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Agent " + agentId + " is without boss");
             }
 
-            if (agent.State != AgentState.Moving)
+            if (agent.StateIdEnum != AgentState.Moving)
             {
                 throw new Exception("Agent " + agentId + " is not in the moving state");
             }

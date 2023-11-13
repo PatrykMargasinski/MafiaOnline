@@ -33,6 +33,8 @@ namespace MafiaOnline.DataAccess.Database
         public virtual DbSet<Headquarters> Headquarters { get; set; }
         public virtual DbSet<Ambush> Ambushes { get; set; }
         public virtual DbSet<News> News { get; set; }
+        public virtual DbSet<State> States { get; set; }
+        public virtual DbSet<Substate> Substates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

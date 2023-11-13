@@ -21,7 +21,7 @@ export class AgentListComponent implements OnInit {
     { Value: "Strength", DisplayValue: "Strength", Sortable: true },
     { Value: "Dexterity", DisplayValue: "Dexterity", Sortable: true },
     { Value: "Intelligence", DisplayValue: "Intelligence", Sortable: true },
-    { Value: "StateName", DisplayValue: "State", Sortable: true },
+    { Value: "StateName", Value2: "SubstateName", DisplayValue: "State", Sortable: true },
   ];
 
   constructor(private agentService: AgentService) {}
@@ -45,6 +45,7 @@ export class AgentListComponent implements OnInit {
       for(let i=0; i<Math.ceil(this.filteredAgents.length/this.pageSize); i++)
         this.pageNumbers.push(i*this.pageSize);
     });
+    console.log(this.agents);
   }
 
   clearFilters() {

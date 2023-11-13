@@ -42,7 +42,7 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("Agent has no boss");
             if (agent.BossId != request.BossId)
                 throw new Exception("It's not your agent. You cannot give him orders.");
-            if (agent.State != AgentState.Active)
+            if (agent.StateIdEnum != AgentState.Active)
                 throw new Exception("Agent is not active");
             if (!_mapUtils.IsRoad(request.Point.X, request.Point.Y))
                 throw new Exception("The ambush place is not on the road");
@@ -90,7 +90,7 @@ namespace MafiaOnline.BusinessLogic.Validators
             var mapElement = await _unitOfWork.MapElements.GetByIdAsync(request.MapElementId);
             if (agent == null)
                 throw new Exception("Agent not found");
-            if (agent.State != AgentState.Active)
+            if (agent.StateIdEnum != AgentState.Active)
                 throw new Exception("Agent is not active");
             if (agent.BossId == null)
                 throw new Exception("Agent has no boss");

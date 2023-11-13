@@ -138,7 +138,7 @@ namespace MafiaOnline.BusinessLogic.Services
                     Dexterity = _randomizer.Next(2, 5),
                     Upkeep = _randomizer.Next(2, 5) * 10,
                     Boss = boss,
-                    State = AgentState.Active,
+                    StateIdEnum = AgentState.Active,
                     IsFromBossFamily = true
                 };
                 _unitOfWork.Agents.Create(newAgent);
@@ -201,7 +201,7 @@ namespace MafiaOnline.BusinessLogic.Services
             var headquarters = await _unitOfWork.Headquarters.GetByBossId(boss.Id);
 
             //removing PerformingMission instances and mission jobs
-            var agentsOnMission = agents.Where(x => x.State == AgentState.OnMission);
+            var agentsOnMission = agents.Where(x => x.StateIdEnum == AgentState.OnMission);
             var performingMissions = await _unitOfWork.PerformingMissions.GetByAgentIds(agentsOnMission.Select(x => x.Id).ToArray());
 
             IScheduler scheduler = await _factory.GetScheduler();
@@ -227,7 +227,7 @@ namespace MafiaOnline.BusinessLogic.Services
             {
                 agent.BossId = null;
                 agent.Boss = null;
-                agent.State = AgentState.Renegate;
+                agent.StateIdEnum = AgentState.Renegate;
             }
 
             _unitOfWork.MapElements.DeleteById(headquarters.MapElementId);

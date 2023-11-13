@@ -61,7 +61,7 @@ namespace MafiaOnline.BusinessLogic.Utils
 
             //reseting all from family agents
             foreach(var agent in agents.Where(x=>x.IsFromBossFamily))
-                agent.State = AgentState.Active;
+                agent.StateIdEnum = AgentState.Active;
 
             //removing all non-headquarters map elements
             var mapElements = await _unitOfWork.MapElements.GetAllAsync();

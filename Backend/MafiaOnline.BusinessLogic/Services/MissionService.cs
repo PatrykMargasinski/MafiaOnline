@@ -101,7 +101,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 messageContent += $"{ex.Message}\n\n";
                 messageContent += "The agent returns to the headquarters";
                 await _reporter.CreateReport(agent.BossId.Value, "The agent returns to the headquarters", messageContent);
-                agent.State = AgentState.Active;
+                agent.StateIdEnum = AgentState.Active;
                 _unitOfWork.Commit();
                 return;
             }
@@ -131,8 +131,8 @@ namespace MafiaOnline.BusinessLogic.Services
                 CompletionTime = missionFinishTime,
                 WayBack = path
             };
-            agent.State = AgentState.OnMission;
-            mission.State = MissionState.Performing;
+            agent.StateIdEnum = AgentState.OnMission;
+            mission.StateIdEnum = MissionState.Performing;
             var mapElement = await _unitOfWork.MapElements.GetByIdAsync(mission.MapElementId);
             mapElement.Boss = agent.Boss;
             _unitOfWork.PerformingMissions.Create(performingMission);
@@ -168,7 +168,7 @@ namespace MafiaOnline.BusinessLogic.Services
 
                 if (mission.RepeatableMission == true)
                 {
-                    mission.State = MissionState.Available;
+                    mission.StateIdEnum = MissionState.Available;
                     mapElement.Boss = null;
                     mapElement.BossId = null;
                 }
@@ -181,7 +181,7 @@ namespace MafiaOnline.BusinessLogic.Services
             else
             {
                 info += ("\nMission failed!\nThe agent returns to the headquarters\n");
-                agent.State = AgentState.Active;
+                agent.StateIdEnum = AgentState.Active;
             }
 
             _unitOfWork.PerformingMissions.DeleteById(pm.Id);

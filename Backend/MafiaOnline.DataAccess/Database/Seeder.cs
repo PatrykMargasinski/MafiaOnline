@@ -22,6 +22,34 @@ namespace MafiaOnline.DataAccess.Database
             modelBuilder.Entity<Headquarters>().HasData(PrepareHeadquarters());
             modelBuilder.Entity<News>().HasData(PrepareNews());
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(PreparePlayerRoles());
+            modelBuilder.Entity<State>().HasData(PrepareState());
+            modelBuilder.Entity<Substate>().HasData(PrepareSubstate());
+        }
+
+        private static IList<State> PrepareState()
+        {
+            var states = new List<State>()
+            {
+                new State{ Id = 1, Name = "Renegate" },
+                new State{ Id = 2, Name = "ForSale"},
+                new State{ Id = 3, Name = "OnMission"},
+                new State{ Id = 4, Name = "Active"},
+                new State{ Id = 5, Name = "Moving"},
+                new State{ Id = 6, Name = "Ambushing"},
+                new State{ Id = 7, Name = "Available"},
+                new State{ Id = 8, Name = "Performing"},
+            };
+            return states;
+        }
+
+        private static IList<Substate> PrepareSubstate()
+        {
+            var states = new List<Substate>()
+            {   
+                new Substate{ Id = 1, StateId = 5, Name = "MovingOnMission"},
+                new Substate{ Id = 2, StateId = 5, Name = "Performing"},
+            };
+            return states;
         }
 
         private static IList<News> PrepareNews()
@@ -78,25 +106,25 @@ namespace MafiaOnline.DataAccess.Database
         private static IList<Agent> PrepareAgents()
         {
             return new List<Agent> {
-                new Agent{Id=1, BossId=1, State = AgentState.Active, FirstName="Jotaro", LastName="Kujo", Strength=10, Intelligence=10, Dexterity=10, Upkeep=100, IsFromBossFamily = false},
-                new Agent{Id=2, BossId=1, State = AgentState.Active, FirstName="Adam", LastName="Mickiewicz", Strength=5, Intelligence=5, Dexterity=5, Upkeep=50, IsFromBossFamily = false},
-                new Agent{Id=3, BossId=2, State = AgentState.Active, FirstName="Natalia", LastName="Natsu", Strength=7, Intelligence=3, Dexterity=4, Upkeep=70, IsFromBossFamily = false},
-                new Agent{Id=4, State = AgentState.Renegate, FirstName="Eleonora", LastName="Lora", Strength=8, Intelligence=0, Dexterity=7, Upkeep=30, IsFromBossFamily = false},
-                new Agent{Id=5, BossId=1, State = AgentState.Active, FirstName="Robert", LastName="Makłowicz", Strength=3, Intelligence=5, Dexterity=1, Upkeep=200, IsFromBossFamily = false},
-                new Agent{Id=6, BossId=1, State = AgentState.Active, FirstName="Ricardo", LastName="Rico", Strength=10, Intelligence=10, Dexterity=10, Upkeep=100, IsFromBossFamily = true},
+                new Agent{Id=1, BossId=1, StateIdEnum = AgentState.Active, FirstName="Jotaro", LastName="Kujo", Strength=10, Intelligence=10, Dexterity=10, Upkeep=100, IsFromBossFamily = false},
+                new Agent{Id=2, BossId=1, StateIdEnum = AgentState.Active, FirstName="Adam", LastName="Mickiewicz", Strength=5, Intelligence=5, Dexterity=5, Upkeep=50, IsFromBossFamily = false},
+                new Agent{Id=3, BossId=2, StateIdEnum = AgentState.Active, FirstName="Natalia", LastName="Natsu", Strength=7, Intelligence=3, Dexterity=4, Upkeep=70, IsFromBossFamily = false},
+                new Agent{Id=4, StateIdEnum = AgentState.Renegate, FirstName="Eleonora", LastName="Lora", Strength=8, Intelligence=0, Dexterity=7, Upkeep=30, IsFromBossFamily = false},
+                new Agent{Id=5, BossId=1, StateIdEnum = AgentState.Active, FirstName="Robert", LastName="Makłowicz", Strength=3, Intelligence=5, Dexterity=1, Upkeep=200, IsFromBossFamily = false},
+                new Agent{Id=6, BossId=1, StateIdEnum = AgentState.Active, FirstName="Ricardo", LastName="Rico", Strength=10, Intelligence=10, Dexterity=10, Upkeep=100, IsFromBossFamily = true},
             };
         }
 
         private static IList<Mission> PrepareMissions()
         {
             return new List<Mission> {
-                new Mission{Id=1, MapElementId=3, Name="Bank robbery", DifficultyLevel=7, Loot=5000, Duration=30, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=2, MapElementId=4, Name="Senator assassination", DifficultyLevel=9, Loot=10000, Duration=10, StrengthPercentage=80, DexterityPercentage=20, IntelligencePercentage=0, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=3, MapElementId=5, Name="Party", DifficultyLevel=2, Loot=100, Duration=10, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=4, MapElementId=6, Name="Buy a coffee", DifficultyLevel=1, Loot=10, Duration=5, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=5, MapElementId=7, Name="Money laundering", DifficultyLevel=5, Loot=1000, Duration=55, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=6, MapElementId=8, Name="Car theft", DifficultyLevel=6, Loot=2000, Duration=3600, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, State=MissionState.Available, RepeatableMission = true},
-                new Mission{Id=7, MapElementId=9, Name="Arms trade", DifficultyLevel=8, Loot=4000, Duration=15, StrengthPercentage=40, DexterityPercentage=20, IntelligencePercentage=40, State=MissionState.Available, RepeatableMission = true}
+                new Mission{Id=1, MapElementId=3, Name="Bank robbery", DifficultyLevel=7, Loot=5000, Duration=30, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, StateIdEnum=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=2, MapElementId=4, Name="Senator assassination", DifficultyLevel=9, Loot=10000, Duration=10, StrengthPercentage=80, DexterityPercentage=20, IntelligencePercentage=0, StateIdEnum=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=3, MapElementId=5, Name="Party", DifficultyLevel=2, Loot=100, Duration=10, StrengthPercentage=60, DexterityPercentage=20, IntelligencePercentage=20, StateIdEnum=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=4, MapElementId=6, Name="Buy a coffee", DifficultyLevel=1, Loot=10, Duration=5, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, StateIdEnum=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=5, MapElementId=7, Name="Money laundering", DifficultyLevel=5, Loot=1000, Duration=55, StrengthPercentage=20, DexterityPercentage=20, IntelligencePercentage=60, StateIdEnum=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=6, MapElementId=8, Name="Car theft", DifficultyLevel=6, Loot=2000, Duration=3600, StrengthPercentage=20, DexterityPercentage=60, IntelligencePercentage=20, StateIdEnum=MissionState.Available, RepeatableMission = true},
+                new Mission{Id=7, MapElementId=9, Name="Arms trade", DifficultyLevel=8, Loot=4000, Duration=15, StrengthPercentage=40, DexterityPercentage=20, IntelligencePercentage=40, StateIdEnum=MissionState.Available, RepeatableMission = true}
             };
         }
 

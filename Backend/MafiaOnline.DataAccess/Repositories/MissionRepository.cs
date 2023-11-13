@@ -44,7 +44,7 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var missions = await _context.Missions
                 .Include(x=>x.MapElement)
-                .Where(x => x.State == MissionState.Available)
+                .Where(x => x.StateId == (long?)MissionState.Available)
                 .ToListAsync();
             return missions;
         }

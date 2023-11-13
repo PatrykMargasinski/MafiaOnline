@@ -78,7 +78,7 @@ namespace MafiaOnline.BusinessLogic.Services
             await _ambushValidator.ValidateCancelAmbush(request);
             var ambush = await _unitOfWork.Ambushes.GetByMapElementIdAsync(request.MapElementId);
             var agent = await _unitOfWork.Agents.GetByIdAsync(ambush.AgentId);
-            agent.State = AgentState.Active;
+            agent.StateIdEnum = AgentState.Active;
             _unitOfWork.MapElements.DeleteById(request.MapElementId);
             _unitOfWork.Commit();
         }
@@ -100,7 +100,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 messageContent += $"{ex.Message}\n\n";
                 messageContent += "The agent returns to the headquarters";
                 await _reporter.CreateReport(boss.Id, "The agent returns to the headquarters", messageContent);
-                agent.State = AgentState.Active;
+                agent.StateIdEnum = AgentState.Active;
                 _unitOfWork.Commit();
                 return;
             }
@@ -121,7 +121,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 Hidden = true
             };
 
-            agent.State = AgentState.Ambushing;
+            agent.StateIdEnum = AgentState.Ambushing;
 
             _unitOfWork.MapElements.Create(mapElement);
             _unitOfWork.Commit();
@@ -156,8 +156,8 @@ namespace MafiaOnline.BusinessLogic.Services
                     reportForDefender += "\nYour agent lost the shootout. Your ambush has been destroyed.\nAgent returns the the headquarters.";
                     _unitOfWork.Ambushes.DeleteById(ambush.Id);
                     _unitOfWork.MapElements.DeleteById(ambush.MapElementId);
-                    attacker.State = AgentState.Active;
-                    defender.State = AgentState.Active;
+                    attacker.StateIdEnum = AgentState.Active;
+                    defender.StateIdEnum = AgentState.Active;
                     return;
                 }
                 //defender wins
@@ -165,7 +165,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 {
                     reportForAttacker += "\nYour agent lost the shootout. The ambush still exists.\nAgent returns the the headquarters.";
                     reportForDefender += "\nYour agent won the shootout. The ambush still exists.";
-                    attacker.State = AgentState.Active;
+                    attacker.StateIdEnum = AgentState.Active;
                 }
                 await _reporter.CreateReport(attacker.BossId.Value, "Shootout", reportForAttacker);
                 await _reporter.CreateReport(defender.BossId.Value, "Shootout", reportForDefender);
@@ -177,7 +177,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 messageContent += $"{ex.Message}\n\n";
                 messageContent += "The agent returns to the headquarters";
                 await _reporter.CreateReport(attacker.BossId.Value, "The agent returns to the headquarters", messageContent);
-                attacker.State = AgentState.Active;
+                attacker.StateIdEnum = AgentState.Active;
                 _unitOfWork.Commit();
                 return;
             }

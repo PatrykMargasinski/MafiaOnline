@@ -12,8 +12,10 @@ export interface Agent
   Dexterity: number,
   Intelligence: number,
   Upkeep: number,
-  State: AgentState
-  StateName: string
+  State: AgentState,
+  Substate?: AgentSubstate,
+  StateName: string,
+  SubstateName?: string
 }
 
 export interface AgentForSale
@@ -84,10 +86,17 @@ export class AgentQuery extends BaseQuery
 
 export enum AgentState
 {
-  Renegate,
-  ForSale,
-  Active,
-  OnMission,
-  Moving,
-  Ambushing
+  Renegate = 1,
+  ForSale = 2,
+  Active = 3,
+  OnMission = 4,
+  Moving = 5,
+  Ambushing = 6
+}
+
+export enum AgentSubstate
+{
+    MovingOnMission = 1,
+    Patrolling = 2,
+    MovingWithLoot = 3
 }

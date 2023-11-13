@@ -14,7 +14,24 @@ namespace MafiaOnline.DataAccess.Entities
 
         }
         public long? BossId { get; set; }
-        public AgentState State { get; set; }
+        [NotMapped]
+        public AgentState? StateIdEnum 
+        {
+            get => (AgentState?) StateId;
+            set => StateId = (long?) value;
+        }
+
+        public long? StateId { get; set; }
+
+        [NotMapped]
+        public AgentSubstate? SubstateIdEnum 
+        {
+            get => (AgentSubstate?) SubstateId;
+            set => SubstateId = (long?) value;
+        }
+
+        public long? SubstateId { get; set; }
+
         public string LastName { get; set; }
         public string FirstName { get; set; }
 
@@ -38,16 +55,27 @@ namespace MafiaOnline.DataAccess.Entities
         public virtual AgentForSale AgentForSale { get; set; }
         public virtual MovingAgent MovingAgent { get; set; }
         public virtual PerformingMission PerformingMission { get; set; }
+
+        public virtual State State { get; set; }
+
+        public virtual Substate Substate { get; set; }
     }
 
     public enum AgentState
     {
-        Renegate,
-        ForSale,
-        Active,
-        OnMission,
-        Moving,
-        Ambushing
+        Renegate = 1,
+        ForSale = 2,
+        Active = 3,
+        OnMission = 4,
+        Moving = 5,
+        Ambushing = 6
+    }
+
+    public enum AgentSubstate
+    {
+        MovingOnMission = 1,
+        Patrolling = 2,
+        MovingWithLoot = 3 //TODO: Dodać do seedera
     }
 
     public class AgentModelConfiguration : IEntityTypeConfiguration<Agent>
@@ -56,11 +84,17 @@ namespace MafiaOnline.DataAccess.Entities
         {
             builder.ToTable("Agent");
 
-            builder.Property(x => x.State).HasConversion<int>();
-
             builder.HasOne(d => d.Boss)
                 .WithMany(p => p.Agents)
                 .HasForeignKey(d => d.BossId);
+
+            builder.HasOne(a => a.State)
+                .WithMany()
+                .HasForeignKey(a => a.StateId);
+
+            builder.HasOne(a => a.Substate)
+                .WithMany()
+                .HasForeignKey(a => a.SubstateId);
         }
     }
 }

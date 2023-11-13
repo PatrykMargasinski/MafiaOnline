@@ -1,4 +1,5 @@
-﻿using MafiaOnline.DataAccess.Database;
+﻿using Fare;
+using MafiaOnline.DataAccess.Database;
 using MafiaOnline.DataAccess.Entities;
 using MafiaOnline.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,8 @@ namespace MafiaOnline.Test.Database
             ExposedMapElements = new ExposedMapElementRepository(context);
             Ambushes = new AmbushRepository(context);
             News = new NewsRepository(context);
+            States = new StateRepository(context);
+            Substates = new SubstateRepository(context);
         }
 
         public IAgentRepository Agents { get; }
@@ -68,6 +71,9 @@ namespace MafiaOnline.Test.Database
 
         public INewsRepository News { get; }
         public IVBossRepository VBosses { get; }
+
+        public IStateRepository States { get; }
+        public ISubstateRepository Substates { get; }
 
         public void Commit()
         {

@@ -20,6 +20,7 @@ export class AgentActionsComponent implements OnInit {
   @Output() actionResponse = new EventEmitter<string>();
 
   ngOnInit(): void {
+    console.log(this.agent.State);
 
   }
 
@@ -29,7 +30,6 @@ export class AgentActionsComponent implements OnInit {
     {
         this.agentService.recruitAgent(agent.Id).subscribe(data=>{
           alert(data.toString());
-          this.emitActionResponse("test")
         })
     }
   }

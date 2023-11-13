@@ -47,7 +47,7 @@ namespace MafiaOnline.BusinessLogic.Factories
 
             return new Agent()
             {
-                State = startingState,
+                StateIdEnum = startingState,
                 FirstName = firstName,
                 LastName = lastName,
                 Strength = strength.Value,
@@ -70,7 +70,7 @@ namespace MafiaOnline.BusinessLogic.Factories
             if (agentForSale.Price < 1000) agentForSale.Price = 1000;
             agentForSale.StartOfSale = DateTime.Now;
             agentForSale.Agent = agent;
-            agent.State = AgentState.ForSale;
+            agent.StateIdEnum = AgentState.ForSale;
             return agentForSale;
         }
 
@@ -88,7 +88,8 @@ namespace MafiaOnline.BusinessLogic.Factories
             movingAgent.DatasJson = JsonSerializer.Serialize(request);
             movingAgent.ArrivalTime = DateTime.Now.AddSeconds(request.Path.Length * MapConsts.SECONDS_TO_MAKE_ONE_STEP);
             movingAgent.Agent = agent;
-            agent.State = AgentState.Moving;
+            agent.StateIdEnum = AgentState.Moving;
+            agent.SubstateIdEnum = AgentSubstate.Patrolling;
             return movingAgent;
         }
 
@@ -111,7 +112,8 @@ namespace MafiaOnline.BusinessLogic.Factories
             movingAgent.DatasJson = JsonSerializer.Serialize(loot);
 
             movingAgent.Agent = agent;
-            agent.State = AgentState.Moving;
+            agent.StateIdEnum = AgentState.Moving;
+            agent.SubstateIdEnum = AgentSubstate.MovingWithLoot;
             return movingAgent;
         }
     }

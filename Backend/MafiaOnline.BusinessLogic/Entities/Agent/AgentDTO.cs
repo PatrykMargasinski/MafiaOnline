@@ -18,7 +18,10 @@ namespace MafiaOnline.BusinessLogic.Entities
         public int Dexterity { get; set; }
         public int Intelligence { get; set; }
         public long Upkeep { get; set; }
-        public AgentState State { get; set; }
         public string StateName { get; set; }
+        public string SubstateName { get; set; }
+        public AgentState? State { get; set; }
+        public AgentSubstate? Substate { get; set; }
+
     }
 }

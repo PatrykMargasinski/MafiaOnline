@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MafiaOnline.DataAccess.Entities
 {
@@ -17,15 +17,25 @@ namespace MafiaOnline.DataAccess.Entities
         public int Loot { get; set; }
         public double Duration { get; set; }
         public bool RepeatableMission { get; set; }
-        public MissionState State { get; set; }
+
+        [NotMapped]
+        public MissionState? StateIdEnum
+        {
+            get => (MissionState?) StateId;
+            set => StateId = (long?) value;
+        }
+
+        public long? StateId { get; set; }
+
         public virtual PerformingMission PerformingMission { get; set; }
         public virtual MapElement MapElement { get; set; }
+        public virtual State State { get; set; }
     }
 
     public enum MissionState
     {
-        Available,
-        Performing
+        Available = 7,
+        Performing = 8
     }
 
     public class MissionModelConfiguration : IEntityTypeConfiguration<Mission>
@@ -34,7 +44,9 @@ namespace MafiaOnline.DataAccess.Entities
         {
             builder.ToTable("Mission");
 
-            builder.Property(x => x.State).HasConversion<int>();
+            builder.HasOne(a => a.State)
+                .WithMany()
+                .HasForeignKey(a => a.StateId);
         }
     }
 }

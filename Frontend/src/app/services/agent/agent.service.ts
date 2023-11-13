@@ -66,7 +66,6 @@ export class AgentService {
 
   getAgentPosition(agentId: number)
   {
-    console.log(2);
     return this.http.get<Point>(this.APIUrl + '/position?agentId=' + agentId);
   }
 }

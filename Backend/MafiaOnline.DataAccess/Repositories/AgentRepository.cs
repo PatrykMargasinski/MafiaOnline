@@ -32,7 +32,7 @@ namespace MafiaOnline.DataAccess.Repositories
         public async Task<IList<Agent>> GetActiveAgents(long bossId)
         {
             var agents = await _context.Agents
-                .Where(x => x.State == AgentState.Active && x.BossId==bossId)
+                .Where(x => x.StateId == (long?)AgentState.Active && x.BossId==bossId)
                 .ToListAsync();
             return agents;
         }
@@ -51,7 +51,7 @@ namespace MafiaOnline.DataAccess.Repositories
                 .Include(x => x.PerformingMission)
                 .ThenInclude(y => y.Mission)
                 .ThenInclude(y => y.MapElement)
-                .Where(z => z.BossId == bossId && z.State == AgentState.OnMission)
+                .Where(z => z.BossId == bossId && z.StateId == (long?)AgentState.OnMission)
                 .ToListAsync();
             return agents;
         }
@@ -60,7 +60,7 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var agents = await _context.Agents
                 .Include(x => x.AgentForSale)
-                .Where(z => z.State == AgentState.ForSale)
+                .Where(z => z.StateId == (long?)AgentState.ForSale)
                 .ToListAsync();
             return agents;
         }
@@ -69,7 +69,7 @@ namespace MafiaOnline.DataAccess.Repositories
         {
             var agents = await _context.Agents
                 .Include(x => x.MovingAgent)
-                .Where(z => (z.State == AgentState.Moving) && z.BossId==bossId)
+                .Where(z => (z.StateId == (long?)AgentState.Moving) && z.BossId==bossId)
                 .ToListAsync();
             return agents;
         }
@@ -80,7 +80,7 @@ namespace MafiaOnline.DataAccess.Repositories
             var agents = await _context.Agents
                 .Include(x => x.Ambush)
                 .ThenInclude(x => x.MapElement)
-                .Where(z => z.State == AgentState.Ambushing && z.BossId == bossId)
+                .Where(z => z.StateId == (long?)AgentState.Ambushing && z.BossId == bossId)
                 .ToListAsync();
             return agents;
         }
@@ -88,7 +88,7 @@ namespace MafiaOnline.DataAccess.Repositories
         public async Task<IList<Agent>> GetRenegates()
         {
             var agents = await _context.Agents
-                .Where(z => z.State == AgentState.Renegate)
+                .Where(z => z.StateId == (long?)AgentState.Renegate)
                 .ToListAsync();
             return agents;
         }
@@ -139,7 +139,7 @@ namespace MafiaOnline.DataAccess.Repositories
 
             if(query.State.HasValue)
             {
-                queryable = queryable.Where(x => x.State == query.State);
+                queryable = queryable.Where(x => x.StateId == (long?)query.State);
             }
 
             queryable = query.ApplySorting(queryable);

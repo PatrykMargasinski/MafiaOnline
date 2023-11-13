@@ -23,7 +23,10 @@ namespace MafiaOnline.BusinessLogic
 
             //Agent
             CreateMap<Agent, AgentDTO>()
-                .ForMember(x => x.StateName, y => y.MapFrom(z => Enum.GetName(typeof(AgentState), z.State)));
+                .ForMember(x => x.StateName, y => y.MapFrom(z => Enum.GetName(typeof(AgentState), z.StateIdEnum.Value)))
+                .ForMember(x => x.SubstateName, y => y.MapFrom(z => z.SubstateId.HasValue ? Enum.GetName(typeof(AgentSubstate), z.SubstateIdEnum.Value) : null))
+                .ForMember(x => x.State, y => y.MapFrom(z => z.StateIdEnum))
+                .ForMember(x => x.Substate, y => y.MapFrom(z => z.SubstateIdEnum));
 
             CreateMap<Agent, AgentOnMissionDTO>()
                 .ForMember(x => x.AgentName, y => y.MapFrom(z => z.FirstName + " " + z.LastName))
