@@ -89,6 +89,7 @@ namespace MafiaOnline
             services.AddScoped<IAmbushService, AmbushService>();
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IJobService, JobService>();
+            services.AddScoped<IStateService, StateService>();
 
             //Utils
             services.AddScoped<ISecurityUtils, SecurityUtils>();

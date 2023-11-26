@@ -14,6 +14,10 @@ export class MessageService {
 
   constructor(private http:HttpClient) { }
 
+  hasUnseenMessages():Observable<boolean>{
+    return this.http.get<boolean>(this.APIUrl+'/hasUnseenMessages');
+  }
+
   getMessageCount(bossId: number):Observable<number>{
     return this.http.get<number>(this.APIUrl+'/bossMessageCount?bossId='+bossId);
   }

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Agent, AgentQuery } from 'src/app/models/agent/agent.models';
 import { TableHeader } from 'src/app/models/helpers/TableHeader';
+import { State } from 'src/app/models/state/state';
 import { AgentService } from 'src/app/services/agent/agent.service';
+import { StateService } from 'src/app/services/state/state.service';
 
 @Component({
   selector: 'app-agent-list',
@@ -15,16 +17,17 @@ export class AgentListComponent implements OnInit {
   filters: AgentQuery = new AgentQuery();
   pageNumbers: number[] = []
   pageSize: number = 5;
+  agentStates: State[] = []
 
   tableHeaders: TableHeader[] = [
     { Value: "FullName", DisplayValue: "Name", SortValue: "LastName", Sortable: true },
     { Value: "Strength", DisplayValue: "Strength", Sortable: true },
     { Value: "Dexterity", DisplayValue: "Dexterity", Sortable: true },
     { Value: "Intelligence", DisplayValue: "Intelligence", Sortable: true },
-    { Value: "StateName", Value2: "SubstateName", DisplayValue: "State", Sortable: true },
+    { Value: "StateName", Value2: "SubstateName", DisplayValue: "State", Sortable: false },
   ];
 
-  constructor(private agentService: AgentService) {}
+  constructor(private agentService: AgentService, private stateService: StateService) {}
 
 
   ngOnInit() {
@@ -45,7 +48,10 @@ export class AgentListComponent implements OnInit {
       for(let i=0; i<Math.ceil(this.filteredAgents.length/this.pageSize); i++)
         this.pageNumbers.push(i*this.pageSize);
     });
-    console.log(this.agents);
+    this.stateService.getAvailableAgentStates().subscribe(x=>
+      {
+        this.agentStates = x;
+      });
   }
 
   clearFilters() {

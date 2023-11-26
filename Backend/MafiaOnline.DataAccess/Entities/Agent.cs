@@ -18,7 +18,14 @@ namespace MafiaOnline.DataAccess.Entities
         public AgentState? StateIdEnum 
         {
             get => (AgentState?) StateId;
-            set => StateId = (long?) value;
+            set 
+            {
+                if(State?.HasSubstates != true)
+                {
+                    SubstateId = null;
+                }
+                StateId = (long?)value;
+            }
         }
 
         public long? StateId { get; set; }
@@ -50,6 +57,8 @@ namespace MafiaOnline.DataAccess.Entities
         public long Upkeep { get; set; }
         public bool IsFromBossFamily { get; set; }
 
+
+
         public virtual Boss Boss { get; set; }
         public virtual Ambush Ambush { get; set; }
         public virtual AgentForSale AgentForSale { get; set; }
@@ -65,8 +74,8 @@ namespace MafiaOnline.DataAccess.Entities
     {
         Renegate = 1,
         ForSale = 2,
-        Active = 3,
-        OnMission = 4,
+        OnMission = 3,
+        Active = 4,
         Moving = 5,
         Ambushing = 6
     }

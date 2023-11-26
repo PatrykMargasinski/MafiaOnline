@@ -15,6 +15,8 @@ namespace MafiaOnline.DataAccess.Entities
         }
         public string Name { get; set; }
 
+        public bool HasSubstates { get; set; }
+
         public virtual IList<Substate> Substates { get; set; }
     }
 

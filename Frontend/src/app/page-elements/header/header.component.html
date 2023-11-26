@@ -36,8 +36,10 @@
         </li>
 
         <li class="nav-item m-1" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">
-          <button routerLink="message/messages"
-          class="btn btn-light btn-outline-primary col-sm-12" Button>Messages</button>
+          <button *ngIf="hasUnseenMessages()" routerLink="message/messages"
+            class="btn btn-light btn-outline-danger col-sm-12" Button>Messages</button>
+          <button *ngIf="!hasUnseenMessages()" routerLink="message/messages"
+            class="btn btn-light btn-outline-primary col-sm-12" Button>Messages</button>
         </li>
 
         <li class="nav-item m-1" *ngIf="isUserAuthenticated() && hasRole('Player,Administrator')">

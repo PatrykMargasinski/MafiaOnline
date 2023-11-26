@@ -91,6 +91,9 @@ namespace MafiaOnline.BusinessLogic
             CreateMap<Headquarters, HeadquartersDTO>()
                 .ForMember(x => x.BossFirstName, y => y.MapFrom(z=>z.Boss.FirstName))
                 .ForMember(x => x.BossLastName, y => y.MapFrom(z => z.Boss.LastName));
+
+            //States
+            CreateMap<State, StateDTO>();
         }
 
         public AutoMapperProfile()

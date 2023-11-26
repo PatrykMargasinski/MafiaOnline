@@ -116,5 +116,13 @@ namespace MafiaOnline.Controllers
             var count = _messageService.SetSeen(request);
             return Ok(count);
         }
+
+        [HttpGet("hasUnseenMessages")]
+        public async Task<IActionResult> HasUnseenMessages()
+        {
+            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
+            var hasUnseenMessages = await _messageService.HasUnseenMessages(jwtDatas.BossId);
+            return Ok(hasUnseenMessages);
+        }
     }
 }

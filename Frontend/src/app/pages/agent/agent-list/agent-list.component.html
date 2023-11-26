@@ -8,12 +8,9 @@
       </div>
       <div class="col-md-6 mb-2">
         <label for="stateFilter" class="form-label">State:</label>
-        <select id="stateFilter" class="form-control" [(ngModel)]="this.filters.State" (change)="applyFilters()">
+        <select id="stateFilter" class="form-control" [(ngModel)]="this.filters.State" (change)="applyFilters()"> <!-- TODO: Pobieranie opcji z bazy danych. Poprawić sortowanie - niech wybranie drugiego sortowania anuluje pierwsze -->
           <option value="" disabled>Select State</option>
-          <option value="2">Active</option>
-          <option value="3">On Mission</option>
-          <option value="4">Moving</option>
-          <option value="5">Ambushing</option>
+          <option *ngFor="let state of agentStates" [value]="state.Id">{{state.Name}}</option>
         </select>
       </div>
       <div class="mt-2">
@@ -26,7 +23,7 @@
     <thead>
       <tr>
         <th *ngFor="let header of tableHeaders">
-          <div>
+          <div *ngIf="header.Sortable==true">
             <button class="btn dropdown-toggle" type="button" id="nameSort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <strong>{{header.DisplayValue}}</strong>
               <span class="caret-up"></span>
@@ -36,6 +33,9 @@
               <a class="dropdown-item" (click)="this.filters.sortBy(!header.SortValue ? header.Value : header.SortValue, true);applyFilters()">Sort descending</a>
               <a class="dropdown-item" (click)="this.filters.cancelSorting();applyFilters()">Cancel sorting</a>
             </div>
+          </div>
+          <div *ngIf="header.Sortable==false">
+            {{header.DisplayValue}}
           </div>
         </th>
         <th><div>Actions</div></th>

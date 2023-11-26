@@ -34,7 +34,7 @@ namespace MafiaOnline.DataAccess.Database
                 new State{ Id = 2, Name = "ForSale"},
                 new State{ Id = 3, Name = "OnMission"},
                 new State{ Id = 4, Name = "Active"},
-                new State{ Id = 5, Name = "Moving"},
+                new State{ Id = 5, Name = "Moving", HasSubstates = true},
                 new State{ Id = 6, Name = "Ambushing"},
                 new State{ Id = 7, Name = "Available"},
                 new State{ Id = 8, Name = "Performing"},
@@ -47,7 +47,8 @@ namespace MafiaOnline.DataAccess.Database
             var states = new List<Substate>()
             {   
                 new Substate{ Id = 1, StateId = 5, Name = "MovingOnMission"},
-                new Substate{ Id = 2, StateId = 5, Name = "Performing"},
+                new Substate{ Id = 2, StateId = 5, Name = "Patrolling"},
+                new Substate{ Id = 3, StateId = 5, Name = "MovingWithLoot"},
             };
             return states;
         }

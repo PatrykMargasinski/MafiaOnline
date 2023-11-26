@@ -30,6 +30,7 @@ namespace MafiaOnline.BusinessLogic.Services
         long CountMessages(long bossId);
         long CountReports(long bossId);
         Task SetSeen(SetSeenRequest request);
+        Task<bool> HasUnseenMessages(long bossId);
 
     }
 
@@ -152,6 +153,16 @@ namespace MafiaOnline.BusinessLogic.Services
             var message = await _unitOfWork.Messages.GetByIdAsync(request.MessageId);
             message.Seen = true;
             _unitOfWork.Commit();
+        }
+
+        public async Task<bool> HasUnseenMessages(long bossId)
+        {
+            var boss = await _unitOfWork.Bosses.GetByIdAsync(bossId);
+            if (boss == null)
+                throw new Exception("Boss not found");
+
+            var messages = await _unitOfWork.Messages.GetAllMessagesToInRange(bossId, 0, 1, "", true);
+            return messages.Any();
         }
     }
 }

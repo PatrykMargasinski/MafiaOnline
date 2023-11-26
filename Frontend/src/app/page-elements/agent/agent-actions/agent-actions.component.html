@@ -1,9 +1,9 @@
 <div class="btn-group" role="group">
-  <button *ngIf="[3].includes(agent.State)"
+  <button *ngIf="[4].includes(agent.State)"
     type="button" (click)="dismissAgent(agent)" class="btn btn-secondary btn-danger">Dismiss</button>
   <button *ngIf="[2].includes(agent.State)"
     type="button" (click)="recruitAgent(agent)" class="btn btn-secondary btn-success">Recruit</button>
-  <button *ngIf="[4, 5, 6].includes(agent.State)"
+  <button *ngIf="[3, 5, 6].includes(agent.State)"
     type="button" (click)="showAgentOnMap(agent)" class="btn btn-secondary btn-warning">Show on map</button>
   <button *ngIf="[6].includes(agent.State)"
     type="button" (click)="cancelAmbush(agent)" class="btn btn-secondary">Cancel ambush</button>

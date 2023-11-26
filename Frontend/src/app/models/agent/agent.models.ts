@@ -88,8 +88,8 @@ export enum AgentState
 {
   Renegate = 1,
   ForSale = 2,
-  Active = 3,
-  OnMission = 4,
+  OnMission = 3,
+  Active = 4,
   Moving = 5,
   Ambushing = 6
 }

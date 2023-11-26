@@ -4,16 +4,29 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { templateJitUrl } from '@angular/compiler';
+import { MessageService } from '../message/message.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GuardService implements CanActivate{
 
-  constructor(private router: Router, private jwtHelper: JwtHelperService, private http: HttpClient) { }
+  constructor(private router: Router, private jwtHelper: JwtHelperService, private http: HttpClient, private message: MessageService) { }
 
   async canActivate(){
     const token = sessionStorage.getItem("jwtToken");
+
+    //message refreshing
+    let hasUnreadMessages = this.message.hasUnseenMessages().subscribe(
+      x=>
+      {
+        if(x == true)
+          sessionStorage.setItem("unseenMessages", "1");
+        else
+          sessionStorage.setItem("unseenMessages", "0");
+      }
+    )
+
     if(token && !this.jwtHelper.isTokenExpired(token, 60)){
       return true
     }
