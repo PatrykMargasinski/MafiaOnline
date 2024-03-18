@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Agent } from 'src/app/models/agent/agent.models';
-import { Point } from 'src/app/models/map/point.models';
 import { AgentService } from 'src/app/services/agent/agent.service';
 import { AmbushService } from 'src/app/services/ambush/ambush.service';
 
@@ -20,7 +19,6 @@ export class AgentActionsComponent implements OnInit {
   @Output() actionResponse = new EventEmitter<string>();
 
   ngOnInit(): void {
-    console.log(this.agent.State);
 
   }
 
@@ -58,6 +56,13 @@ export class AgentActionsComponent implements OnInit {
       {
         this.router.navigate(["/map/showMap"], { queryParams: { x: data.X, y: data.Y }});
       })
+  }
+
+  agentContainsState(states: [])
+  {
+    let agentState = this.agent.Substate == null ? this.agent.State : [this.agent.State, this.agent.Substate]
+    console.log(agentState);
+    return states.some(subArray => JSON.stringify(subArray) === JSON.stringify(agentState));
   }
 
   emitActionResponse(response: string)
