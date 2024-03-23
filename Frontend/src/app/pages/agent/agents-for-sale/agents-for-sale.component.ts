@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AgentForSale } from 'src/app/models/agent/agent.models';
+import { AgentActionsService } from 'src/app/services/agent/agent-actions.service';
 import { AgentService } from 'src/app/services/agent/agent.service';
 import { TokenService } from 'src/app/services/auth/token.service';
 
@@ -12,7 +13,7 @@ import { TokenService } from 'src/app/services/auth/token.service';
 
 export class AgentsForSaleComponent implements OnInit {
 
-  constructor(private shared: AgentService, private tokenService: TokenService) { }
+  constructor(private shared: AgentService, private agentActions: AgentActionsService, private tokenService: TokenService) { }
   AgentsForSale:AgentForSale[];
 
   ngOnInit(): void {
@@ -28,7 +29,7 @@ export class AgentsForSaleComponent implements OnInit {
   recruitAgent(agentId: number): void
   {
     if(confirm('Are you sure??')){
-        this.shared.recruitAgent(agentId).subscribe(data=>{
+        this.agentActions.recruitAgent(agentId).subscribe(data=>{
           alert(data.toString());
           this.refresh();
         })

@@ -260,6 +260,7 @@ export class ShowMapComponent implements OnInit {
 
     if(operation==Operations.PatrolPathReady)
     {
+      console.log("Test");
       this.chosenElementType=0;
       this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
     }

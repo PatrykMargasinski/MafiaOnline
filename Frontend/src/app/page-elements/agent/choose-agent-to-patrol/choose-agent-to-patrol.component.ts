@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Agent } from 'src/app/models/agent/agent.models';
+import { AgentActionsService } from 'src/app/services/agent/agent-actions.service';
 import { AgentService } from 'src/app/services/agent/agent.service';
 import { AmbushService } from 'src/app/services/ambush/ambush.service';
 import { TokenService } from 'src/app/services/auth/token.service';
@@ -18,7 +19,7 @@ export class ChooseAgentToPatrolComponent implements OnInit {
 
   constructor(
     private agentService: AgentService,
-    private tokenService: TokenService,
+    private agentActionsService: AgentActionsService,
     private mapUtils: MapUtils
     ) {
 
@@ -34,9 +35,9 @@ export class ChooseAgentToPatrolComponent implements OnInit {
     })
   }
 
-  moveToPatrol(agentId: number){
+  sendToPatrol(agentId: number){
     let path= this.mapUtils.getPath()
-    this.agentService.moveToPatrol(agentId, path).subscribe(it=>{
+    this.agentActionsService.sendToPatrol(agentId, path).subscribe(it=>{
       alert("Agent sent to patrol")
       this.someEvent.next(2)
     })

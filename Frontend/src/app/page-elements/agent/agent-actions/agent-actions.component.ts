@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Agent } from 'src/app/models/agent/agent.models';
+import { AgentActionsService } from 'src/app/services/agent/agent-actions.service';
 import { AgentService } from 'src/app/services/agent/agent.service';
 import { AmbushService } from 'src/app/services/ambush/ambush.service';
 
@@ -11,7 +12,7 @@ import { AmbushService } from 'src/app/services/ambush/ambush.service';
 })
 export class AgentActionsComponent implements OnInit {
 
-  constructor(private agentService: AgentService, private ambushService: AmbushService, private router: Router) { }
+  constructor(private agentActionsService: AgentActionsService, private router: Router) { }
 
   @Input()
   agent: Agent
@@ -26,7 +27,7 @@ export class AgentActionsComponent implements OnInit {
   {
     if(confirm('Are you sure??'))
     {
-        this.agentService.recruitAgent(agent.Id).subscribe(data=>{
+        this.agentActionsService.recruitAgent(agent.Id).subscribe(data=>{
           alert(data.toString());
         })
     }
@@ -36,7 +37,7 @@ export class AgentActionsComponent implements OnInit {
   {
     if(confirm('Are you sure??'))
     {
-        this.agentService.dismissAgent(agent.Id).subscribe(data=>{
+        this.agentActionsService.dismissAgent(agent.Id).subscribe(data=>{
           this.emitActionResponse("Agent dismissed");
         })
     }
@@ -44,7 +45,7 @@ export class AgentActionsComponent implements OnInit {
 
   cancelAmbush(agent: Agent): void
   {
-    this.agentService.cancelAgentAmbush(agent.Id).subscribe(data =>
+    this.agentActionsService.cancelAgentAmbush(agent.Id).subscribe(data =>
     {
       this.emitActionResponse("Ambush canceled");
     })
@@ -52,7 +53,7 @@ export class AgentActionsComponent implements OnInit {
 
   showAgentOnMap(agent: Agent)
   {
-    this.agentService.getAgentPosition(agent.Id).subscribe(data =>
+    this.agentActionsService.getAgentPosition(agent.Id).subscribe(data =>
       {
         this.router.navigate(["/map/showMap"], { queryParams: { x: data.X, y: data.Y }});
       })

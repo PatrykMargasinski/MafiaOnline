@@ -55,12 +55,9 @@ namespace MafiaOnline.Test.Repositories
         [Test]
         [AutoMoqData]
         public void Check_If_GetActiveAgents_Returns_Correct_Number_Of_Active_Agents(Mock<IAgentValidator> validator, Mock<IAgentFactory> factory, 
-            Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer, 
-            Mock<IPatrolJobRunner> partrolJobRunner, Mock<IReporter> reporter, Mock<IMovingAgentUtils> movingAgentUtils, Mock<IAgentUtils> agentUtils, Mock<IReturnWithLootJobRunner> returnWithLootJobRunner,
-            Mock<IMailSender> mailSender)
+            Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer)
         {
-            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, factory.Object, scheduler.Object, jobRunner.Object, logger.Object, randomizer.Object,
-                partrolJobRunner.Object, reporter.Object, movingAgentUtils.Object, agentUtils.Object, returnWithLootJobRunner.Object, mailSender.Object);
+            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, factory.Object, logger.Object, randomizer.Object, scheduler.Object);
             var agents = sut.GetActiveAgents(1L).Result;
             Assert.AreEqual(agents.Count, 4);
         }
@@ -72,8 +69,7 @@ namespace MafiaOnline.Test.Repositories
             Mock<IPatrolJobRunner> partrolJobRunner, Mock<IReporter> reporter, Mock<IMovingAgentUtils> movingAgentUtils, Mock<IAgentUtils> agentUtils, Mock<IReturnWithLootJobRunner> returnWithLootJobRunner,
             Mock<IMailSender> mailSender)
         {
-            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, factory.Object, scheduler.Object, jobRunner.Object, logger.Object, randomizer.Object,
-                partrolJobRunner.Object, reporter.Object, movingAgentUtils.Object, agentUtils.Object, returnWithLootJobRunner.Object, mailSender.Object);
+            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, factory.Object, logger.Object, randomizer.Object, scheduler.Object);
             var agents = sut.GetBossAgents(1L).Result;
             Assert.AreEqual(agents.Count, 4);
         }
@@ -81,12 +77,9 @@ namespace MafiaOnline.Test.Repositories
         [Test]
         [AutoMoqData]
         public async Task Check_If_Dismiss_Agent_Works_Properly(Mock<IAgentValidator> validator, Mock<IAgentFactory> factory,
-            Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer,
-            Mock<IPatrolJobRunner> partrolJobRunner, Mock<IReporter> reporter, Mock<IMovingAgentUtils> movingAgentUtils, Mock<IAgentUtils> agentUtils, Mock<IReturnWithLootJobRunner> returnWithLootJobRunner,
-            Mock<IMailSender> mailSender)
+            Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer)
         {
-            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, factory.Object, scheduler.Object, jobRunner.Object, logger.Object, randomizer.Object,
-                partrolJobRunner.Object, reporter.Object, movingAgentUtils.Object, agentUtils.Object, returnWithLootJobRunner.Object, mailSender.Object);
+            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, factory.Object, logger.Object, randomizer.Object, scheduler.Object);
             var agents = sut.GetBossAgents(1L).Result;
             var request = new DismissAgentRequest()
             { AgentId = 1L };
@@ -101,13 +94,10 @@ namespace MafiaOnline.Test.Repositories
         [Test]
         [AutoMoqData]
         public async Task Check_If_Recruit_Agent_Works_Properly(Mock<IAgentValidator> validator, Mock<IAgentFactory> factory,
-            Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer,
-            Mock<IPatrolJobRunner> partrolJobRunner, Mock<IReporter> reporter, Mock<IMovingAgentUtils> movingAgentUtils, Mock<IAgentUtils> agentUtils, Mock<IReturnWithLootJobRunner> returnWithLootJobRunner,
-            Mock<IMailSender> mailSender)
+            Mock<ISchedulerFactory> scheduler, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer)
         {
             AgentFactory agentFactory = new AgentFactory(_unitOfWork);
-            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, factory.Object, scheduler.Object, jobRunner.Object, logger.Object, randomizer.Object,
-                partrolJobRunner.Object, reporter.Object, movingAgentUtils.Object, agentUtils.Object, returnWithLootJobRunner.Object, mailSender.Object);
+            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, factory.Object, logger.Object, randomizer.Object, scheduler.Object);
 
             var agent = await agentFactory.Create();
             agent.AgentForSale = await agentFactory.CreateForSaleInstance(agent);
@@ -125,14 +115,11 @@ namespace MafiaOnline.Test.Repositories
 
         [Test]
         [AutoMoqData]
-        public async Task Check_If_Refresh_Agents_Works_Properly(Mock<IAgentValidator> validator, Mock<IAgentFactory> factory,
-            Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer,
-            Mock<IPatrolJobRunner> partrolJobRunner, Mock<IReporter> reporter, Mock<IMovingAgentUtils> movingAgentUtils, Mock<IAgentUtils> agentUtils, Mock<IReturnWithLootJobRunner> returnWithLootJobRunner
-            , Mock<IMailSender> mailSender)
+        public async Task Check_If_Refresh_Agents_Works_Properly(Mock<IAgentValidator> validator,
+            Mock<ISchedulerFactory> scheduler, Mock<IAgentRefreshJobRunner> jobRunner, Mock<ILogger<AgentService>> logger, Mock<IRandomizer> randomizer)
         {
             AgentFactory agentFactory = new AgentFactory(_unitOfWork);
-            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, agentFactory, scheduler.Object, jobRunner.Object, logger.Object, randomizer.Object,
-                partrolJobRunner.Object, reporter.Object, movingAgentUtils.Object, agentUtils.Object, returnWithLootJobRunner.Object, mailSender.Object);
+            AgentService sut = new AgentService(_unitOfWork, _mapper, validator.Object, agentFactory, logger.Object, randomizer.Object, scheduler.Object);
             await sut.RefreshAgents();
             var agents = await _unitOfWork.Agents.GetAllAsync();
             Assert.AreEqual(agents.Where(x => x.StateIdEnum == AgentState.ForSale).Count(), AgentConsts.NUMBER_OF_AGENTS_FOR_SALE);

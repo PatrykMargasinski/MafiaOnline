@@ -40,32 +40,4 @@ export class AgentService {
   getAmbushingAgents(): Observable<AmbushingAgent[]> {
     return this.http.get<AmbushingAgent[]>(this.APIUrl + '/ambushing');
   }
-
-  recruitAgent(agentId: number) {
-    const request: RecruitAgentRequest = {AgentId: agentId, BossId: 0}
-    return this.http.post(this.APIUrl + "/recruit", request);
-  }
-
-  dismissAgent(agentId: number) {
-    console.log(agentId);
-    const request: DismissAgentRequest = {AgentId: agentId}
-    return this.http.post(this.APIUrl + "/dismiss", request);
-  }
-
-  moveToPatrol(agentId: number, path: Point[])
-  {
-    const request: PatrolRequest = {Path: path, AgentId: agentId}
-    return this.http.post(this.APIUrl + '/patrol', request);
-  }
-
-  //NEW
-  cancelAgentAmbush(agentId: number)
-  {
-    return this.http.get(this.APIUrl + '/cancelAmbush?agentId=' + agentId);
-  }
-
-  getAgentPosition(agentId: number)
-  {
-    return this.http.get<Point>(this.APIUrl + '/position?agentId=' + agentId);
-  }
 }

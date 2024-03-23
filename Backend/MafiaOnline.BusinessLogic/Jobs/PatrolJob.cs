@@ -16,23 +16,20 @@ namespace MafiaAPI.Jobs
     public class PatrolJob : IJob
     {
         private readonly ILogger<PatrolJob> _logger;
-        private readonly IAgentService _agentService;
-        private readonly IMovingAgentUtils _movingAgentUtils;
+        private readonly IAgentActionsService _movingAgentService;
         public PatrolJob(
             ILogger<PatrolJob> logger,
-            IAgentService agentService,
-            IMovingAgentUtils movingAgentUtils
+            IAgentActionsService movingAgentService
             )
         {
             _logger = logger;
-            _agentService = agentService;
-            _movingAgentUtils = movingAgentUtils;
+            _movingAgentService = movingAgentService;
         }
         public async Task Execute(IJobExecutionContext context)
         {
             JobDataMap dataMap = context.JobDetail.JobDataMap;
             long movingAgentId = long.Parse(dataMap.GetString("movingAgentId"));
-            await _agentService.MakeStepDuringPatrolling(movingAgentId);
+            await _movingAgentService.MakeStepDuringPatrolling(movingAgentId);
         }
     }
 

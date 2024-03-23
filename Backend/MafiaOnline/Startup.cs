@@ -80,6 +80,7 @@ namespace MafiaOnline
 
             //Services
             services.AddScoped<IAgentService, AgentService>();
+            services.AddScoped<IAgentActionsService, AgentActionsService>();
             services.AddScoped<IBossService, BossService>();
             services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IMissionService, MissionService>();

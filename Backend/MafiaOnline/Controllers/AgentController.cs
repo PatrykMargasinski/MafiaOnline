@@ -43,14 +43,6 @@ namespace MafiaOnline.Controllers
             return new JsonResult(agents);
         }
 
-        [HttpGet("cancelAmbush")]
-        public async Task<IActionResult> CancelAgentAmbush(long agentId)
-        {
-            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            await _agentService.CancelAgentAmbush(agentId, jwtDatas.BossId);
-            return new JsonResult("Ambush canceled");
-        }
-
         [HttpGet("moving")]
         public async Task<IActionResult> GetMovingAgents()
         {
@@ -91,46 +83,11 @@ namespace MafiaOnline.Controllers
             return new JsonResult(agents);
         }
 
-        [HttpPost("dismiss")]
-        public async Task<IActionResult> DismissAgent([FromBody] DismissAgentRequest request)
-        {
-            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            request.BossId = jwtDatas.BossId;
-            var agents = await _agentService.DismissAgent(request);
-            return new JsonResult(agents);
-        }
-
-        [HttpPost("recruit")]
-        public async Task<IActionResult> RecruitAgent([FromBody] RecruitAgentRequest request)
-        {
-            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            request.BossId = jwtDatas.BossId;
-            var agent = await _agentService.RecruitAgent(request);
-            return new JsonResult($"Agent {agent.FirstName} {agent.LastName} is at your service.");
-        }
-
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshAgents()
         {
             await _agentService.RefreshAgents();
             return Ok();
-        }
-
-        [HttpPost("patrol")]
-        public async Task<IActionResult> SendToPatrol(PatrolRequest request)
-        {
-            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            request.BossId = jwtDatas.BossId;
-            await _agentService.SendToPatrol(request);
-            return Ok();
-        }
-
-        [HttpGet("position")]
-        public async Task<IActionResult> GetAgentPosition([FromQuery] long agentId)
-        {
-            var jwtDatas = _tokenUtils.DecodeToken(Request.Headers["Authorization"]);
-            var point = await _agentService.GetAgentPosition(agentId, jwtDatas.BossId);
-            return Ok(point);
         }
     }
 }
