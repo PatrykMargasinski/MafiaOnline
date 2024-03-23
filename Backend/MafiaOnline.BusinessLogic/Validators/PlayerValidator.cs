@@ -189,7 +189,7 @@ namespace MafiaOnline.BusinessLogic.Validators
             if (string.IsNullOrEmpty(request.RepeatedNewPassword))
                 throw new Exception("Repeated new password not provided");
 
-            if (_securityUtils.VerifyPassword(player, request.OldPassword) == false)
+            if (await _securityUtils.VerifyPasswordAsync(player, request.OldPassword) == false)
             {
                 throw new Exception("Invalid old password");
             }
@@ -210,7 +210,7 @@ namespace MafiaOnline.BusinessLogic.Validators
                 throw new Exception("User not found");
             }
 
-            if (_securityUtils.VerifyPassword(player, request.Password) == false)
+            if (await _securityUtils.VerifyPasswordAsync(player, request.Password) == false)
             {
                 throw new Exception("Invalid password");
             }

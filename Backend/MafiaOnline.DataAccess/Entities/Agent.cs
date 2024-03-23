@@ -20,10 +20,6 @@ namespace MafiaOnline.DataAccess.Entities
             get => (AgentState?) StateId;
             set 
             {
-                if(State?.HasSubstates != true)
-                {
-                    SubstateId = null;
-                }
                 StateId = (long?)value;
             }
         }

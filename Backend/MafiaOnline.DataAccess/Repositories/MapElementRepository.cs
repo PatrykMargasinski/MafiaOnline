@@ -13,6 +13,7 @@ namespace MafiaOnline.DataAccess.Repositories
     {
         Task<IList<MapElement>> GetInRange(long xMin, long xMax, long yMin, long yMax, long bossId);
         Task<MapElement> GetInPoint(long x, long y);
+        Task<MapElement> GetInPoint(Point p);
     }
 
     public class MapElementRepository : CrudRepository<MapElement>, IMapElementRepository
@@ -25,6 +26,12 @@ namespace MafiaOnline.DataAccess.Repositories
         public async Task<MapElement> GetInPoint(long x, long y)
         {
             var mapElements = await _context.MapElements.FirstOrDefaultAsync(el => el.X == x && el.Y == y);
+            return mapElements;
+        }
+
+        public async Task<MapElement> GetInPoint(Point p)
+        {
+            var mapElements = await GetInPoint(p.X, p.Y);
             return mapElements;
         }
 

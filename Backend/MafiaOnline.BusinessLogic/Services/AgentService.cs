@@ -167,7 +167,6 @@ namespace MafiaOnline.BusinessLogic.Services
             await _agentValidator.ValidateDismissAgent(request);
             var agent = await _unitOfWork.Agents.GetByIdAsync(request.AgentId);
             agent.StateIdEnum = AgentState.Renegate;
-            agent.Boss = null;
             agent.BossId = null;
             _unitOfWork.Commit();
             return agent;
@@ -282,7 +281,7 @@ namespace MafiaOnline.BusinessLogic.Services
             var movingAgent = await _unitOfWork.MovingAgents.GetByIdAsync(movingAgentId);
             if (movingAgent == null)
                 throw new Exception($"Moving agent with id {movingAgentId} not found");
-            var agent = await _unitOfWork.Agents.GetByIdAsync(movingAgent.AgentId);
+            var agent = movingAgent.Agent;
             var point = movingAgent.Path[movingAgent.Step.Value];
             var mapElement = await _unitOfWork.MapElements.GetInPoint(point.X, point.Y);
             if (mapElement != null && mapElement.Type == MapElementType.Ambush && mapElement.BossId != agent.BossId)
@@ -338,6 +337,7 @@ namespace MafiaOnline.BusinessLogic.Services
                 var boss = await _unitOfWork.Bosses.GetByIdAsync(agent.BossId.Value);
                 boss.Money += loot.Money;
                 agent.StateIdEnum = AgentState.Active;
+                agent.SubstateIdEnum = null;
                 var report = "Your agent returned to the headquarter with loot. The money is yours and no one undesirable will lay hands on it";
                 await _reporter.CreateReport(boss.Id, "Agent returned to HQ with loot", report);
                 _unitOfWork.MovingAgents.DeleteById(movingAgentId);

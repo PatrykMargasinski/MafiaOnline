@@ -1,4 +1,5 @@
 ﻿using MafiaOnline.DataAccess.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,18 +16,20 @@ namespace MafiaOnline.BusinessLogic.Utils
         public string Decrypt(string text);
         public string Encrypt(string text);
         public string Hash(string text);
-        public bool VerifyPassword(Player player, string pass);
+        public Task<bool> VerifyPasswordAsync(Player player, string pass);
     }
 
     public class SecurityUtils : ISecurityUtils
     {
         private readonly IConfiguration _config;
+        private readonly UserManager<Player> _userManager;
 
         private string aes_key;
         private string aes_iv;
-        public SecurityUtils(IConfiguration config)
+        public SecurityUtils(IConfiguration config, UserManager<Player> userManager)
         {
             _config = config;
+            _userManager = userManager;
             aes_key = _config.GetValue<string>("Security:EncryptKey");
             aes_iv = _config.GetValue<string>("Security:IV");
         }
@@ -111,18 +114,9 @@ namespace MafiaOnline.BusinessLogic.Utils
         /// <summary>
         /// Checks if entered password is correct
         /// </summary>
-        public bool VerifyPassword(Player player, string pass)
+        public async Task<bool> VerifyPasswordAsync(Player player, string pass)
         {
-            string savedPasswordHash = player.PasswordHash;
-            byte[] hashBytes = Convert.FromBase64String(savedPasswordHash);
-            byte[] salt = new byte[16];
-            Array.Copy(hashBytes, 0, salt, 0, 16);
-            var pbkdf2 = new Rfc2898DeriveBytes(pass, salt, 100000);
-            byte[] hash = pbkdf2.GetBytes(20);
-            for (int i = 0; i < 20; i++)
-                if (hashBytes[i + 16] != hash[i])
-                    return false;
-            return true;
+            return await _userManager.CheckPasswordAsync(player, pass);
         }
     }
 }
