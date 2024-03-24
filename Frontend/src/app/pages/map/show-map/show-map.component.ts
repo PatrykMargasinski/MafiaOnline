@@ -1,11 +1,11 @@
+import { MapElementType as MapElementTypes } from './../../../models/map/mapField.models';
 import { MapUtils } from './../../../utils/map-utils';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Directions, MapField, MapModes, Operations, TerrainTypes } from 'src/app/models/map/mapField.models';
+import { Directions, MapField, MapModes, MapOperations, TerrainTypes } from 'src/app/models/map/mapField.models';
 import { MapService } from 'src/app/services/map/map.service';
 import { TokenService } from 'src/app/services/auth/token.service';
 import { ActivatedRoute } from '@angular/router';
-import { Point } from 'src/app/models/map/point.models';
 
 @Component({
   selector: 'app-show-map',
@@ -19,9 +19,16 @@ export class ShowMapComponent implements OnInit {
   constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils, private activatedRoute: ActivatedRoute) { }
   mapFields: MapField[]
   chosenMapFieldId: number
-  chosenElementType: number
+  chosenElementType: MapElementTypes
   mapMode: MapModes = MapModes.Nothing //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
+
+  //enums (To be able to use them in the html file I need to output them here)
+  MapOperations = MapOperations
+  MapModes = MapModes
+  TerrainTypes = TerrainTypes
+  MapElementTypes = MapElementTypes
+  Directions = Directions
 
   uniquelyColouredFields: Map<string, string> = new Map<string, string>()
 
@@ -66,28 +73,22 @@ export class ShowMapComponent implements OnInit {
 
   closeAndRefresh(operation: number) {
     this.modalService.dismissAll();
-    if(operation==1)
+    switch(operation)
     {
-      this.mapMode=MapModes.CreatingMissionPath
-    }
-    else
-    {
-      this.mapMode=MapModes.Nothing
-      this.mapUtils.clearPath();
+      case MapOperations.MissionChosen:
+      case MapOperations.Cancel:
+        this.setMode(MapModes.Nothing)
+      break;
+      case MapOperations.StartSettingRoad:
+        this.setMode(MapModes.CreatingMissionPath)
+      break;
     }
     this.refreshMap();
   }
 
-  setAmbushMode()
+  setMode(mode: MapModes)
   {
-    this.mapMode=MapModes.SettingAmbush
-    this.mapUtils.clearPath();
-    this.refreshMap();
-  }
-
-  setPatrolMode()
-  {
-    this.mapMode=MapModes.CreatingPatrolPath
+    this.mapMode=mode;
     this.mapUtils.clearPath();
     this.refreshMap();
   }
@@ -140,94 +141,93 @@ export class ShowMapComponent implements OnInit {
     this.refreshMap();
   }
 
-  mapElementClick(mapFieldId: number, elementType: number){
+  mapElementClick(mapFieldId: number, elementType: MapElementTypes){
     this.chosenMapFieldId=mapFieldId
     this.chosenElementType=elementType
     this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
   }
 
-  mapFieldClick(mapFieldId: number, X:number, Y:number, mapElementType: number, terrainType: number){
-    if(this.mapMode==MapModes.CreatingMissionPath)
+  mapFieldClick(X:number, Y:number){
+    switch (this.mapMode)
     {
-      if(!this.mapUtils.isRoad(X,Y))
-      {
-        alert('This field is not a road')
-        return
-      }
+      case MapModes.CreatingMissionPath:
+        if(!this.mapUtils.isRoad(X,Y))
+        {
+          alert('This field is not a road')
+          return
+        }
 
-      var lastElement = this.mapUtils.getLastElementOfPath();
+        var lastElement = this.mapUtils.getLastElementOfPath();
 
-      if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
-      {
-        this.mapUtils.removePath(X,Y);
-        return
-      }
+        if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
+        {
+          this.mapUtils.removePath(X,Y);
+          return
+        }
 
-      if(this.mapUtils.getPath().filter(el=>el.X==X && el.Y==Y).length!=0)
-      {
-        alert('You can remove only last set element')
-        return
-      }
+        if(this.mapUtils.getPath().filter(el=>el.X==X && el.Y==Y).length!=0)
+        {
+          alert('You can remove only last set element')
+          return
+        }
 
-      if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement.X,lastElement.Y))
-      {
-        alert('This field is not adjacent with last field of agent road')
-        return
-      }
+        if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement.X,lastElement.Y))
+        {
+          alert('This field is not adjacent with last field of agent road')
+          return
+        }
 
-      if(!this.mapUtils.isPointPath(X,Y))
-      {
-        this.mapUtils.addPointToPath(X,Y);
-      }
-    }
-    else if(this.mapMode == MapModes.SettingAmbush)
-    {
-      if(!this.mapUtils.isRoad(X,Y))
-      {
-        alert('This field is not a road')
-        return
-      }
+        if(!this.mapUtils.isPointPath(X,Y))
+        {
+          this.mapUtils.addPointToPath(X,Y);
+        }
+      break;
+      case MapModes.SettingAmbush:
+        if(!this.mapUtils.isRoad(X,Y))
+        {
+          alert('This field is not a road')
+          return
+        }
 
-      this.mapUtils.clearPath();
+        this.mapUtils.clearPath();
 
-      if(!this.mapUtils.isPointPath(X,Y))
-      {
-        this.mapUtils.addPointToPath(X,Y);
-      }
-    }
+        if(!this.mapUtils.isPointPath(X,Y))
+        {
+          this.mapUtils.addPointToPath(X,Y);
+        }
+      break;
+      case MapModes.CreatingPatrolPath:
+        if(!this.mapUtils.isRoad(X,Y))
+        {
+          alert('This field is not a road')
+          return
+        }
 
-    else if(this.mapMode == MapModes.CreatingPatrolPath)
-    {
-      if(!this.mapUtils.isRoad(X,Y))
-      {
-        alert('This field is not a road')
-        return
-      }
+        var lastElement = this.mapUtils.getLastElementOfPath();
 
-      var lastElement = this.mapUtils.getLastElementOfPath();
+        if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
+        {
+          this.mapUtils.removePath(X,Y);
+          return
+        }
 
-      if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
-      {
-        this.mapUtils.removePath(X,Y);
-        return
-      }
+        if(this.mapUtils.getPath().filter(el=>el.X==X && el.Y==Y).length!=0)
+        {
+          alert('You can remove only last set element')
+          return
+        }
 
-      if(this.mapUtils.getPath().filter(el=>el.X==X && el.Y==Y).length!=0)
-      {
-        alert('You can remove only last set element')
-        return
-      }
+        if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement.X,lastElement.Y))
+        {
+          alert('This field is not adjacent with last field of agent road')
+          return
+        }
 
-      if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement.X,lastElement.Y))
-      {
-        alert('This field is not adjacent with last field of agent road')
-        return
-      }
-
-      if(!this.mapUtils.isPointPath(X,Y))
-      {
-        this.mapUtils.addPointToPath(X,Y);
-      }
+        if(!this.mapUtils.isPointPath(X,Y))
+        {
+          this.mapUtils.addPointToPath(X,Y);
+        }
+      break;
     }
   }
 
@@ -236,33 +236,29 @@ export class ShowMapComponent implements OnInit {
     return this.mapUtils.isPointPath(X, Y);
   }
 
-  pathReadyOperations(operation: number)
+  pathReadyOperations(operation: MapOperations)
   {
-    if(operation==Operations.RoadReady)
+    switch(operation)
     {
-      this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
-    }
-    if(operation==Operations.Cancel)
-    {
-      this.mapMode=MapModes.Nothing
-      this.mapUtils.clearPath();
-    }
-    if(operation==Operations.AmbushPointReady)
-    {
-      if(this.mapUtils.getPath().length!=1)
-      {
-        alert('You have to choose 1 point');
-        return;
-      }
-      this.chosenElementType=0;
-      this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
-    }
-
-    if(operation==Operations.PatrolPathReady)
-    {
-      console.log("Test");
-      this.chosenElementType=0;
-      this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
+      case MapOperations.RoadReady:
+        this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
+        break;
+      case MapOperations.Cancel:
+        this.setMode(MapModes.Nothing);
+        break;
+      case MapOperations.AmbushPointReady:
+        if(this.mapUtils.getPath().length != 1)
+        {
+          alert('You have to choose 1 point');
+          return;
+        }
+        this.chosenElementType = MapElementTypes.None;
+        this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
+        break;
+      case MapOperations.PatrolPathReady:
+        this.chosenElementType = MapElementTypes.None;
+        this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
+        break;
     }
   }
 }

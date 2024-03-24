@@ -4,27 +4,27 @@
 {{mapElementDescription}}<br>
 <div>
   <div class="container col-1 p-0" style="margin-left: auto; margin-right: auto;">
-    <img src="../../../../assets/arrow.png" alt="Arrow up" style="width:100%;height:100%;" (click)="moveMap(0)">
+    <img src="../../../../assets/arrow.png" alt="Arrow up" style="width:100%;height:100%;" (click)="moveMap(Directions.Up)">
   </div>
 
   <div style="overflow: auto; display: flex;">
     <div class="container col-1 float-left p-0">
-      <img src="../../../../assets/arrowLeft.png" class="vertical-center" alt="Arrow left" style="width:100%;" (click)="moveMap(3)">
+      <img src="../../../../assets/arrowLeft.png" class="vertical-center" alt="Arrow left" style="width:100%;" (click)="moveMap(Directions.Left)">
     </div>
 
     <div class="container col-10 p-0">
       <div *ngFor="let item of mapFields">
-        <div class="terrainDiv" [style.background]="getTerrainColor(item.X, item.Y, item.TerrainType)" (click)="mapFieldClick(item.Id, item.X, item.Y, item.MapElementType, item.TerrainType)"
+        <div class="terrainDiv" [style.background]="getTerrainColor(item.X, item.Y, item.TerrainType)" (click)="mapFieldClick(item.X, item.Y)"
         (mouseenter)="onMouseEnter(item)">
-          <div *ngIf="item.MapElementType==1">
+          <div *ngIf="item.MapElementType == MapElementTypes.Headquarters">
             <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myheadquarters.png" alt="MH" style="max-width: 90%; max-height: 90%" (click)="mapElementClick(item.Id, item.MapElementType)">
             <img *ngIf="item.Owner != getBossId()" src="../../../../assets/headquarters.png" alt="H" style="max-width: 90%; max-height: 90%;" (click)="mapElementClick(item.Id, item.MapElementType)">
           </div>
-          <div *ngIf="item.MapElementType==2">
+          <div *ngIf="item.MapElementType == MapElementTypes.Mission">
             <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myMissionIcon.png" alt="MM" style="max-width: 90%; max-height: 90%" (click)="mapElementClick(item.Id, item.MapElementType)">
             <img *ngIf="item.Owner != getBossId()" src="../../../../assets/missionIcon.png" alt="M" style="max-width: 90%; max-height: 90%;" (click)="mapElementClick(item.Id, item.MapElementType)">
           </div>
-          <div *ngIf="item.MapElementType==3">
+          <div *ngIf="item.MapElementType == MapElementTypes.Ambush">
             <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myAmbush.png" alt="MM" style="max-width: 90%; max-height: 90%" (click)="mapElementClick(item.Id, item.MapElementType)">
             <img *ngIf="item.Owner != getBossId()" src="../../../../assets/ambush.png" alt="M" style="max-width: 90%; max-height: 90%;" (click)="mapElementClick(item.Id, item.MapElementType)">
           </div>
@@ -36,22 +36,22 @@
     </div>
 
     <div class="container col-1 p-0">
-      <img src="../../../../assets/arrowRight.png" class="vertical-center" alt="Arrow right" style="width:100%; clear: both;" (click)="moveMap(1)">
+      <img src="../../../../assets/arrowRight.png" class="vertical-center" alt="Arrow right" style="width:100%; clear: both;" (click)="moveMap(Directions.Right)">
     </div>
   </div>
 
   <div class="container col-1 p-0">
-    <img src="../../../../assets/arrow.png" class="down" alt="Arrow down" style="width:90%;height:90%;" (click)="moveMap(2)">
+    <img src="../../../../assets/arrow.png" class="down" alt="Arrow down" style="width:90%;height:90%;" (click)="moveMap(Directions.Down)">
   </div>
 
 
   <div class="container col-1 row">
-    <button *ngIf="mapMode == 0" type="button" class="btn btn-outline-dark" (click)="setAmbushMode()">Set ambush</button>
-    <button *ngIf="mapMode == 0" type="button" class="btn btn-outline-dark" (click)="setPatrolMode()">Patrol</button>
-    <button *ngIf="mapMode == 1" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(1)">Road ready</button>
-    <button *ngIf="mapMode == 2" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(2)">Ambush point ready</button>
-    <button *ngIf="mapMode == 3" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(3)">Patrol path ready</button>
-    <button *ngIf="mapMode != 0" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(0)">Cancel</button>
+    <button *ngIf="mapMode == MapModes.Nothing" type="button" class="btn btn-outline-dark" (click)="setMode(MapModes.SettingAmbush)">Set ambush</button>
+    <button *ngIf="mapMode == MapModes.Nothing" type="button" class="btn btn-outline-dark" (click)="setMode(MapModes.CreatingPatrolPath)">Patrol</button>
+    <button *ngIf="mapMode == MapModes.CreatingMissionPath" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(MapOperations.RoadReady)">Road ready</button>
+    <button *ngIf="mapMode == MapModes.SettingAmbush" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(MapOperations.AmbushPointReady)">Ambush point ready</button>
+    <button *ngIf="mapMode == MapModes.CreatingPatrolPath" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(MapOperations.PatrolPathReady)">Patrol path ready</button>
+    <button *ngIf="mapMode != MapModes.Nothing" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(MapOperations.Cancel)">Cancel</button>
   </div>
 </div>
 <ng-template #mapElementModal let-modal>
@@ -62,23 +62,23 @@
     </button>
   </div>
   <div class="modal-body">
-    <div *ngIf="chosenElementType==1">
+    <div *ngIf="chosenElementType == MapElementTypes.Headquarters">
       <app-headquarters-details [headquartersId]="chosenMapFieldId" (someEvent)="closeAndRefresh($event)"></app-headquarters-details>
     </div>
-    <div *ngIf="chosenElementType==2">
+    <div *ngIf="chosenElementType == MapElementTypes.Mission">
       <app-choose-agent-on-mission [mapElementId]="chosenMapFieldId" (someEvent)="closeAndRefresh($event)"></app-choose-agent-on-mission>
     </div>
-    <div *ngIf="chosenElementType==3">
+    <div *ngIf="chosenElementType == MapElementTypes.Ambush">
       <app-ambush-details [mapElementId]="chosenMapFieldId" (someEvent)="closeAndRefresh($event)"></app-ambush-details>
     </div>
-    <div *ngIf="chosenElementType==0 && mapMode == 2">
+    <div *ngIf="chosenElementType == MapElementTypes.None && mapMode == MapModes.SettingAmbush">
       <app-choose-agent-to-arrange-ambush [mapElementId]="chosenMapFieldId" (someEvent)="closeAndRefresh($event)"></app-choose-agent-to-arrange-ambush>
     </div>
-    <div *ngIf="chosenElementType==0 && mapMode == 3">
+    <div *ngIf="chosenElementType == MapElementTypes.None && mapMode == MapModes.CreatingPatrolPath">
       <app-choose-agent-to-patrol [mapElementId]="chosenMapFieldId" (someEvent)="closeAndRefresh($event)"></app-choose-agent-to-patrol>
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="closeAndRefresh(0)">Close</button>
+    <button type="button" class="btn btn-outline-dark" (click)="closeAndRefresh(MapOperations.Cancel)">Close</button>
   </div>
 </ng-template>

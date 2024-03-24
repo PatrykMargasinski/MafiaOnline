@@ -72,7 +72,7 @@ export class ShowReportsComponent implements OnInit {
   }
 
   showMessage(messageId: number){
-    console.log(messageId);
+
     this.shared.setSeen(messageId).subscribe(
       x=>
       {

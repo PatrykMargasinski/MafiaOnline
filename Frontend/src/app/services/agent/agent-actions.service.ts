@@ -35,7 +35,7 @@ export class AgentActionsService {
   }
 
   dismissAgent(agentId: number) {
-    console.log(agentId);
+
     const request: DismissAgentRequest = {AgentId: agentId}
     return this.http.post(this.APIUrl + "/dismiss", request);
   }

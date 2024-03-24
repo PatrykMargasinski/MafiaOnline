@@ -24,7 +24,7 @@ export class ForgottenPasswordComponent implements OnInit {
 
   createResetPasswordCode()
   {
-    console.log(this.createResetPasswordCodeRequest)
+
     this.playerService.createResetPasswordCode(this.createResetPasswordCodeRequest).subscribe
     (
       x=>

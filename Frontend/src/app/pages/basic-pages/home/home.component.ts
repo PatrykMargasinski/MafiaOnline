@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
     this.newsService.getLastNews().subscribe(x => {
       this.newsList=x;
     })
-    console.log(this.newsList)
+
   }
 
 }

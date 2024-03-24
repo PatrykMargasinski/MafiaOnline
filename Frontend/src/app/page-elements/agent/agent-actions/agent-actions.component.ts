@@ -62,7 +62,6 @@ export class AgentActionsComponent implements OnInit {
   agentContainsState(states: [])
   {
     let agentState = this.agent.Substate == null ? this.agent.State : [this.agent.State, this.agent.Substate]
-    console.log(agentState);
     return states.some(subArray => JSON.stringify(subArray) === JSON.stringify(agentState));
   }
 

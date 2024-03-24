@@ -26,9 +26,9 @@ export enum Directions
 }
 
 
-export enum Operations
+export enum MapOperations
 {
-  Cancel, RoadReady, AmbushPointReady, PatrolPathReady
+  Cancel, RoadReady, AmbushPointReady, PatrolPathReady, MissionChosen, StartSettingRoad
 }
 
 export enum MapElementType

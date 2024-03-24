@@ -1,6 +1,7 @@
 import { MapUtils } from './../../../utils/map-utils';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Agent } from 'src/app/models/agent/agent.models';
+import { MapOperations } from 'src/app/models/map/mapField.models';
 import { Mission } from 'src/app/models/mission/mission.models';
 import { AgentService } from 'src/app/services/agent/agent.service';
 import { TokenService } from 'src/app/services/auth/token.service';
@@ -64,25 +65,17 @@ export class ChooseAgentOnMissionComponent implements OnInit {
     })
   }
 
-  doMission(agentId: number){
-    let path = this.mapUtils.getPath()
-    this.missionService.startMission(agentId, this.missionId, path).subscribe(it=>{
-      alert("Agent sent on mission")
-      this.someEvent.next(0)
-    })
-  }
-
   moveOnMission(agentId: number){
     let path = this.mapUtils.getPath()
     this.missionService.moveOnMission(agentId, this.missionId, path).subscribe(it=>{
       alert("Agent sent on mission")
-      this.someEvent.next(2)
+      this.someEvent.next(MapOperations.MissionChosen)
     })
   }
 
   setAgentPath(){
     this.mapUtils.clearPath();
-      this.someEvent.next(1)
+      this.someEvent.next(MapOperations.StartSettingRoad)
   }
 }
 
