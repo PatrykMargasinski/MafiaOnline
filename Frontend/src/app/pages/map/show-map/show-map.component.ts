@@ -6,6 +6,7 @@ import { Directions, MapField, MapModes, MapOperations, TerrainTypes } from 'src
 import { MapService } from 'src/app/services/map/map.service';
 import { TokenService } from 'src/app/services/auth/token.service';
 import { ActivatedRoute } from '@angular/router';
+import { CreatingMissionPathMapModeStrategy, CreatingPatrolPathMapModeStrategy, MapModeStrategy, NothingMissionPathMapModeStrategy, SettingAmbushMapModeStrategy } from 'src/app/utils/map/strategies/mapModeStrategy';
 
 @Component({
   selector: 'app-show-map',
@@ -16,11 +17,21 @@ export class ShowMapComponent implements OnInit {
 
   edgeX : number
   edgeY : number
-  constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils, private activatedRoute: ActivatedRoute) { }
+
+  constructor(private mapService: MapService, private tokenService: TokenService, private modalService: NgbModal, private mapUtils: MapUtils, private activatedRoute: ActivatedRoute)
+  {
+    this.mapModeStrategies.set(MapModes.Nothing, new NothingMissionPathMapModeStrategy(mapUtils));
+    this.mapModeStrategies.set(MapModes.CreatingMissionPath, new CreatingMissionPathMapModeStrategy(mapUtils));
+    this.mapModeStrategies.set(MapModes.SettingAmbush, new SettingAmbushMapModeStrategy(mapUtils));
+    this.mapModeStrategies.set(MapModes.CreatingPatrolPath, new CreatingPatrolPathMapModeStrategy(mapUtils));
+  }
+
   mapFields: MapField[]
   chosenMapFieldId: number
   chosenElementType: MapElementTypes
-  mapMode: MapModes = MapModes.Nothing //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
+  mapMode: MapModes = MapModes.Nothing; //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
+  mapModeStrategies: Map <MapModes, MapModeStrategy> = new Map();
+
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
   //enums (To be able to use them in the html file I need to output them here)
@@ -142,93 +153,16 @@ export class ShowMapComponent implements OnInit {
   }
 
   mapElementClick(mapFieldId: number, elementType: MapElementTypes){
-    this.chosenMapFieldId=mapFieldId
-    this.chosenElementType=elementType
-    this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
+    if(this.mapMode == MapModes.Nothing)
+    {
+      this.chosenMapFieldId=mapFieldId
+      this.chosenElementType=elementType
+      this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
+    }
   }
 
   mapFieldClick(X:number, Y:number){
-    switch (this.mapMode)
-    {
-      case MapModes.CreatingMissionPath:
-        if(!this.mapUtils.isRoad(X,Y))
-        {
-          alert('This field is not a road')
-          return
-        }
-
-        var lastElement = this.mapUtils.getLastElementOfPath();
-
-        if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
-        {
-          this.mapUtils.removePath(X,Y);
-          return
-        }
-
-        if(this.mapUtils.getPath().filter(el=>el.X==X && el.Y==Y).length!=0)
-        {
-          alert('You can remove only last set element')
-          return
-        }
-
-        if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement.X,lastElement.Y))
-        {
-          alert('This field is not adjacent with last field of agent road')
-          return
-        }
-
-        if(!this.mapUtils.isPointPath(X,Y))
-        {
-          this.mapUtils.addPointToPath(X,Y);
-        }
-      break;
-      case MapModes.SettingAmbush:
-        if(!this.mapUtils.isRoad(X,Y))
-        {
-          alert('This field is not a road')
-          return
-        }
-
-        this.mapUtils.clearPath();
-
-        if(!this.mapUtils.isPointPath(X,Y))
-        {
-          this.mapUtils.addPointToPath(X,Y);
-        }
-      break;
-      case MapModes.CreatingPatrolPath:
-        if(!this.mapUtils.isRoad(X,Y))
-        {
-          alert('This field is not a road')
-          return
-        }
-
-        var lastElement = this.mapUtils.getLastElementOfPath();
-
-        if(lastElement!=null && lastElement.X==X && lastElement.Y==Y)
-        {
-          this.mapUtils.removePath(X,Y);
-          return
-        }
-
-        if(this.mapUtils.getPath().filter(el=>el.X==X && el.Y==Y).length!=0)
-        {
-          alert('You can remove only last set element')
-          return
-        }
-
-        if(lastElement!=null && !this.mapUtils.areAdjacent(X,Y,lastElement.X,lastElement.Y))
-        {
-          alert('This field is not adjacent with last field of agent road')
-          return
-        }
-
-        if(!this.mapUtils.isPointPath(X,Y))
-        {
-          this.mapUtils.addPointToPath(X,Y);
-        }
-      break;
-    }
+    this.mapModeStrategies.get(this.mapMode).mapFieldClick(X, Y);
   }
 
   isChosenAsAgentPath(X: number, Y: number)

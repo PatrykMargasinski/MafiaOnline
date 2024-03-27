@@ -16,6 +16,7 @@
       <div *ngFor="let item of mapFields">
         <div class="terrainDiv" [style.background]="getTerrainColor(item.X, item.Y, item.TerrainType)" (click)="mapFieldClick(item.X, item.Y)"
         (mouseenter)="onMouseEnter(item)">
+        <!-- mapElement jako oddzielny component -->
           <div *ngIf="item.MapElementType == MapElementTypes.Headquarters">
             <img *ngIf="item.Owner == getBossId()" src="../../../../assets/myheadquarters.png" alt="MH" style="max-width: 90%; max-height: 90%" (click)="mapElementClick(item.Id, item.MapElementType)">
             <img *ngIf="item.Owner != getBossId()" src="../../../../assets/headquarters.png" alt="H" style="max-width: 90%; max-height: 90%;" (click)="mapElementClick(item.Id, item.MapElementType)">
