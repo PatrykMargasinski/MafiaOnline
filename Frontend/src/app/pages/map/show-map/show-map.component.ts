@@ -127,11 +127,6 @@ export class ShowMapComponent implements OnInit {
     }
   }
 
-  getBossId()
-  {
-    return this.tokenService.getBossId();
-  }
-
   moveMap(direction: Directions)
   {
     switch(direction)
