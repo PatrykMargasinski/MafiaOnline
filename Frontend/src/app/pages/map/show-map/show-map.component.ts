@@ -1,4 +1,4 @@
-import { MapElementType as MapElementTypes } from './../../../models/map/mapField.models';
+import { MapButton, MapElementType as MapElementTypes } from './../../../models/map/mapField.models';
 import { MapUtils } from './../../../utils/map-utils';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -29,8 +29,9 @@ export class ShowMapComponent implements OnInit {
   mapFields: MapField[]
   chosenMapFieldId: number
   chosenElementType: MapElementTypes
-  mapMode: MapModes = MapModes.Nothing; //0 - nothing, 1 - creating path back from mission, 2 - set ambush, 3 - create path to patrol
+  mapMode: MapModes = MapModes.Nothing;
   mapModeStrategies: Map <MapModes, MapModeStrategy> = new Map();
+  availableButtons: MapButton[];
 
   @ViewChild('mapElementModal') mapElementModal : TemplateRef<any>;
 
@@ -54,7 +55,7 @@ export class ShowMapComponent implements OnInit {
           this.edgeX=requestedX-10;
           this.edgeY=requestedY-10;
           this.refreshMap();
-          this.mapUtils.clearPath();
+          this.setMode(MapModes.Nothing);
         }
         else
         {
@@ -63,7 +64,7 @@ export class ShowMapComponent implements OnInit {
               this.edgeX=x[0]
               this.edgeY=x[1]
               this.refreshMap();
-              this.mapUtils.clearPath();
+              this.setMode(MapModes.Nothing);
             })
         }
       });
@@ -90,7 +91,7 @@ export class ShowMapComponent implements OnInit {
       case MapOperations.Cancel:
         this.setMode(MapModes.Nothing)
       break;
-      case MapOperations.StartSettingRoad:
+      case MapOperations.StartSettingMissionPath:
         this.setMode(MapModes.CreatingMissionPath)
       break;
     }
@@ -99,7 +100,8 @@ export class ShowMapComponent implements OnInit {
 
   setMode(mode: MapModes)
   {
-    this.mapMode=mode;
+    this.mapMode = mode;
+    this.availableButtons = this.mapModeStrategies.get(this.mapMode).getButtons();
     this.mapUtils.clearPath();
     this.refreshMap();
   }
@@ -165,11 +167,20 @@ export class ShowMapComponent implements OnInit {
     return this.mapUtils.isPointPath(X, Y);
   }
 
-  pathReadyOperations(operation: MapOperations)
+  buttonOperations(operation: MapOperations)
   {
     switch(operation)
     {
-      case MapOperations.RoadReady:
+      case MapOperations.StartSettingMissionPath:
+        this.setMode(MapModes.CreatingMissionPath)
+        break;
+      case MapOperations.StartSettingPatrolPath:
+        this.setMode(MapModes.CreatingPatrolPath)
+        break;
+      case MapOperations.StartSettingAmbush:
+        this.setMode(MapModes.SettingAmbush)
+        break;
+      case MapOperations.MissionPathReady:
         this.modalService.open(this.mapElementModal, {ariaLabelledBy: 'modal-basic-title'});
         break;
       case MapOperations.Cancel:

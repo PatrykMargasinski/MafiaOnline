@@ -1,7 +1,9 @@
+import { MapButton, MapOperations } from "src/app/models/map/mapField.models";
 import { MapUtils } from "../../map-utils";
 
 export interface MapModeStrategy {
   mapFieldClick(X: number, Y: number): void;
+  getButtons(): MapButton[];
 }
 
 export class CreatingMissionPathMapModeStrategy implements MapModeStrategy {
@@ -9,6 +11,15 @@ export class CreatingMissionPathMapModeStrategy implements MapModeStrategy {
 
   constructor(mapUtils: MapUtils) {
       this.mapUtils = mapUtils;
+  }
+
+  getButtons(): MapButton[] {
+    var buttons: MapButton[] =
+    [
+      new MapButton("Mission path ready", MapOperations.MissionPathReady),
+      new MapButton("Cancel", MapOperations.Cancel)
+    ]
+    return buttons;
   }
 
   mapFieldClick(X: number, Y: number): void {
@@ -52,6 +63,15 @@ export class NothingMissionPathMapModeStrategy implements MapModeStrategy {
       this.mapUtils = mapUtils;
   }
 
+  getButtons(): MapButton[] {
+    var buttons: MapButton[] =
+    [
+      new MapButton("Set ambush", MapOperations.StartSettingAmbush),
+      new MapButton("Patrol", MapOperations.StartSettingPatrolPath)
+    ]
+    return buttons;
+  }
+
   mapFieldClick(X: number, Y: number): void {
 
   }
@@ -63,6 +83,16 @@ export class SettingAmbushMapModeStrategy implements MapModeStrategy {
   constructor(mapUtils: MapUtils) {
       this.mapUtils = mapUtils;
   }
+
+  getButtons(): MapButton[] {
+    var buttons: MapButton[] =
+    [
+      new MapButton("Ambush point ready", MapOperations.AmbushPointReady),
+      new MapButton("Cancel", MapOperations.Cancel)
+    ]
+    return buttons;
+  }
+
 
   mapFieldClick(X: number, Y: number): void {
     if(!this.mapUtils.isRoad(X,Y))
@@ -85,6 +115,14 @@ export class CreatingPatrolPathMapModeStrategy implements MapModeStrategy {
 
   constructor(mapUtils: MapUtils) {
       this.mapUtils = mapUtils;
+  }
+  getButtons(): MapButton[] {
+    var buttons: MapButton[] =
+    [
+      new MapButton("Patrol path ready", MapOperations.PatrolPathReady),
+      new MapButton("Cancel", MapOperations.Cancel)
+    ]
+    return buttons;
   }
 
   mapFieldClick(X: number, Y: number): void {

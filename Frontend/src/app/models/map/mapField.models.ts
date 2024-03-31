@@ -28,7 +28,14 @@ export enum Directions
 
 export enum MapOperations
 {
-  Cancel, RoadReady, AmbushPointReady, PatrolPathReady, MissionChosen, StartSettingRoad
+  Cancel,
+  StartSettingMissionPath,
+  StartSettingAmbush,
+  StartSettingPatrolPath,
+  MissionPathReady,
+  AmbushPointReady,
+  PatrolPathReady,
+  MissionChosen
 }
 
 export enum MapElementType
@@ -37,4 +44,16 @@ export enum MapElementType
   Headquarters,
   Mission,
   Ambush
+}
+
+export class MapButton
+{
+  constructor(text: string, operation: MapOperations)
+  {
+    this.Text=text;
+    this.Operation=operation;
+  }
+
+  Text: string
+  Operation: MapOperations
 }

@@ -16,7 +16,6 @@
       <div *ngFor="let item of mapFields">
         <div class="mapField" [style.background]="getTerrainColor(item.X, item.Y, item.TerrainType)" (click)="mapFieldClick(item.X, item.Y)"
         (mouseenter)="onMouseEnter(item)">
-        <!-- mapElement jako oddzielny component -->
           <div *ngIf="item.MapElementType == MapElementTypes.Headquarters">
             <app-map-element [bossId]="item.Owner" ifPlayerImage="assets/myheadquarters.png" ifNotPlayerImage="assets/headquarters.png" (click)="mapElementClick(item.Id, item.MapElementType)"></app-map-element>
           </div>
@@ -44,12 +43,7 @@
 
 
   <div class="container col-1 row">
-    <button *ngIf="mapMode == MapModes.Nothing" type="button" class="btn btn-outline-dark" (click)="setMode(MapModes.SettingAmbush)">Set ambush</button>
-    <button *ngIf="mapMode == MapModes.Nothing" type="button" class="btn btn-outline-dark" (click)="setMode(MapModes.CreatingPatrolPath)">Patrol</button>
-    <button *ngIf="mapMode == MapModes.CreatingMissionPath" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(MapOperations.RoadReady)">Road ready</button>
-    <button *ngIf="mapMode == MapModes.SettingAmbush" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(MapOperations.AmbushPointReady)">Ambush point ready</button>
-    <button *ngIf="mapMode == MapModes.CreatingPatrolPath" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(MapOperations.PatrolPathReady)">Patrol path ready</button>
-    <button *ngIf="mapMode != MapModes.Nothing" type="button" class="btn btn-outline-dark" (click)="pathReadyOperations(MapOperations.Cancel)">Cancel</button>
+    <button *ngFor="let mapButton of availableButtons" type="button" class="btn btn-outline-dark" (click)="buttonOperations(mapButton.Operation)">{{mapButton.Text}}</button>
   </div>
 </div>
 <ng-template #mapElementModal let-modal>

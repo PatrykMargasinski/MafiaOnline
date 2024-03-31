@@ -75,7 +75,7 @@ export class ChooseAgentOnMissionComponent implements OnInit {
 
   setAgentPath(){
     this.mapUtils.clearPath();
-      this.someEvent.next(MapOperations.StartSettingRoad)
+      this.someEvent.next(MapOperations.StartSettingMissionPath)
   }
 }
 
