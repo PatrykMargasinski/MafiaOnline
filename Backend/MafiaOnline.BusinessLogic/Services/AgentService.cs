@@ -30,7 +30,7 @@ namespace MafiaOnline.BusinessLogic.Services
     public interface IAgentService
     {
         Task<IList<AgentDTO>> GetAllAgents();
-        Task<IList<AgentDTO>> GetAgentsByQuery(AgentQuery query);
+        Task<IList<VAgentDTO>> GetAgentsByQuery(AgentQuery query);
         Task<IList<AgentDTO>> GetBossAgents(long bossId);
         Task<IList<AgentDTO>> GetActiveAgents(long bossId);
         Task<IList<AgentOnMissionDTO>> GetAgentsOnMission(long bossId);
@@ -45,19 +45,17 @@ namespace MafiaOnline.BusinessLogic.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IAgentValidator _agentValidator;
         private readonly ISchedulerFactory _scheduler;
         private readonly IAgentFactory _agentFactory;
         private readonly IAgentRefreshJobRunner _agentRefreshJobRunner;
         private readonly ILogger<AgentService> _logger;
         private readonly IRandomizer _randomizer;
 
-        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentValidator agentValidator, IAgentFactory agentFactory, ILogger<AgentService> logger, 
+        public AgentService(IUnitOfWork unitOfWork, IMapper mapper, IAgentFactory agentFactory, ILogger<AgentService> logger, 
             IRandomizer randomizer, ISchedulerFactory scheduler, IAgentRefreshJobRunner agentRefreshJobRunner)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _agentValidator = agentValidator;
             _agentFactory = agentFactory;
             _logger = logger;
             _randomizer = randomizer;
@@ -68,10 +66,10 @@ namespace MafiaOnline.BusinessLogic.Services
         /// <summary>
         /// Returns agents belonging to the boss
         /// </summary>
-        public async Task<IList<AgentDTO>> GetAgentsByQuery(AgentQuery query)
+        public async Task<IList<VAgentDTO>> GetAgentsByQuery(AgentQuery query)
         {
             var agents = await _unitOfWork.Agents.GetAgentByQuery(query);
-            return _mapper.Map<IList<AgentDTO>>(agents);
+            return _mapper.Map<IList<VAgentDTO>>(agents);
         }
 
 

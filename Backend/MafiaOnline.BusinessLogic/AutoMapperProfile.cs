@@ -50,6 +50,12 @@ namespace MafiaOnline.BusinessLogic
                 .ForMember(x => x.AmbushId, y => y.MapFrom(z => z.Ambush.Id))
                 .ForMember(x => x.MapElementId, y => y.MapFrom(z => z.Ambush.MapElementId));
 
+            CreateMap<VAgent, VAgentDTO>()
+                .ForMember(x => x.StateName, y => y.MapFrom(z => Enum.GetName(typeof(AgentState), z.StateIdEnum.Value)))
+                .ForMember(x => x.SubstateName, y => y.MapFrom(z => z.SubstateId.HasValue ? Enum.GetName(typeof(AgentSubstate), z.SubstateIdEnum.Value) : null))
+                .ForMember(x => x.State, y => y.MapFrom(z => z.StateIdEnum))
+                .ForMember(x => x.Substate, y => y.MapFrom(z => z.SubstateIdEnum));
+
             //Ambush
             CreateMap<Ambush, AmbushDTO>()
                 .ForMember(x => x.AgentFullName, y => y.MapFrom(z => z.Agent.FullName))

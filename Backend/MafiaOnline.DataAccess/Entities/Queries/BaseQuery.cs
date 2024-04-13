@@ -21,8 +21,8 @@ namespace MafiaOnline.DataAccess.Entities.Queries
             if(!string.IsNullOrEmpty(SortBy))
             { 
                 queryable = SortDesc
-                    ? queryable.OrderByDescending(x => EF.Property<object>(x, SortBy))
-                    : queryable.OrderBy(x => EF.Property<object>(x, SortBy));
+                    ? queryable.OrderByDescending(x => EF.Property<T>(x, SortBy))
+                    : queryable.OrderBy(x => EF.Property<T>(x, SortBy));
             }
             return queryable;
         }

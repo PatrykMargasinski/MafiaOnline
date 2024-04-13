@@ -1,11 +1,8 @@
-import { AgentQuery } from './../../models/agent/agent.models';
+import { AgentQuery, VAgent } from './../../models/agent/agent.models';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Agent, AgentOnMission, AgentForSale, MovingAgent, AmbushingAgent } from 'src/app/models/agent/agent.models';
-import { DismissAgentRequest, PatrolRequest, RecruitAgentRequest } from 'src/app/models/agent/agent.requests';
-import { Point } from 'src/app/models/map/point.models';
-import { Mission } from 'src/app/models/mission/mission.models';
 import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
@@ -18,7 +15,7 @@ export class AgentService {
 
 
   getAgentsByQuery(filters: AgentQuery): Observable<Agent[]> {
-    return this.http.post<Agent[]>(this.APIUrl + '/query', filters);
+    return this.http.post<VAgent[]>(this.APIUrl + '/query', filters);
   }
 
   getAvailableAgents(): Observable<Agent[]> {

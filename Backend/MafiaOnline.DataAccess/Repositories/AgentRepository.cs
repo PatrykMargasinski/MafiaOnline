@@ -19,7 +19,7 @@ namespace MafiaOnline.DataAccess.Repositories
         Task<IList<Agent>> GetMovingAgents(long bossId);
         Task<IList<Agent>> GetRenegates();
         Task<IList<Agent>> GetAmbushingAgents(long bossId);
-        Task<IList<Agent>> GetAgentByQuery(AgentQuery query);
+        Task<IList<VAgent>> GetAgentByQuery(AgentQuery query);
     }
 
     public class AgentRepository : CrudRepository<Agent>, IAgentRepository
@@ -126,9 +126,9 @@ namespace MafiaOnline.DataAccess.Repositories
                 _context.AgentsForSale.RemoveRange(agentsForSale);
         }
 
-        public async Task<IList<Agent>> GetAgentByQuery(AgentQuery query)
+        public async Task<IList<VAgent>> GetAgentByQuery(AgentQuery query)
         {
-            IQueryable<Agent> queryable = _context.Agents;
+            IQueryable<VAgent> queryable = _context.VAgent;
 
             queryable = queryable.Where(x => x.BossId == query.BossId);
 

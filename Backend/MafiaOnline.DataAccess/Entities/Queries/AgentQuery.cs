@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MafiaOnline.DataAccess.Entities.Queries
 {
-    public class AgentQuery : BaseQuery<Agent>
+    public class AgentQuery : BaseQuery<VAgent>
     {
         public string Name { get; set; }
         public AgentState? State { get; set; }

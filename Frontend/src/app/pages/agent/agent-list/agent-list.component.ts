@@ -25,6 +25,7 @@ export class AgentListComponent implements OnInit {
     { Value: "Dexterity", DisplayValue: "Dexterity", Sortable: true },
     { Value: "Intelligence", DisplayValue: "Intelligence", Sortable: true },
     { Value: "StateName", Value2: "SubstateName", DisplayValue: "State", Sortable: false },
+    { Value: "FinishTime", DisplayValue: "Finish time", Sortable: false },
   ];
 
   constructor(private agentService: AgentService, private stateService: StateService) {}
@@ -44,6 +45,7 @@ export class AgentListComponent implements OnInit {
   getAgents() {
     this.agentService.getAgentsByQuery(this.filters).subscribe((data: Agent[]) => {
       this.agents = data;
+      console.log(this.agents);
       this.filteredAgents = this.agents;
       for(let i=0; i<Math.ceil(this.filteredAgents.length/this.pageSize); i++)
         this.pageNumbers.push(i*this.pageSize);

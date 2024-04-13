@@ -18,6 +18,24 @@ export interface Agent
   SubstateName?: string
 }
 
+export interface VAgent
+{
+  Id: number,
+  BossId: number,
+  LastName: string,
+  FirstName: string,
+  FullName: string,
+  Strength: number,
+  Dexterity: number,
+  Intelligence: number,
+  Upkeep: number,
+  State: AgentState,
+  Substate?: AgentSubstate,
+  StateName: string,
+  SubstateName?: string,
+  FinishTime?: Date
+}
+
 export interface AgentForSale
 {
   Id: number,
