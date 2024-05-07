@@ -44,8 +44,13 @@
     <tbody>
       <tr *ngFor="let agent of filteredAgents">
         <td *ngFor="let header of tableHeaders">
+          <div *ngIf="header.IsTimeRemaining != true">
             <div>{{agent[header.Value]}}</div>
             <div *ngIf="agent[header.Value2]">({{agent[header.Value2]}})</div>
+          </div>
+          <div *ngIf="header.IsTimeRemaining == true">
+            <div>{{getSecondsRemaining(agent[header.Value])}}</div>
+          </div>
         </td>
         <td><app-agent-actions (actionResponse)="handleActionResponse($event)" [agent]="agent"></app-agent-actions></td>
       </tr>

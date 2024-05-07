@@ -5,4 +5,6 @@ export class TableHeader
   Value2?: string
   SortValue?: string
   Sortable?: boolean = false
+  IsTimeRemaining?: boolean = false
+  TimeLeft?: number = 0
 }
